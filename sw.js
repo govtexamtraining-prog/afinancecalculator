@@ -1,11 +1,16 @@
-const CACHE_NAME = 'afinancecalc-v2-cache';
+const CACHE_NAME = 'afinancecalc-v3-cache';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './privacy.html',
+  './terms.html',
+  './contact.html',
+  './about.html',
   './css/styles.css',
   './js/mechanics.js',
   './manifest.json',
-  './favicon.svg'
+  './favicon.svg',
+  './favicon.ico'
 ];
 
 self.addEventListener('install', (event) => {

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us & Methodology | aFinanceCalculator</title>
+    <meta name="description" content="Learn about aFinanceCalculator, our mission to provide institutional-grade, 100% private client-side financial computing engines, and our mathematical standards.">
+    <link rel="canonical" href="https://afinancecalculator.com/about.html">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <!-- Tailwind CSS Engine -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            950: '#020617',
+                            900: '#0f172a',
+                            850: '#141e33',
+                            800: '#1e293b',
+                            700: '#334155',
+                            600: '#475569',
+                            500: '#64748b',
+                        },
+                        emerald: {
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-slate-950">
+
+    <!-- Header Navigation -->
+    <header class="bg-slate-900/90 border-b border-slate-800 py-3.5 px-6 sticky top-0 z-40 backdrop-blur-md shadow-xl transition-colors">
+        <div class="max-w-5xl mx-auto flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-black text-slate-950 text-xl shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">A</div>
+                <div>
+                    <span class="text-xl font-black tracking-tight text-white flex items-center gap-1.5">
+                        a<span class="text-emerald-400">Finance</span>Calculator
+                    </span>
+                    <span class="text-[10px] text-slate-400 block">Back to Financial Workspace</span>
+                </div>
+            </a>
+            
+            <div class="flex items-center gap-3">
+                <button id="theme-toggle-btn" onclick="toggleLocalTheme()" title="Toggle Dark/Light Mode" class="p-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 hover:text-white transition-all cursor-pointer">
+                    <span id="theme-toggle-icon" class="text-sm">🌙</span>
+                </button>
+                <a href="index.html" class="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-1.5">
+                    <span>←</span> Launch Calculators
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8 glass-panel">
+            
+            <!-- Page Header -->
+            <div class="border-b border-slate-800 pb-6">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-3">
+                    <span>🏛️ Mission & Engineering Standards</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">About aFinanceCalculator</h1>
+                <p class="text-sm text-slate-400 mt-2">Institutional-Grade Financial Engineering &bull; 100% Client-Side Privacy &bull; Zero Lag</p>
+            </div>
+
+            <!-- Mission Statement -->
+            <section class="space-y-4">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <span class="text-emerald-400">1.</span> Our Core Mission
+                </h2>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    Most financial calculators across the web are burdened with heavy ad trackers, slow page-reload cycles, intrusive paywalls, and privacy-invasive forms that require you to transmit your personal mortgage balances, salaries, or debt amounts to remote databases.
+                </p>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    <strong>aFinanceCalculator was engineered to change that paradigm forever.</strong> We set out to build a unified, high-performance financial workspace containing <strong>50 comprehensive computing engines</strong> that execute with sub-millisecond latency directly inside the user's browser. Whether you are analyzing a $500,000 mortgage in California, calculating a commercial cap rate in London, planning for early retirement via the 4% FIRE framework, or optimizing debt repayment across multiple credit lines, aFinanceCalculator delivers institutional-level accuracy with zero friction.
+                </p>
+            </section>
+
+            <!-- Why Client-Side Privacy Matters -->
+            <div class="bg-emerald-950/30 border border-emerald-500/30 rounded-2xl p-5 text-emerald-200 space-y-2">
+                <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                    <span>⚡</span> The Zero-Server Privacy Architecture
+                </div>
+                <p class="text-xs leading-relaxed text-slate-300">
+                    Your financial numbers are deeply personal. We believe you should never have to compromise your confidential financial information just to evaluate a mortgage payment, model an investment curve, or audit your monthly budget. All 50 engines on aFinanceCalculator run 100% locally on your machine via client-side JavaScript. <strong>We maintain zero databases, require zero user accounts, and never log or sell your calculation numbers.</strong>
+                </p>
+            </div>
+
+            <!-- Methodology Section -->
+            <section id="methodology" class="space-y-4">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <span class="text-emerald-400">2.</span> Mathematical Modeling & Formulas
+                </h2>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    Every algorithm on our platform is built strictly upon peer-reviewed financial mathematics and established regulatory lending models:
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                    <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-1">
+                        <span class="text-emerald-400 font-bold block">🏠 Standard Amortization Formula</span>
+                        <p class="text-slate-300 font-mono text-[11px]">$M = P \cdot \frac{r(1+r)^n}{(1+r)^n - 1}$</p>
+                        <p class="text-slate-400 text-[10px] mt-1">Conforms to US Consumer Financial Protection Bureau (CFPB) & European Central Bank lending disclosure standards.</p>
+                    </div>
+
+                    <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-1">
+                        <span class="text-emerald-400 font-bold block">💰 Exponential Compounding Equation</span>
+                        <p class="text-slate-300 font-mono text-[11px]">$A = P \left(1 + \frac{r}{n}\right)^{nt}$</p>
+                        <p class="text-slate-400 text-[10px] mt-1">Continuous and discrete compounding curves with inflation-adjusted real returns using Fisher modeling.</p>
+                    </div>
+
+                    <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-1">
+                        <span class="text-emerald-400 font-bold block">🔥 The Trinity Study 4% FIRE Rule</span>
+                        <p class="text-slate-300 font-mono text-[11px]">$Target\ Capital = Annual\ Outflow \times 25$</p>
+                        <p class="text-slate-400 text-[10px] mt-1">Based on William Bengen's historical safe withdrawal rate analysis across 75+ years of market cycles.</p>
+                    </div>
+
+                    <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-1">
+                        <span class="text-emerald-400 font-bold block">🏢 Commercial Asset Cap Rate</span>
+                        <p class="text-slate-300 font-mono text-[11px]">$Cap\ Rate = \frac{NOI}{Current\ Market\ Value}$</p>
+                        <p class="text-slate-400 text-[10px] mt-1">Institutional real estate appraisal methodology factoring gross scheduled income, vacancy buffers, and operating expenses.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Global Currency Support -->
+            <section class="space-y-3">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <span class="text-emerald-400">3.</span> Regional & Global Focus (USA, Europe & Beyond)
+                </h2>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    Financial rules and economic structures vary worldwide. That is why aFinanceCalculator supports <strong>27 global currencies</strong> with instant symbol scaling and localized denomination grouping (including en-US standard groupings and Indian Lakhs/Crores notations). We actively tune calculations for users across the <strong>United States, United Kingdom, Eurozone (Germany, France, Netherlands, Spain, Italy), Canada, Australia, Switzerland, and Scandinavia</strong>.
+                </p>
+            </section>
+
+            <!-- Advertising & Editorial Standards -->
+            <section class="space-y-3">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <span class="text-emerald-400">4.</span> Editorial Independence & Google AdSense Policy
+                </h2>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    Our platform displays discrete, non-intrusive advertisements served through Google AdSense to offset server hosting and software development costs. We uphold strict editorial and algorithmic independence:
+                </p>
+                <ul class="list-disc list-inside text-sm text-slate-300 space-y-1.5 pl-2">
+                    <li>Advertisers and third-party commercial partners have zero input into our mathematical formulas or calculation outputs.</li>
+                    <li>We never endorse specific commercial loan offers, mortgages, or financial products in our mathematical results.</li>
+                    <li>All ad slots are clearly designated with standard industry labeling and never mimic calculation controls or interactive buttons.</li>
+                </ul>
+            </section>
+
+            <!-- Team / Contact -->
+            <section class="space-y-3 border-t border-slate-800 pt-6">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <span class="text-emerald-400">5.</span> Connect with Our Engineers
+                </h2>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    We welcome questions, suggestions for new calculation models, and reports of any discrepancies. Please reach out to our team via our <a href="contact.html" class="text-emerald-400 underline">Contact Us portal</a> or email <a href="mailto:support@afinancecalculator.com" class="text-emerald-400 underline">support@afinancecalculator.com</a>.
+                </p>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-5xl mx-auto px-4 py-8 text-center text-xs text-slate-500 border-t border-slate-900 mt-8">
+        <p>&copy; 2026 aFinanceCalculator &bull; Universal 50-in-1 Financial Computing Engine</p>
+        <div class="flex justify-center gap-4 mt-2 text-[11px] text-slate-400">
+            <a href="index.html" class="hover:text-emerald-400 transition-colors">Calculators</a>
+            <a href="privacy.html" class="hover:text-emerald-400 transition-colors">Privacy Policy</a>
+            <a href="terms.html" class="hover:text-emerald-400 transition-colors">Terms of Service</a>
+            <a href="contact.html" class="hover:text-emerald-400 transition-colors">Contact Us</a>
+            <a href="about.html" class="hover:text-emerald-400 transition-colors font-bold text-emerald-400">About Us</a>
+        </div>
+    </footer>
+
+    <script>
+        function toggleLocalTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-toggle-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                if (icon) icon.textContent = '☀️';
+                localStorage.setItem('afinance_theme', 'light');
+            } else {
+                html.classList.add('dark');
+                if (icon) icon.textContent = '🌙';
+                localStorage.setItem('afinance_theme', 'dark');
+            }
+        }
+        if (localStorage.getItem('afinance_theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+            const icon = document.getElementById('theme-toggle-icon');
+            if (icon) icon.textContent = '☀️';
+        }
+    </script>
+</body>
+</html>

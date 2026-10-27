@@ -1118,7 +1118,7 @@ function calcFire() {
   if (yrsEl) yrsEl.textContent = `${years.toFixed(1)} Years`;
   if (moEl) moEl.textContent = formatCurrency(safeMonthly);
 
-  renderFireChart(expenses, currentSavings, annualSave, targetNumber, yearsToFire);
+  renderFireChart(expenses, savings, annualSave, target, years);
   flashElement('fire-target-number');
 }
 
@@ -4041,10 +4041,14 @@ function switchEngine(tabOrEngineId, shouldScroll = true) {
 
   activeEngineId = tabId;
 
-  // 1. Highlight tab button in sidebar
+  // 1. Highlight tab button in sidebar & sync mobile dropdown
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.classList.toggle('active', btn.id === tabId);
   });
+  const mobileEngineSelect = document.getElementById('mobile-engine-select');
+  if (mobileEngineSelect && mobileEngineSelect.value !== tabId) {
+    mobileEngineSelect.value = tabId;
+  }
 
   // Ensure active sidebar button is scrolled into view in sidebar nav
   const activeTabBtn = document.getElementById(tabId);
