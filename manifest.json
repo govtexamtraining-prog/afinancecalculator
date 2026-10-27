@@ -1,0 +1,19 @@
+{
+  "name": "aFinanceCalculator - Universal 50-in-1 Financial Computing Engine",
+  "short_name": "aFinance",
+  "description": "50 high-performance client-side financial engines for mortgages, taxes, wealth, debt, and investments.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "categories": ["finance", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

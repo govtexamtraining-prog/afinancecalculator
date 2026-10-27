@@ -1,0 +1,603 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --primary-emerald: #10b981;
+  --primary-emerald-glow: rgba(16, 185, 129, 0.25);
+  --teal-accent: #14b8a6;
+  --bg-dark: #020617;
+  --card-bg: #0f172a;
+  --border-dark: #1e293b;
+}
+
+/* Light Theme Variables */
+html:not(.dark) {
+  --bg-dark: #f8fafc;
+  --card-bg: #ffffff;
+  --border-dark: #e2e8f0;
+}
+
+html:not(.dark) body {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+html:not(.dark) header {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+}
+
+html:not(.dark) header h1 {
+  color: #0f172a !important;
+}
+
+html:not(.dark) .glass-panel {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #e2e8f0;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  color: #0f172a;
+}
+
+html:not(.dark) aside > div {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .tab-btn {
+  color: #475569;
+}
+
+html:not(.dark) .tab-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+html:not(.dark) .tab-btn.active {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(20, 184, 166, 0.05));
+  color: #059669;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+html:not(.dark) input[type="number"],
+html:not(.dark) input[type="text"] {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+html:not(.dark) select {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #059669 !important;
+}
+
+html:not(.dark) .result-display-card {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(255, 255, 255, 0.95) 100%);
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+html:not(.dark) .bg-slate-900,
+html:not(.dark) .bg-slate-900\/90,
+html:not(.dark) .bg-slate-900\/80,
+html:not(.dark) .bg-slate-900\/60,
+html:not(.dark) .bg-slate-900\/50 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .bg-slate-950,
+html:not(.dark) .bg-slate-950\/60,
+html:not(.dark) .bg-slate-950\/40 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .text-white {
+  color: #0f172a !important;
+}
+
+html:not(.dark) .text-slate-200,
+html:not(.dark) .text-slate-300 {
+  color: #1e293b !important;
+}
+
+html:not(.dark) .text-slate-400 {
+  color: #475569 !important;
+}
+
+html:not(.dark) .border-slate-800,
+html:not(.dark) .border-slate-800\/80,
+html:not(.dark) .border-slate-700 {
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) input[type="range"] {
+  background-color: #e2e8f0;
+}
+
+/* Base Global Styles */
+body {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #030712;
+  color: #f1f5f9;
+  overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.font-mono-num {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom UI Scrollbar Enhancements */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(2, 6, 23, 0.4);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #10b981;
+}
+
+/* Range Sliders */
+input[type="range"] {
+  accent-color: #10b981;
+  cursor: pointer;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: #1e293b;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #10b981;
+  cursor: pointer;
+  border: 2px solid #0f172a;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.8);
+}
+
+/* Number Spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+  transition: all 0.25s ease;
+}
+
+.glass-panel:hover {
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+/* Active Tab Styles */
+.tab-btn {
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #94a3b8;
+  border: 1px solid transparent;
+}
+
+.tab-btn:hover {
+  background-color: rgba(30, 41, 59, 0.6);
+  color: #f8fafc;
+  transform: translateX(3px);
+}
+
+.tab-btn.active {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(20, 184, 166, 0.05));
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+  transform: translateX(4px);
+}
+
+.tab-btn.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  height: 70%;
+  width: 3px;
+  background: #10b981;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 0 0 8px #10b981;
+}
+
+/* Result Card */
+.result-display-card {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(15, 23, 42, 0.8) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: all 0.3s ease;
+}
+
+.result-display-card:hover {
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 10px 35px 0 rgba(16, 185, 129, 0.12);
+}
+
+/* Toggle Buttons */
+.toggle-btn {
+  transition: all 0.2s ease;
+}
+
+.toggle-btn.active {
+  background-color: #10b981;
+  color: #020617;
+  font-weight: 700;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.4);
+}
+
+/* Engine Panels */
+.engine-panel {
+  scroll-margin-top: 5.5rem;
+}
+
+/* Visual Flash Effect */
+.value-flash {
+  animation: subtlePulse 0.35s ease-out;
+}
+
+@keyframes subtlePulse {
+  0% { transform: scale(0.98); opacity: 0.8; }
+  50% { transform: scale(1.02); color: #6ee7b7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Toast */
+.toast-notice {
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-notice.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Modals & Sliding Drawers */
+.modal-overlay {
+  background: rgba(2, 6, 23, 0.75);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  transform: scale(0.95) translateY(20px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay.active .modal-card {
+  transform: scale(1) translateY(0);
+}
+
+/* History Sliding Drawer */
+.drawer-panel {
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drawer-panel.active {
+  transform: translateX(0);
+}
+
+/* Micro-Chart Visualizers */
+.chart-container {
+  position: relative;
+  width: 100%;
+}
+
+.chart-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.chart-path {
+  transition: d 0.35s ease, stroke-dasharray 0.35s ease;
+}
+
+/* Isolated Focused Engine Print Layout */
+@media print {
+  @page {
+    margin: 12mm 15mm;
+    size: auto;
+  }
+
+  /* Universal Hide for Non-Report UI Elements */
+  header, 
+  aside, 
+  footer, 
+  .no-print, 
+  .engine-actions,
+  .ad-slot-container, 
+  #global-leaderboard-ad,
+  #toast-notification, 
+  .modal-overlay, 
+  #history-drawer,
+  #view-mode-focus,
+  #view-mode-all,
+  input[type="range"],
+  .preset-btn-group button:not(.active),
+  button:not(.preserve-print) {
+    display: none !important;
+  }
+
+  /* Reset main grid layout */
+  main {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+
+  .grid,
+  .lg\:grid-cols-4,
+  .lg\:col-span-3 {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide ALL engine panels by default in print */
+  .engine-panel {
+    display: none !important;
+  }
+
+  /* Display ONLY the focused / active engine panel */
+  .engine-panel.print-focus-active,
+  body[data-print-engine="engine-mortgage"] #engine-mortgage,
+  body[data-print-engine="engine-invoice"] #engine-invoice,
+  body[data-print-engine="engine-roi"] #engine-roi,
+  body[data-print-engine="engine-crypto"] #engine-crypto,
+  body[data-print-engine="engine-compound"] #engine-compound,
+  body[data-print-engine="engine-caprate"] #engine-caprate,
+  body[data-print-engine="engine-salary"] #engine-salary,
+  body[data-print-engine="engine-breakeven"] #engine-breakeven,
+  body[data-print-engine="engine-creditcard"] #engine-creditcard,
+  body[data-print-engine="engine-stockavg"] #engine-stockavg,
+  body[data-print-engine="engine-rentbuy"] #engine-rentbuy,
+  body[data-print-engine="engine-margin"] #engine-margin,
+  body[data-print-engine="engine-autoloan"] #engine-autoloan,
+  body[data-print-engine="engine-student"] #engine-student,
+  body[data-print-engine="engine-budget"] #engine-budget,
+  body[data-print-engine="engine-interest"] #engine-interest,
+  body[data-print-engine="engine-dividend"] #engine-dividend,
+  body[data-print-engine="engine-inflation"] #engine-inflation,
+  body[data-print-engine="engine-sip"] #engine-sip,
+  body[data-print-engine="engine-cagr"] #engine-cagr {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    margin: 0 0 20px 0 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Print Header & Footer */
+  #print-report-header {
+    display: block !important;
+    margin-bottom: 20px !important;
+  }
+
+  #print-report-footer {
+    display: block !important;
+    margin-top: 24px !important;
+  }
+
+  /* Crisp Typography & Inks for Printed Page */
+  .engine-panel.print-focus-active h2,
+  body[data-print-engine] .engine-panel h2 {
+    color: #0f172a !important;
+    font-size: 20pt !important;
+  }
+
+  .engine-panel.print-focus-active p,
+  body[data-print-engine] .engine-panel p {
+    color: #475569 !important;
+  }
+
+  .engine-panel.print-focus-active label,
+  body[data-print-engine] .engine-panel label {
+    color: #1e293b !important;
+    font-weight: 700 !important;
+  }
+
+  .engine-panel.print-focus-active .text-white,
+  body[data-print-engine] .engine-panel .text-white {
+    color: #0f172a !important;
+  }
+
+  .engine-panel.print-focus-active .text-slate-400,
+  .engine-panel.print-focus-active .text-slate-500,
+  body[data-print-engine] .engine-panel .text-slate-400,
+  body[data-print-engine] .engine-panel .text-slate-500 {
+    color: #64748b !important;
+  }
+
+  .engine-panel.print-focus-active .text-emerald-400,
+  body[data-print-engine] .engine-panel .text-emerald-400 {
+    color: #047857 !important;
+    font-weight: 800 !important;
+  }
+
+  .engine-panel.print-focus-active .text-rose-400,
+  body[data-print-engine] .engine-panel .text-rose-400 {
+    color: #be123c !important;
+    font-weight: 800 !important;
+  }
+
+  .engine-panel.print-focus-active .text-amber-400,
+  body[data-print-engine] .engine-panel .text-amber-400 {
+    color: #b45309 !important;
+    font-weight: 800 !important;
+  }
+
+  /* Crisp Inputs */
+  .engine-panel.print-focus-active input,
+  .engine-panel.print-focus-active select,
+  body[data-print-engine] .engine-panel input,
+  body[data-print-engine] .engine-panel select {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    padding: 6px 10px !important;
+  }
+
+  /* Output Cards */
+  .engine-panel.print-focus-active .result-display-card,
+  body[data-print-engine] .engine-panel .result-display-card {
+    background: #f0fdf4 !important;
+    border: 1px solid #86efac !important;
+    color: #064e3b !important;
+  }
+
+  .engine-panel.print-focus-active .bg-slate-900,
+  .engine-panel.print-focus-active .bg-slate-900\/90,
+  .engine-panel.print-focus-active .bg-slate-950,
+  .engine-panel.print-focus-active .bg-slate-950\/70,
+  body[data-print-engine] .engine-panel .bg-slate-900,
+  body[data-print-engine] .engine-panel .bg-slate-900\/90,
+  body[data-print-engine] .engine-panel .bg-slate-950,
+  body[data-print-engine] .engine-panel .bg-slate-950\/70 {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  .engine-panel.print-focus-active .border-slate-800,
+  .engine-panel.print-focus-active .border-slate-800\/80,
+  .engine-panel.print-focus-active .border-slate-800\/60,
+  body[data-print-engine] .engine-panel .border-slate-800,
+  body[data-print-engine] .engine-panel .border-slate-800\/80,
+  body[data-print-engine] .engine-panel .border-slate-800\/60 {
+    border-color: #e2e8f0 !important;
+  }
+
+  /* Selected Mode Badges / Presets */
+  .engine-panel.print-focus-active .mortgage-term-btn.active,
+  .engine-panel.print-focus-active .crypto-pos-btn.active,
+  .engine-panel.print-focus-active .budget-rule-btn.active,
+  .engine-panel.print-focus-active .rate-toggle-btn.active,
+  body[data-print-engine] .engine-panel .mortgage-term-btn.active,
+  body[data-print-engine] .engine-panel .crypto-pos-btn.active,
+  body[data-print-engine] .engine-panel .budget-rule-btn.active,
+  body[data-print-engine] .engine-panel .rate-toggle-btn.active {
+    display: inline-block !important;
+    background: #0f172a !important;
+    color: #ffffff !important;
+    border: 1px solid #0f172a !important;
+    padding: 4px 12px !important;
+    border-radius: 6px !important;
+  }
+
+  /* Preserve micro charts */
+  .engine-panel.print-focus-active svg,
+  body[data-print-engine] .engine-panel svg {
+    display: block !important;
+  }
+
+  .engine-panel.print-focus-active .chart-path,
+  body[data-print-engine] .engine-panel .chart-path {
+    stroke: #047857 !important;
+    stroke-width: 2.5px !important;
+  }
+
+  /* Executive Financial Dossier Printing Support */
+  body.printing-dossier #dossier-modal {
+    display: block !important;
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    opacity: 1 !important;
+  }
+  body.printing-dossier #dossier-modal .modal-card {
+    background: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    transform: none !important;
+    color: #0f172a !important;
+  }
+  body.printing-dossier #dossier-modal button,
+  body.printing-dossier header,
+  body.printing-dossier aside,
+  body.printing-dossier .engine-panel {
+    display: none !important;
+  }
+  body.printing-dossier #dossier-report-content {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 16px !important;
+  }
+  body.printing-dossier #dossier-report-content > div {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  body.printing-dossier #dossier-report-content h4 {
+    color: #047857 !important;
+    font-size: 11pt !important;
+  }
+  body.printing-dossier #dossier-report-content div > div {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 6px !important;
+  }
+  body.printing-dossier #dossier-report-content span {
+    color: #0f172a !important;
+  }
+  body.printing-dossier #print-report-header {
+    display: block !important;
+  }
+}
+
