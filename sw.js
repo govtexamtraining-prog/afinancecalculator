@@ -10,7 +10,10 @@ const ASSETS_TO_CACHE = [
   './js/mechanics.js',
   './manifest.json',
   './favicon.svg',
-  './favicon.ico'
+  './favicon.ico',
+  './llms.txt',
+  './sitemap.xml',
+  './robots.txt'
 ];
 
 self.addEventListener('install', (event) => {

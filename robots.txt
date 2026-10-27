@@ -44,3 +44,6 @@ Allow: /
 
 # XML Sitemap Location
 Sitemap: https://afinancecalculator.com/sitemap.xml
+
+# Generative Engine Knowledge Base (GEO)
+# LLMs.txt: https://afinancecalculator.com/llms.txt
