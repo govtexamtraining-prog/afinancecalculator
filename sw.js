@@ -13,7 +13,8 @@ const ASSETS_TO_CACHE = [
   './favicon.ico',
   './llms.txt',
   './sitemap.xml',
-  './robots.txt'
+  './robots.txt',
+  './ads.txt'
 ];
 
 self.addEventListener('install', (event) => {
