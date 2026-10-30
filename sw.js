@@ -1,4 +1,4 @@
-const CACHE_NAME = 'afinancecalc-v5-cache';
+const CACHE_NAME = 'afinancecalc-v6-cache';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const ASSETS_TO_CACHE = [
   './contact.html',
   './about.html',
   './css/styles.css',
+  './css/tailwind.min.css',
   './js/banking_data.js',
   './js/mechanics.js',
   './manifest.json',

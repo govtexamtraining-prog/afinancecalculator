@@ -9,6 +9,7 @@
       gtag('js', new Date());
 
       gtag('config', 'GT-NNXWJQMK');
+      gtag('config', 'G-WV3PBND4TK');
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -74,35 +75,8 @@
     <!-- Preconnects & Speed Optimizations -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
-
-    <!-- Tailwind CSS Engine -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        slate: {
-                            950: '#020617',
-                            900: '#0f172a',
-                            850: '#141e33',
-                            800: '#1e293b',
-                            700: '#334155',
-                            600: '#475569',
-                            500: '#64748b',
-                        },
-                        emerald: {
-                            400: '#34d399',
-                            500: '#10b981',
-                            600: '#059669',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Compiled Production Tailwind CSS -->
+    <link rel="stylesheet" href="css/tailwind.min.css">
 
     <!-- Comprehensive Rich Schema Graph (SEO, VEO, GEO, AEO) -->
     <script type="application/ld+json">
@@ -529,7 +503,7 @@
                         </span>
                         <span class="text-[9px] bg-blue-500/20 text-blue-300 border border-blue-500/30 px-1.5 py-0.2 rounded font-mono font-bold">90+ Banks</span>
                     </button>
-                    <button id="tab-mortgage" data-cat="debt" class="tab-btn active w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer">🏠 Mortgage & Monthly Payment</button>
+                    <button id="tab-mortgage" data-cat="debt" class="tab-btn active w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer">🏠 Home Loan EMI &amp; Mortgage</button>
                     <button id="tab-invoice" data-cat="business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer">💼 Simple Invoice & Tax</button>
                     <button id="tab-roi" data-cat="business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer">📈 Investment Return & ROI</button>
                     <button id="tab-crypto" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer">⚡ Crypto Leverage Calculator</button>
@@ -1268,7 +1242,7 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="text-2xl">🏠</span>
-                            <h2 class="text-xl sm:text-2xl font-black text-white">Mortgage Calculator: What Will My Monthly Payment Be?</h2>
+                            <h2 class="text-xl sm:text-2xl font-black text-white">Home Loan EMI &amp; Mortgage Calculator: What Will My Monthly Payment Be?</h2>
                         </div>
                         <p class="text-sm text-slate-400 mt-1">Find out your exact monthly payment, total interest, and how to pay off your home years faster.</p>
                     </div>
@@ -1325,22 +1299,27 @@
                         </div>
 
                         <div>
-                            <div class="flex justify-between text-xs font-bold text-slate-300 mb-1.5">
-                                <label for="mortgage-term">Loan Length (Years)</label>
-                                <span id="mortgage-term-display" class="text-emerald-400 font-mono-num">30 Years</span>
+                            <div class="flex justify-between items-center text-xs font-bold text-slate-300 mb-1.5">
+                                <label for="mortgage-term" class="flex items-center gap-1.5">
+                                    <span>Loan Tenure / Amortization Period</span>
+                                    <span class="text-[10px] text-emerald-400 font-semibold bg-emerald-950/60 border border-emerald-800/40 px-1.5 py-0.2 rounded">Custom Value Allowed</span>
+                                </label>
+                                <span id="mortgage-term-display" class="text-emerald-400 font-mono-num font-bold">30 Years</span>
                             </div>
-                            <div class="relative">
-                                <input type="number" id="mortgage-term" value="30" min="1" max="50" step="1" oninput="setMortgageTerm(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                            <div class="relative flex items-center">
+                                <input type="number" id="mortgage-term" value="30" min="1" max="50" step="any" oninput="setMortgageTerm(this.value, 'input')" placeholder="Type custom years (e.g. 7, 12, 18, 22)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 pr-16 text-sm font-bold text-white focus:outline-none focus:border-emerald-500 font-mono">
+                                <span class="absolute right-3 text-xs text-slate-400 font-bold pointer-events-none">Years</span>
                             </div>
-                            <input type="range" id="mortgage-term-range" value="30" min="5" max="40" step="1" oninput="setMortgageTerm(this.value)" class="w-full mt-2">
-                            <!-- Quick Presets -->
-                            <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 mt-2">
+                            <input type="range" id="mortgage-term-range" value="30" min="1" max="40" step="1" oninput="setMortgageTerm(this.value, 'range')" class="w-full mt-2">
+                            <!-- Quick Presets + Custom Button -->
+                            <div class="grid grid-cols-4 sm:grid-cols-7 gap-1.5 mt-2">
                                 <button type="button" onclick="setMortgageTerm(10)" data-years="10" class="mortgage-term-btn py-1.5 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">10Y</button>
                                 <button type="button" onclick="setMortgageTerm(15)" data-years="15" class="mortgage-term-btn py-1.5 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">15Y</button>
                                 <button type="button" onclick="setMortgageTerm(20)" data-years="20" class="mortgage-term-btn py-1.5 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">20Y</button>
                                 <button type="button" onclick="setMortgageTerm(25)" data-years="25" class="mortgage-term-btn py-1.5 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">25Y</button>
                                 <button type="button" onclick="setMortgageTerm(30)" data-years="30" class="mortgage-term-btn active py-1.5 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">30Y</button>
                                 <button type="button" onclick="setMortgageTerm(40)" data-years="40" class="mortgage-term-btn py-1.5 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">40Y</button>
+                                <button type="button" id="mortgage-term-custom-btn" onclick="focusCustomTerm('mortgage-term')" class="mortgage-term-btn py-1.5 px-2 rounded-lg text-xs font-bold border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 hover:text-white transition-all cursor-pointer">✏️ Custom</button>
                             </div>
                         </div>
                     </div>
@@ -2500,15 +2479,19 @@
                                 <label for="autoloan-term">Amortization Term (Months)</label>
                                 <span id="autoloan-term-display" class="text-emerald-400 font-mono-num">60 Mo</span>
                             </div>
-                            <input type="number" id="autoloan-term" value="60" min="6" max="120" step="1" oninput="setAutoLoanTerm(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                            <div class="relative">
+                                <input type="number" id="autoloan-term" value="60" min="1" max="180" step="1" placeholder="e.g. 60" oninput="setAutoLoanTerm(this.value, 'input')" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 pr-16 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                <span class="absolute right-3 top-2.5 text-xs text-slate-500 font-bold pointer-events-none">Months</span>
+                            </div>
                             <input type="range" id="autoloan-term-range" value="60" min="12" max="84" step="1" oninput="setAutoLoanTerm(this.value)" class="w-full mt-2">
-                            <div class="grid grid-cols-6 gap-1.5 mt-2">
-                                <button type="button" onclick="setAutoLoanTerm(24)" data-months="24" class="autoloan-term-btn py-1 px-1.5 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">24m</button>
-                                <button type="button" onclick="setAutoLoanTerm(36)" data-months="36" class="autoloan-term-btn py-1 px-1.5 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">36m</button>
-                                <button type="button" onclick="setAutoLoanTerm(48)" data-months="48" class="autoloan-term-btn py-1 px-1.5 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">48m</button>
-                                <button type="button" onclick="setAutoLoanTerm(60)" data-months="60" class="autoloan-term-btn active py-1 px-1.5 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">60m</button>
-                                <button type="button" onclick="setAutoLoanTerm(72)" data-months="72" class="autoloan-term-btn py-1 px-1.5 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">72m</button>
-                                <button type="button" onclick="setAutoLoanTerm(84)" data-months="84" class="autoloan-term-btn py-1 px-1.5 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">84m</button>
+                            <div class="grid grid-cols-7 gap-1.5 mt-2">
+                                <button type="button" onclick="setAutoLoanTerm(24)" data-months="24" class="autoloan-term-btn py-1 px-1 rounded-lg text-[10px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">24m</button>
+                                <button type="button" onclick="setAutoLoanTerm(36)" data-months="36" class="autoloan-term-btn py-1 px-1 rounded-lg text-[10px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">36m</button>
+                                <button type="button" onclick="setAutoLoanTerm(48)" data-months="48" class="autoloan-term-btn py-1 px-1 rounded-lg text-[10px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">48m</button>
+                                <button type="button" onclick="setAutoLoanTerm(60)" data-months="60" class="autoloan-term-btn active py-1 px-1 rounded-lg text-[10px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">60m</button>
+                                <button type="button" onclick="setAutoLoanTerm(72)" data-months="72" class="autoloan-term-btn py-1 px-1 rounded-lg text-[10px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">72m</button>
+                                <button type="button" onclick="setAutoLoanTerm(84)" data-months="84" class="autoloan-term-btn py-1 px-1 rounded-lg text-[10px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">84m</button>
+                                <button type="button" id="autoloan-term-custom-btn" onclick="focusCustomTerm('autoloan-term')" class="autoloan-term-btn py-1 px-1 rounded-lg text-[10px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">✏️ Custom</button>
                             </div>
                         </div>
                     </div>
@@ -2576,18 +2559,25 @@
                         </div>
 
                         <div>
-                            <div class="flex justify-between text-xs font-bold text-slate-300 mb-1.5">
-                                <label for="student-months">Repayment Term (Months)</label>
-                                <span id="student-months-display" class="text-emerald-400 font-mono-num">120 Mo (10 Yrs)</span>
+                            <div class="flex justify-between items-center text-xs font-bold text-slate-300 mb-1.5">
+                                <label for="student-months" class="flex items-center gap-1.5">
+                                    <span>Repayment Term / Amortization</span>
+                                    <span class="text-[10px] text-emerald-400 font-semibold bg-emerald-950/60 border border-emerald-800/40 px-1.5 py-0.2 rounded">Custom Value Allowed</span>
+                                </label>
+                                <span id="student-months-display" class="text-emerald-400 font-mono-num font-bold">120 Mo (10 Yrs)</span>
                             </div>
-                            <input type="number" id="student-months" value="120" min="6" max="360" step="1" oninput="setStudentMonths(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
-                            <input type="range" id="student-months-range" value="120" min="12" max="240" step="1" oninput="setStudentMonths(this.value)" class="w-full mt-2">
-                            <div class="grid grid-cols-5 gap-1.5 mt-2">
+                            <div class="relative flex items-center">
+                                <input type="number" id="student-months" value="120" min="1" max="360" step="any" oninput="setStudentMonths(this.value, 'input')" placeholder="Type custom months (e.g. 48, 84, 150)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 pr-16 text-sm font-bold text-white focus:outline-none focus:border-emerald-500 font-mono">
+                                <span class="absolute right-3 text-xs text-slate-400 font-bold pointer-events-none">Months</span>
+                            </div>
+                            <input type="range" id="student-months-range" value="120" min="12" max="240" step="1" oninput="setStudentMonths(this.value, 'range')" class="w-full mt-2">
+                            <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 mt-2">
                                 <button type="button" onclick="setStudentMonths(36)" data-months="36" class="student-term-btn py-1 px-1 rounded-lg text-[10px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">36m (3Y)</button>
                                 <button type="button" onclick="setStudentMonths(60)" data-months="60" class="student-term-btn py-1 px-1 rounded-lg text-[10px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">60m (5Y)</button>
                                 <button type="button" onclick="setStudentMonths(120)" data-months="120" class="student-term-btn active py-1 px-1 rounded-lg text-[10px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">120m (10Y)</button>
                                 <button type="button" onclick="setStudentMonths(180)" data-months="180" class="student-term-btn py-1 px-1 rounded-lg text-[10px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">180m (15Y)</button>
                                 <button type="button" onclick="setStudentMonths(240)" data-months="240" class="student-term-btn py-1 px-1 rounded-lg text-[10px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">240m (20Y)</button>
+                                <button type="button" id="student-term-custom-btn" onclick="focusCustomTerm('student-months')" class="student-term-btn py-1 px-1 rounded-lg text-[10px] font-bold border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 hover:text-white transition-all cursor-pointer">✏️ Custom</button>
                             </div>
                         </div>
                     </div>
@@ -3134,14 +3124,16 @@
                                 <span id="affordability-term-display" class="text-emerald-400 font-mono-num">30 Years</span>
                             </div>
                             <div class="relative">
-                                <input type="number" id="affordability-term" value="30" min="1" max="50" step="1" oninput="setAffordabilityTerm(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                <input type="number" id="affordability-term" value="30" min="1" max="50" step="1" placeholder="e.g. 30" oninput="setAffordabilityTerm(this.value, 'input')" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 pr-16 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                <span class="absolute right-3 top-2.5 text-xs text-slate-500 font-bold pointer-events-none">Years</span>
                             </div>
                             <input type="range" id="affordability-term-range" value="30" min="5" max="40" step="1" oninput="setAffordabilityTerm(this.value)" class="w-full mt-2">
-                            <div class="grid grid-cols-4 gap-1.5 mt-2">
+                            <div class="grid grid-cols-5 gap-1.5 mt-2">
                                 <button type="button" onclick="setAffordabilityTerm(15)" data-years="15" class="affordability-term-btn py-1 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">15 Yrs</button>
                                 <button type="button" onclick="setAffordabilityTerm(20)" data-years="20" class="affordability-term-btn py-1 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">20 Yrs</button>
                                 <button type="button" onclick="setAffordabilityTerm(25)" data-years="25" class="affordability-term-btn py-1 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">25 Yrs</button>
                                 <button type="button" onclick="setAffordabilityTerm(30)" data-years="30" class="affordability-term-btn active py-1 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">30 Yrs</button>
+                                <button type="button" id="affordability-term-custom-btn" onclick="focusCustomTerm('affordability-term')" class="affordability-term-btn py-1 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">✏️ Custom</button>
                             </div>
                         </div>
                     </div>
@@ -3223,20 +3215,25 @@
                             <input type="range" id="refinance-new-rate-range" value="5.2" min="1" max="15" step="0.1" class="w-full mt-2">
                         </div>
                         <div>
-                            <div class="flex justify-between text-xs font-bold text-slate-300 mb-1.5">
-                                <label for="refinance-term">Amortization Period (Years)</label>
-                                <span id="refinance-term-display" class="text-emerald-400 font-mono-num">30 Years</span>
+                            <div class="flex justify-between items-center text-xs font-bold text-slate-300 mb-1.5">
+                                <label for="refinance-term" class="flex items-center gap-1.5">
+                                    <span>Amortization Period (Years)</span>
+                                    <span class="text-[10px] text-emerald-400 font-semibold bg-emerald-950/60 border border-emerald-800/40 px-1.5 py-0.2 rounded">Custom Value Allowed</span>
+                                </label>
+                                <span id="refinance-term-display" class="text-emerald-400 font-mono-num font-bold">30 Years</span>
                             </div>
-                            <div class="relative">
-                                <input type="number" id="refinance-term" value="30" min="1" max="50" step="1" oninput="setRefinanceTerm(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 pr-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                            <div class="relative flex items-center">
+                                <input type="number" id="refinance-term" value="30" min="1" max="50" step="any" oninput="setRefinanceTerm(this.value, 'input')" placeholder="Type custom years (e.g. 10, 18, 22)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 pr-16 text-sm font-bold text-white focus:outline-none focus:border-emerald-500 font-mono">
+                                <span class="absolute right-3 text-xs text-slate-400 font-bold pointer-events-none">Years</span>
                             </div>
-                            <input type="range" id="refinance-term-range" value="30" min="5" max="40" step="1" oninput="setRefinanceTerm(this.value)" class="w-full mt-2">
-                            <!-- Quick Presets -->
-                            <div class="grid grid-cols-4 gap-1.5 mt-2">
+                            <input type="range" id="refinance-term-range" value="30" min="5" max="40" step="1" oninput="setRefinanceTerm(this.value, 'range')" class="w-full mt-2">
+                            <!-- Quick Presets + Custom Button -->
+                            <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5 mt-2">
                                 <button type="button" onclick="setRefinanceTerm(15)" data-years="15" class="refinance-term-btn py-1 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">15 Yrs</button>
                                 <button type="button" onclick="setRefinanceTerm(20)" data-years="20" class="refinance-term-btn py-1 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">20 Yrs</button>
                                 <button type="button" onclick="setRefinanceTerm(25)" data-years="25" class="refinance-term-btn py-1 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">25 Yrs</button>
                                 <button type="button" onclick="setRefinanceTerm(30)" data-years="30" class="refinance-term-btn active py-1 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">30 Yrs</button>
+                                <button type="button" id="refinance-term-custom-btn" onclick="focusCustomTerm('refinance-term')" class="refinance-term-btn py-1 px-2 rounded-lg text-xs font-bold border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 hover:text-white transition-all cursor-pointer">✏️ Custom</button>
                             </div>
                         </div>
                         <div>
@@ -3320,14 +3317,16 @@
                                 <span id="biweekly-term-display" class="text-emerald-400 font-mono-num">30 Years</span>
                             </div>
                             <div class="relative">
-                                <input type="number" id="biweekly-term" value="30" min="1" max="50" step="1" oninput="setBiweeklyTerm(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 pr-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                <input type="number" id="biweekly-term" value="30" min="1" max="50" step="1" placeholder="e.g. 30" oninput="setBiweeklyTerm(this.value, 'input')" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 pr-16 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                <span class="absolute right-3 top-2.5 text-xs text-slate-500 font-bold pointer-events-none">Years</span>
                             </div>
                             <input type="range" id="biweekly-term-range" value="30" min="5" max="40" step="1" oninput="setBiweeklyTerm(this.value)" class="w-full mt-2">
-                            <div class="grid grid-cols-4 gap-1.5 mt-2">
+                            <div class="grid grid-cols-5 gap-1.5 mt-2">
                                 <button type="button" onclick="setBiweeklyTerm(15)" data-years="15" class="biweekly-term-btn py-1 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">15 Yrs</button>
                                 <button type="button" onclick="setBiweeklyTerm(20)" data-years="20" class="biweekly-term-btn py-1 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">20 Yrs</button>
                                 <button type="button" onclick="setBiweeklyTerm(25)" data-years="25" class="biweekly-term-btn py-1 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">25 Yrs</button>
                                 <button type="button" onclick="setBiweeklyTerm(30)" data-years="30" class="biweekly-term-btn active py-1 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">30 Yrs</button>
+                                <button type="button" id="biweekly-term-custom-btn" onclick="focusCustomTerm('biweekly-term')" class="biweekly-term-btn py-1 px-2 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">✏️ Custom</button>
                             </div>
                         </div>
                     </div>
@@ -3496,15 +3495,17 @@
                                 <span id="heloc-repay-years-display" class="text-emerald-400 font-mono-num">15 Years</span>
                             </div>
                             <div class="relative">
-                                <input type="number" id="heloc-repay-years" value="15" min="1" max="30" step="1" oninput="setHelocRepayYears(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 pr-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                <input type="number" id="heloc-repay-years" value="15" min="1" max="30" step="1" placeholder="e.g. 15" oninput="setHelocRepayYears(this.value, 'input')" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 pr-16 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                <span class="absolute right-3 top-2.5 text-xs text-slate-500 font-bold pointer-events-none">Years</span>
                             </div>
                             <input type="range" id="heloc-repay-years-range" value="15" min="5" max="25" step="1" oninput="setHelocRepayYears(this.value)" class="w-full mt-2">
-                            <div class="grid grid-cols-5 gap-1.5 mt-2">
-                                <button type="button" onclick="setHelocRepayYears(5)" data-years="5" class="heloc-term-btn py-1 px-1.5 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">5Y</button>
-                                <button type="button" onclick="setHelocRepayYears(10)" data-years="10" class="heloc-term-btn py-1 px-1.5 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">10Y</button>
-                                <button type="button" onclick="setHelocRepayYears(15)" data-years="15" class="heloc-term-btn active py-1 px-1.5 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">15Y</button>
-                                <button type="button" onclick="setHelocRepayYears(20)" data-years="20" class="heloc-term-btn py-1 px-1.5 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">20Y</button>
-                                <button type="button" onclick="setHelocRepayYears(25)" data-years="25" class="heloc-term-btn py-1 px-1.5 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">25Y</button>
+                            <div class="grid grid-cols-6 gap-1.5 mt-2">
+                                <button type="button" onclick="setHelocRepayYears(5)" data-years="5" class="heloc-term-btn py-1 px-1 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">5Y</button>
+                                <button type="button" onclick="setHelocRepayYears(10)" data-years="10" class="heloc-term-btn py-1 px-1 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">10Y</button>
+                                <button type="button" onclick="setHelocRepayYears(15)" data-years="15" class="heloc-term-btn active py-1 px-1 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">15Y</button>
+                                <button type="button" onclick="setHelocRepayYears(20)" data-years="20" class="heloc-term-btn py-1 px-1 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">20Y</button>
+                                <button type="button" onclick="setHelocRepayYears(25)" data-years="25" class="heloc-term-btn py-1 px-1 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">25Y</button>
+                                <button type="button" id="heloc-repay-custom-btn" onclick="focusCustomTerm('heloc-repay-years')" class="heloc-term-btn py-1 px-1 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">✏️ Custom</button>
                             </div>
                         </div>
                     </div>
@@ -4829,15 +4830,17 @@
                                 <span id="personalloan-term-display" class="text-emerald-400 font-mono-num">36 Mo</span>
                             </div>
                             <div class="relative">
-                                <input type="number" id="personalloan-term" value="36" min="6" max="120" step="1" oninput="setPersonalLoanTerm(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 pr-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                <input type="number" id="personalloan-term" value="36" min="1" max="180" step="1" placeholder="e.g. 36" oninput="setPersonalLoanTerm(this.value, 'input')" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 pr-16 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                <span class="absolute right-3 top-2.5 text-xs text-slate-500 font-bold pointer-events-none">Months</span>
                             </div>
                             <input type="range" id="personalloan-term-range" value="36" min="12" max="84" step="1" oninput="setPersonalLoanTerm(this.value)" class="w-full mt-2">
-                            <div class="grid grid-cols-5 gap-1.5 mt-2">
+                            <div class="grid grid-cols-6 gap-1.5 mt-2">
                                 <button type="button" onclick="setPersonalLoanTerm(12)" data-months="12" class="personalloan-term-btn py-1 px-1.5 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">12m</button>
                                 <button type="button" onclick="setPersonalLoanTerm(24)" data-months="24" class="personalloan-term-btn py-1 px-1.5 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">24m</button>
                                 <button type="button" onclick="setPersonalLoanTerm(36)" data-months="36" class="personalloan-term-btn active py-1 px-1.5 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">36m</button>
                                 <button type="button" onclick="setPersonalLoanTerm(48)" data-months="48" class="personalloan-term-btn py-1 px-1.5 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">48m</button>
                                 <button type="button" onclick="setPersonalLoanTerm(60)" data-months="60" class="personalloan-term-btn py-1 px-1.5 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">60m</button>
+                                <button type="button" id="personalloan-term-custom-btn" onclick="focusCustomTerm('personalloan-term')" class="personalloan-term-btn py-1 px-1.5 rounded-lg text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">✏️ Custom</button>
                             </div>
                         </div>
                         <div>

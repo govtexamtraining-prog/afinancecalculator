@@ -99,21 +99,40 @@ function flashElement(elemId) {
 // -------------------------------------------------------------
 // 1. MORTGAGE LIABILITY CONSOLE & WHAT-IF ENGINE
 // -------------------------------------------------------------
-function setMortgageTerm(years) {
-  const parsed = Math.max(1, Math.min(50, parseFloat(years) || 30));
-  mortgageTermYears = parsed;
-  
+function setMortgageTerm(years, source) {
   const numInp = document.getElementById('mortgage-term');
   const rangeInp = document.getElementById('mortgage-term-range');
   const dispSpan = document.getElementById('mortgage-term-display');
-  
-  if (numInp && parseFloat(numInp.value) !== parsed) numInp.value = parsed;
-  if (rangeInp && parseFloat(rangeInp.value) !== parsed) rangeInp.value = parsed;
-  if (dispSpan) dispSpan.textContent = `${parsed} Year${parsed === 1 ? '' : 's'}`;
 
+  if (source === 'input') {
+    if (years === '' || isNaN(parseFloat(years))) return;
+  }
+
+  const val = parseFloat(years);
+  const parsed = Math.max(1, Math.min(50, isNaN(val) ? 30 : val));
+  mortgageTermYears = parsed;
+
+  if (numInp && source !== 'input') {
+    numInp.value = parsed;
+  }
+  if (rangeInp) {
+    rangeInp.value = Math.min(40, Math.max(1, parsed));
+  }
+  if (dispSpan) {
+    dispSpan.textContent = `${parsed} Year${parsed === 1 ? '' : 's'}`;
+  }
+
+  let hasPresetMatch = false;
   document.querySelectorAll('.mortgage-term-btn').forEach(btn => {
-    btn.classList.toggle('active', parseFloat(btn.dataset.years) === parsed);
+    const match = parseFloat(btn.dataset.years) === parsed;
+    btn.classList.toggle('active', match);
+    if (match) hasPresetMatch = true;
   });
+  const customBtn = document.getElementById('mortgage-term-custom-btn');
+  if (customBtn) {
+    customBtn.classList.toggle('active', !hasPresetMatch);
+  }
+
   calcMortgage();
   calcMortgageWhatIf(
     Math.max(0, (parseFloat(document.getElementById('mortgage-asset')?.value) || 0) - (parseFloat(document.getElementById('mortgage-down')?.value) || 0)),
@@ -958,12 +977,29 @@ function calcAutoLoan() {
   flashElement('autoloan-payment');
 }
 
-function setAutoLoanTerm(months) {
-  const parsed = Math.max(1, Math.min(120, parseInt(months) || 60));
+function setAutoLoanTerm(months, source) {
   const termEl = document.getElementById('autoloan-term');
   const rangeEl = document.getElementById('autoloan-term-range');
-  if (termEl) termEl.value = parsed;
-  if (rangeEl) rangeEl.value = parsed;
+  const dispSpan = document.getElementById('autoloan-term-display');
+
+  if (source === 'input' && (months === '' || isNaN(parseInt(months)))) return;
+
+  const val = parseInt(months);
+  const parsed = Math.max(1, Math.min(120, isNaN(val) ? 60 : val));
+
+  if (termEl && source !== 'input') termEl.value = parsed;
+  if (rangeEl) rangeEl.value = Math.min(84, Math.max(12, parsed));
+  if (dispSpan) dispSpan.textContent = `${parsed} Mo (${(parsed / 12).toFixed(1)} Yrs)`;
+
+  let hasPreset = false;
+  document.querySelectorAll('.autoloan-term-btn').forEach(btn => {
+    const match = parseInt(btn.dataset.months) === parsed;
+    btn.classList.toggle('active', match);
+    if (match) hasPreset = true;
+  });
+  const customBtn = document.getElementById('autoloan-term-custom-btn');
+  if (customBtn) customBtn.classList.toggle('active', !hasPreset);
+
   calcAutoLoan();
   saveStateDebounced();
 }
@@ -1008,12 +1044,29 @@ function calcStudent() {
   flashElement('student-payment');
 }
 
-function setStudentMonths(months) {
-  const parsed = Math.max(1, Math.min(360, parseInt(months) || 120));
+function setStudentMonths(months, source) {
   const termEl = document.getElementById('student-months');
   const rangeEl = document.getElementById('student-months-range');
-  if (termEl) termEl.value = parsed;
-  if (rangeEl) rangeEl.value = parsed;
+  const dispSpan = document.getElementById('student-months-display');
+
+  if (source === 'input' && (months === '' || isNaN(parseInt(months)))) return;
+
+  const val = parseInt(months);
+  const parsed = Math.max(1, Math.min(360, isNaN(val) ? 120 : val));
+
+  if (termEl && source !== 'input') termEl.value = parsed;
+  if (rangeEl) rangeEl.value = Math.min(240, Math.max(12, parsed));
+  if (dispSpan) dispSpan.textContent = `${parsed} Mo (${(parsed / 12).toFixed(1)} Yrs)`;
+
+  let hasPreset = false;
+  document.querySelectorAll('.student-term-btn').forEach(btn => {
+    const match = parseInt(btn.dataset.months) === parsed;
+    btn.classList.toggle('active', match);
+    if (match) hasPreset = true;
+  });
+  const customBtn = document.getElementById('student-term-custom-btn');
+  if (customBtn) customBtn.classList.toggle('active', !hasPreset);
+
   calcStudent();
   saveStateDebounced();
 }
@@ -1293,12 +1346,29 @@ function calcAffordability() {
   flashElement('affordability-max-home');
 }
 
-function setAffordabilityTerm(years) {
-  const parsed = Math.max(1, Math.min(50, parseFloat(years) || 30));
+function setAffordabilityTerm(years, source) {
   const termEl = document.getElementById('affordability-term');
   const rangeEl = document.getElementById('affordability-term-range');
-  if (termEl) termEl.value = parsed;
-  if (rangeEl) rangeEl.value = parsed;
+  const dispSpan = document.getElementById('affordability-term-display');
+
+  if (source === 'input' && (years === '' || isNaN(parseFloat(years)))) return;
+
+  const val = parseFloat(years);
+  const parsed = Math.max(1, Math.min(50, isNaN(val) ? 30 : val));
+
+  if (termEl && source !== 'input') termEl.value = parsed;
+  if (rangeEl) rangeEl.value = Math.min(40, Math.max(5, parsed));
+  if (dispSpan) dispSpan.textContent = `${parsed} Year${parsed === 1 ? '' : 's'}`;
+
+  let hasPreset = false;
+  document.querySelectorAll('.affordability-term-btn').forEach(btn => {
+    const match = parseFloat(btn.dataset.years) === parsed;
+    btn.classList.toggle('active', match);
+    if (match) hasPreset = true;
+  });
+  const customBtn = document.getElementById('affordability-term-custom-btn');
+  if (customBtn) customBtn.classList.toggle('active', !hasPreset);
+
   calcAffordability();
   saveStateDebounced();
 }
@@ -1346,12 +1416,29 @@ function calcRefinance() {
   flashElement('refinance-monthly-savings');
 }
 
-function setRefinanceTerm(years) {
-  const parsed = Math.max(1, Math.min(50, parseFloat(years) || 30));
+function setRefinanceTerm(years, source) {
   const termEl = document.getElementById('refinance-term');
   const rangeEl = document.getElementById('refinance-term-range');
-  if (termEl) termEl.value = parsed;
-  if (rangeEl) rangeEl.value = parsed;
+  const dispSpan = document.getElementById('refinance-term-display');
+
+  if (source === 'input' && (years === '' || isNaN(parseFloat(years)))) return;
+
+  const val = parseFloat(years);
+  const parsed = Math.max(1, Math.min(50, isNaN(val) ? 30 : val));
+
+  if (termEl && source !== 'input') termEl.value = parsed;
+  if (rangeEl) rangeEl.value = Math.min(40, Math.max(5, parsed));
+  if (dispSpan) dispSpan.textContent = `${parsed} Year${parsed === 1 ? '' : 's'}`;
+
+  let hasPreset = false;
+  document.querySelectorAll('.refinance-term-btn').forEach(btn => {
+    const match = parseFloat(btn.dataset.years) === parsed;
+    btn.classList.toggle('active', match);
+    if (match) hasPreset = true;
+  });
+  const customBtn = document.getElementById('refinance-term-custom-btn');
+  if (customBtn) customBtn.classList.toggle('active', !hasPreset);
+
   calcRefinance();
   saveStateDebounced();
 }
@@ -1396,12 +1483,29 @@ function calcBiweekly() {
   flashElement('biweekly-interest-saved');
 }
 
-function setBiweeklyTerm(years) {
-  const parsed = Math.max(1, Math.min(50, parseFloat(years) || 30));
+function setBiweeklyTerm(years, source) {
   const termEl = document.getElementById('biweekly-term');
   const rangeEl = document.getElementById('biweekly-term-range');
-  if (termEl) termEl.value = parsed;
-  if (rangeEl) rangeEl.value = parsed;
+  const dispSpan = document.getElementById('biweekly-term-display');
+
+  if (source === 'input' && (years === '' || isNaN(parseFloat(years)))) return;
+
+  const val = parseFloat(years);
+  const parsed = Math.max(1, Math.min(50, isNaN(val) ? 30 : val));
+
+  if (termEl && source !== 'input') termEl.value = parsed;
+  if (rangeEl) rangeEl.value = Math.min(40, Math.max(5, parsed));
+  if (dispSpan) dispSpan.textContent = `${parsed} Year${parsed === 1 ? '' : 's'}`;
+
+  let hasPreset = false;
+  document.querySelectorAll('.biweekly-term-btn').forEach(btn => {
+    const match = parseFloat(btn.dataset.years) === parsed;
+    btn.classList.toggle('active', match);
+    if (match) hasPreset = true;
+  });
+  const customBtn = document.getElementById('biweekly-term-custom-btn');
+  if (customBtn) customBtn.classList.toggle('active', !hasPreset);
+
   calcBiweekly();
   saveStateDebounced();
 }
@@ -1470,12 +1574,29 @@ function calcHeloc() {
   flashElement('heloc-draw-payment');
 }
 
-function setHelocRepayYears(years) {
-  const parsed = Math.max(1, Math.min(30, parseInt(years) || 15));
+function setHelocRepayYears(years, source) {
   const termEl = document.getElementById('heloc-repay-years');
   const rangeEl = document.getElementById('heloc-repay-years-range');
-  if (termEl) termEl.value = parsed;
-  if (rangeEl) rangeEl.value = parsed;
+  const dispSpan = document.getElementById('heloc-repay-years-display');
+
+  if (source === 'input' && (years === '' || isNaN(parseInt(years)))) return;
+
+  const val = parseInt(years);
+  const parsed = Math.max(1, Math.min(30, isNaN(val) ? 15 : val));
+
+  if (termEl && source !== 'input') termEl.value = parsed;
+  if (rangeEl) rangeEl.value = Math.min(25, Math.max(5, parsed));
+  if (dispSpan) dispSpan.textContent = `${parsed} Year${parsed === 1 ? '' : 's'}`;
+
+  let hasPreset = false;
+  document.querySelectorAll('.heloc-term-btn').forEach(btn => {
+    const match = parseInt(btn.dataset.years) === parsed;
+    btn.classList.toggle('active', match);
+    if (match) hasPreset = true;
+  });
+  const customBtn = document.getElementById('heloc-repay-custom-btn');
+  if (customBtn) customBtn.classList.toggle('active', !hasPreset);
+
   calcHeloc();
   saveStateDebounced();
 }
@@ -1955,12 +2076,29 @@ function calcPersonalLoan() {
   flashElement('personalloan-monthly');
 }
 
-function setPersonalLoanTerm(months) {
-  const parsed = Math.max(1, Math.min(120, parseInt(months) || 36));
+function setPersonalLoanTerm(months, source) {
   const termEl = document.getElementById('personalloan-term');
   const rangeEl = document.getElementById('personalloan-term-range');
-  if (termEl) termEl.value = parsed;
-  if (rangeEl) rangeEl.value = parsed;
+  const dispSpan = document.getElementById('personalloan-term-display');
+
+  if (source === 'input' && (months === '' || isNaN(parseInt(months)))) return;
+
+  const val = parseInt(months);
+  const parsed = Math.max(1, Math.min(120, isNaN(val) ? 36 : val));
+
+  if (termEl && source !== 'input') termEl.value = parsed;
+  if (rangeEl) rangeEl.value = Math.min(84, Math.max(12, parsed));
+  if (dispSpan) dispSpan.textContent = `${parsed} Mo (${(parsed / 12).toFixed(1)} Yrs)`;
+
+  let hasPreset = false;
+  document.querySelectorAll('.personalloan-term-btn').forEach(btn => {
+    const match = parseInt(btn.dataset.months) === parsed;
+    btn.classList.toggle('active', match);
+    if (match) hasPreset = true;
+  });
+  const customBtn = document.getElementById('personalloan-term-custom-btn');
+  if (customBtn) customBtn.classList.toggle('active', !hasPreset);
+
   calcPersonalLoan();
   saveStateDebounced();
 }
@@ -8148,3 +8286,12 @@ if (typeof window !== 'undefined') {
   window.calcRentBuy = calcRentBuy;
 }
 
+
+function focusCustomTerm(inputId) {
+  const el = document.getElementById(inputId);
+  if (el) {
+    el.focus();
+    el.select();
+  }
+}
+window.focusCustomTerm = focusCustomTerm;
