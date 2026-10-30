@@ -361,37 +361,40 @@
 
                 <!-- Global Currency Transformation System -->
                 <div class="flex items-center gap-1.5 bg-slate-950 px-2.5 py-1 rounded-xl border border-slate-800">
-                    <select id="global-currency" class="bg-slate-900 border border-slate-700 text-emerald-400 font-bold rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-emerald-400 transition-all cursor-pointer max-w-[190px]">
+                    <span id="location-auto-badge" class="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold text-slate-300 border-r border-slate-800 pr-2 cursor-pointer" title="Automatically tailored to your location. Click currency dropdown to change.">
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span id="location-auto-text">📍 Auto: United States 🇺🇸</span>
+                    </span>
+                    <select id="global-currency" class="bg-slate-900 border border-slate-700 text-emerald-400 font-bold rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-emerald-400 transition-all cursor-pointer max-w-[210px]">
+                        <option value="AUTO">✨ Auto-Detect Location</option>
                         <!-- Core Baseline Set -->
-                        <option value="USD" data-symbol="$" selected>USD - United States ($)</option>
-                        <option value="EUR" data-symbol="€">EUR - Eurozone (€)</option>
-                        <option value="GBP" data-symbol="£">GBP - United Kingdom (£)</option>
-                        <option value="INR" data-symbol="₹">INR - India (₹)</option>
-                        <option value="JPY" data-symbol="¥">JPY - Japan (¥)</option>
-                        <option value="BTC" data-symbol="₿">BTC - Crypto Core (₿)</option>
-                        <!-- Tier-1 & High CPC Expanded Regions -->
-                        <option value="AUD" data-symbol="$">AUD - Australia ($)</option>
-                        <option value="CAD" data-symbol="$">CAD - Canada ($)</option>
-                        <option value="SGD" data-symbol="$">SGD - Singapore ($)</option>
-                        <option value="NZD" data-symbol="$">NZD - New Zealand ($)</option>
-                        <option value="HKD" data-symbol="$">HKD - Hong Kong ($)</option>
-                        <option value="MXN" data-symbol="$">MXN - Mexico ($)</option>
-                        <option value="BRL" data-symbol="R$">BRL - Brazil (R$)</option>
-                        <option value="PLN" data-symbol="zł">PLN - Poland (zł)</option>
-                        <option value="SEK" data-symbol="kr">SEK / NOK - Scandinavia (kr)</option>
-                        <option value="AED" data-symbol="د.إ">AED - United Arab Emirates (د.إ)</option>
-                        <option value="ILS" data-symbol="₪">ILS - Israel (₪)</option>
-                        <option value="KRW" data-symbol="₩">KRW - South Korea (₩)</option>
-                        <!-- Global Footprint Extended Set -->
-                        <option value="ZAR" data-symbol="R">ZAR - South Africa (R)</option>
-                        <option value="CHF" data-symbol="CHF">CHF - Switzerland (CHF)</option>
-                        <option value="TRY" data-symbol="TL">TRY - Turkey (TL)</option>
-                        <option value="IDR" data-symbol="Rp">IDR - Indonesia (Rp)</option>
-                        <option value="MYR" data-symbol="RM">MYR - Malaysia (RM)</option>
-                        <option value="PHP" data-symbol="₱">PHP - Philippines (₱)</option>
-                        <option value="THB" data-symbol="฿">THB - Thailand (฿)</option>
-                        <option value="VND" data-symbol="₫">VND - Vietnam (₫)</option>
-                        <option value="SAR" data-symbol="﷼">SAR - Saudi Arabia (﷼)</option>
+                        <option value="USD" data-symbol="$" selected>🇺🇸 USD - United States ($)</option>
+                        <option value="CAD" data-symbol="$">🇨🇦 CAD - Canada ($)</option>
+                        <option value="INR" data-symbol="₹">🇮🇳 INR - India (₹)</option>
+                        <option value="GBP" data-symbol="£">🇬🇧 GBP - United Kingdom (£)</option>
+                        <option value="EUR" data-symbol="€">🇪🇺 EUR - Eurozone (€)</option>
+                        <option value="AUD" data-symbol="$">🇦🇺 AUD - Australia ($)</option>
+                        <option value="SGD" data-symbol="$">🇸🇬 SGD - Singapore ($)</option>
+                        <option value="AED" data-symbol="د.إ">🇦🇪 AED - United Arab Emirates (د.إ)</option>
+                        <option value="SAR" data-symbol="﷼">🇸🇦 SAR - Saudi Arabia (﷼)</option>
+                        <option value="JPY" data-symbol="¥">🇯🇵 JPY - Japan (¥)</option>
+                        <option value="NZD" data-symbol="$">🇳🇿 NZD - New Zealand ($)</option>
+                        <option value="HKD" data-symbol="$">🇭🇰 HKD - Hong Kong ($)</option>
+                        <option value="MXN" data-symbol="$">🇲🇽 MXN - Mexico ($)</option>
+                        <option value="BRL" data-symbol="R$">🇧🇷 BRL - Brazil (R$)</option>
+                        <option value="PLN" data-symbol="zł">🇵🇱 PLN - Poland (zł)</option>
+                        <option value="SEK" data-symbol="kr">🇸🇪 SEK / NOK - Scandinavia (kr)</option>
+                        <option value="CHF" data-symbol="CHF">🇨🇭 CHF - Switzerland (CHF)</option>
+                        <option value="ZAR" data-symbol="R">🇿🇦 ZAR - South Africa (R)</option>
+                        <option value="KRW" data-symbol="₩">🇰🇷 KRW - South Korea (₩)</option>
+                        <option value="BTC" data-symbol="₿">⚡ BTC - Crypto Core (₿)</option>
+                        <option value="TRY" data-symbol="TL">🇹🇷 TRY - Turkey (TL)</option>
+                        <option value="IDR" data-symbol="Rp">🇮🇩 IDR - Indonesia (Rp)</option>
+                        <option value="MYR" data-symbol="RM">🇲🇾 MYR - Malaysia (RM)</option>
+                        <option value="PHP" data-symbol="₱">🇵🇭 PHP - Philippines (₱)</option>
+                        <option value="THB" data-symbol="฿">🇹🇭 THB - Thailand (฿)</option>
+                        <option value="VND" data-symbol="₫">🇻🇳 VND - Vietnam (₫)</option>
+                        <option value="ILS" data-symbol="₪">🇮🇱 ILS - Israel (₪)</option>
                     </select>
                 </div>
             </div>

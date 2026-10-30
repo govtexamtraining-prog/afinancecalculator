@@ -4594,13 +4594,272 @@ function setGlobalCurrency(codeOrSymbol) {
   saveStateDebounced();
 }
 
+
+// =============================================================
+// AUTOMATIC USER LOCATION & REGIONAL TAILORING SYSTEM
+// =============================================================
+const COUNTRY_META = {
+  USD: { country: 'United States', flag: '🇺🇸', bankingTab: 'us-banks' },
+  CAD: { country: 'Canada', flag: '🇨🇦', bankingTab: 'ca-banks' },
+  INR: { country: 'India', flag: '🇮🇳', bankingTab: 'cross-border' },
+  GBP: { country: 'United Kingdom', flag: '🇬🇧', bankingTab: 'cross-border' },
+  EUR: { country: 'Eurozone', flag: '🇪🇺', bankingTab: 'cross-border' },
+  AUD: { country: 'Australia', flag: '🇦🇺', bankingTab: 'cross-border' },
+  SGD: { country: 'Singapore', flag: '🇸🇬', bankingTab: 'cross-border' },
+  AED: { country: 'UAE', flag: '🇦🇪', bankingTab: 'cross-border' },
+  SAR: { country: 'Saudi Arabia', flag: '🇸🇦', bankingTab: 'cross-border' },
+  JPY: { country: 'Japan', flag: '🇯🇵', bankingTab: 'cross-border' },
+  NZD: { country: 'New Zealand', flag: '🇳🇿', bankingTab: 'cross-border' },
+  HKD: { country: 'Hong Kong', flag: '🇭🇰', bankingTab: 'cross-border' },
+  MXN: { country: 'Mexico', flag: '🇲🇽', bankingTab: 'cross-border' },
+  BRL: { country: 'Brazil', flag: '🇧🇷', bankingTab: 'cross-border' },
+  PLN: { country: 'Poland', flag: '🇵🇱', bankingTab: 'cross-border' },
+  SEK: { country: 'Scandinavia', flag: '🇸🇪', bankingTab: 'cross-border' },
+  CHF: { country: 'Switzerland', flag: '🇨🇭', bankingTab: 'cross-border' },
+  ZAR: { country: 'South Africa', flag: '🇿🇦', bankingTab: 'cross-border' },
+  KRW: { country: 'South Korea', flag: '🇰🇷', bankingTab: 'cross-border' },
+  BTC: { country: 'Global Crypto', flag: '⚡', bankingTab: 'directory' },
+  TRY: { country: 'Turkey', flag: '🇹🇷', bankingTab: 'cross-border' },
+  IDR: { country: 'Indonesia', flag: '🇮🇩', bankingTab: 'cross-border' },
+  MYR: { country: 'Malaysia', flag: '🇲🇾', bankingTab: 'cross-border' },
+  PHP: { country: 'Philippines', flag: '🇵🇭', bankingTab: 'cross-border' },
+  THB: { country: 'Thailand', flag: '🇹🇭', bankingTab: 'cross-border' },
+  VND: { country: 'Vietnam', flag: '🇻🇳', bankingTab: 'cross-border' },
+  ILS: { country: 'Israel', flag: '🇮🇱', bankingTab: 'cross-border' }
+};
+
+function detectUserLocation() {
+  // If user previously manually picked a country from the dropdown, prioritize it
+  let manualChoice = null;
+  try {
+    if (typeof localStorage !== 'undefined') {
+      manualChoice = localStorage.getItem('afinancecalc_user_manual_currency');
+    }
+  } catch (e) {}
+  if (manualChoice && CURRENCY_REGISTRY[manualChoice]) {
+    const meta = COUNTRY_META[manualChoice] || { country: manualChoice, flag: '🌐' };
+    return {
+      code: manualChoice,
+      country: meta.country,
+      flag: meta.flag,
+      isAuto: false
+    };
+  }
+
+  // 1. Check Timezone (instant, 0ms, works 100% offline)
+  let tz = '';
+  try {
+    tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+  } catch (e) {}
+
+  // 2. Check Browser Locale
+  let navLang = '';
+  try {
+    navLang = (navigator.language || (navigator.languages && navigator.languages[0]) || '').toLowerCase();
+  } catch (e) {}
+
+  // India
+  if (tz === 'Asia/Calcutta' || tz === 'Asia/Kolkata' || navLang.includes('-in') || navLang === 'hi' || navLang === 'ta' || navLang === 'te' || navLang === 'bn' || navLang === 'mr') {
+    return { code: 'INR', country: 'India', flag: '🇮🇳', isAuto: true };
+  }
+
+  // Canada
+  if ((tz.startsWith('America/') && (
+    tz.includes('Toronto') || tz.includes('Vancouver') || tz.includes('Montreal') ||
+    tz.includes('Edmonton') || tz.includes('Winnipeg') || tz.includes('Halifax') ||
+    tz.includes('St_Johns') || tz.includes('Regina') || tz.includes('Calgary') ||
+    tz.includes('Ottawa') || tz.includes('Quebec') || tz.includes('Yellowknife')
+  )) || navLang.endsWith('-ca')) {
+    return { code: 'CAD', country: 'Canada', flag: '🇨🇦', isAuto: true };
+  }
+
+  // United Kingdom
+  if (tz === 'Europe/London' || tz === 'Europe/Belfast' || navLang.endsWith('-gb')) {
+    return { code: 'GBP', country: 'United Kingdom', flag: '🇬🇧', isAuto: true };
+  }
+
+  // Australia
+  if (tz.startsWith('Australia/') || navLang.endsWith('-au')) {
+    return { code: 'AUD', country: 'Australia', flag: '🇦🇺', isAuto: true };
+  }
+
+  // New Zealand
+  if (tz.startsWith('Pacific/Auckland') || tz.includes('Chatham') || navLang.endsWith('-nz')) {
+    return { code: 'NZD', country: 'New Zealand', flag: '🇳🇿', isAuto: true };
+  }
+
+  // Singapore
+  if (tz === 'Asia/Singapore' || navLang.endsWith('-sg')) {
+    return { code: 'SGD', country: 'Singapore', flag: '🇸🇬', isAuto: true };
+  }
+
+  // UAE / Middle East
+  if (tz === 'Asia/Dubai' || tz === 'Asia/Muscat' || navLang.endsWith('-ae')) {
+    return { code: 'AED', country: 'United Arab Emirates', flag: '🇦🇪', isAuto: true };
+  }
+  if (tz === 'Asia/Riyadh' || navLang.endsWith('-sa')) {
+    return { code: 'SAR', country: 'Saudi Arabia', flag: '🇸🇦', isAuto: true };
+  }
+
+  // Eurozone
+  if ((tz.startsWith('Europe/') && (
+    tz.includes('Berlin') || tz.includes('Paris') || tz.includes('Rome') ||
+    tz.includes('Madrid') || tz.includes('Amsterdam') || tz.includes('Brussels') ||
+    tz.includes('Vienna') || tz.includes('Dublin') || tz.includes('Helsinki') ||
+    tz.includes('Athens') || tz.includes('Lisbon')
+  )) || navLang.endsWith('-de') || navLang.endsWith('-fr') || navLang.endsWith('-it') || navLang.endsWith('-es') || navLang.endsWith('-nl')) {
+    return { code: 'EUR', country: 'Eurozone', flag: '🇪🇺', isAuto: true };
+  }
+
+  // Japan
+  if (tz === 'Asia/Tokyo' || navLang.startsWith('ja')) {
+    return { code: 'JPY', country: 'Japan', flag: '🇯🇵', isAuto: true };
+  }
+
+  // Mexico
+  if (tz.startsWith('America/Mexico') || tz.includes('Cancun') || tz.includes('Monterrey') || navLang.endsWith('-mx')) {
+    return { code: 'MXN', country: 'Mexico', flag: '🇲🇽', isAuto: true };
+  }
+
+  // Brazil
+  if (tz.startsWith('America/Sao_Paulo') || navLang.endsWith('-br')) {
+    return { code: 'BRL', country: 'Brazil', flag: '🇧🇷', isAuto: true };
+  }
+
+  // South Africa
+  if (tz === 'Africa/Johannesburg' || navLang.endsWith('-za')) {
+    return { code: 'ZAR', country: 'South Africa', flag: '🇿🇦', isAuto: true };
+  }
+
+  // Switzerland
+  if (tz === 'Europe/Zurich' || navLang.endsWith('-ch')) {
+    return { code: 'CHF', country: 'Switzerland', flag: '🇨🇭', isAuto: true };
+  }
+
+  // Poland
+  if (tz.includes('Warsaw') || navLang.endsWith('-pl')) {
+    return { code: 'PLN', country: 'Poland', flag: '🇵🇱', isAuto: true };
+  }
+
+  // Scandinavia (Sweden / Norway)
+  if (tz.includes('Stockholm') || tz.includes('Oslo') || navLang.endsWith('-se') || navLang.endsWith('-no')) {
+    return { code: 'SEK', country: 'Scandinavia', flag: '🇸🇪', isAuto: true };
+  }
+
+  // United States fallback
+  return { code: 'USD', country: 'United States', flag: '🇺🇸', isAuto: true };
+}
+
+function updateLocationBadge(currencyCode, isAuto) {
+  const badgeEl = document.getElementById('location-auto-badge');
+  const textEl = document.getElementById('location-auto-text');
+  if (!badgeEl || !textEl) return;
+
+  const meta = COUNTRY_META[currencyCode] || { country: currencyCode, flag: '🌐' };
+  badgeEl.classList.remove('hidden');
+
+  if (isAuto) {
+    textEl.innerHTML = `📍 Auto: ${meta.country} ${meta.flag}`;
+    badgeEl.title = 'Location automatically detected from your browser. Click currency dropdown to change.';
+  } else {
+    textEl.innerHTML = `📍 ${meta.country} ${meta.flag}`;
+    badgeEl.title = 'Manually selected country. Select "Auto-Detect Location" in dropdown to re-enable detection.';
+  }
+}
+
+function applyUserLocation(loc) {
+  if (!loc || !loc.code) return;
+  setGlobalCurrency(loc.code);
+  updateLocationBadge(loc.code, loc.isAuto);
+
+  // Auto-adapt Banking Hub based on country
+  if (typeof window.switchBankingTab === 'function') {
+    if (loc.code === 'CAD') {
+      window.switchBankingTab('ca-banks');
+    } else if (loc.code === 'USD') {
+      window.switchBankingTab('us-banks');
+    } else {
+      window.switchBankingTab('cross-border');
+    }
+  }
+}
+
+function checkIpLocationAsync() {
+  try {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('afinancecalc_user_manual_currency')) return;
+  } catch (e) {}
+
+  try {
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 2000) : null;
+
+    fetch('https://get.geojs.io/v1/ip/country.json', { signal: controller ? controller.signal : undefined })
+      .then(r => r.json())
+      .then(data => {
+        if (timeoutId) clearTimeout(timeoutId);
+        if (!data || !data.country) return;
+        const c = data.country.toUpperCase();
+        let matchedCode = null;
+        if (c === 'IN') matchedCode = 'INR';
+        else if (c === 'CA') matchedCode = 'CAD';
+        else if (c === 'US') matchedCode = 'USD';
+        else if (c === 'GB') matchedCode = 'GBP';
+        else if (c === 'AU') matchedCode = 'AUD';
+        else if (c === 'NZ') matchedCode = 'NZD';
+        else if (c === 'SG') matchedCode = 'SGD';
+        else if (c === 'AE') matchedCode = 'AED';
+        else if (c === 'SA') matchedCode = 'SAR';
+        else if (['DE', 'FR', 'IT', 'ES', 'NL', 'IE', 'AT', 'BE', 'FI', 'PT', 'GR'].includes(c)) matchedCode = 'EUR';
+        else if (c === 'JP') matchedCode = 'JPY';
+        else if (c === 'MX') matchedCode = 'MXN';
+        else if (c === 'BR') matchedCode = 'BRL';
+        else if (c === 'ZA') matchedCode = 'ZAR';
+        else if (c === 'CH') matchedCode = 'CHF';
+
+        if (matchedCode && matchedCode !== currentCurrencyCode) {
+          if (!localStorage.getItem('afinancecalc_user_manual_currency')) {
+            const meta = COUNTRY_META[matchedCode] || { country: matchedCode, flag: '🌐' };
+            applyUserLocation({
+              code: matchedCode,
+              country: meta.country,
+              flag: meta.flag,
+              isAuto: true
+            });
+          }
+        }
+      })
+      .catch(() => {});
+  } catch (e) {}
+}
+
+window.detectUserLocation = detectUserLocation;
+window.applyUserLocation = applyUserLocation;
+window.updateLocationBadge = updateLocationBadge;
+
 function setupCurrencySelector() {
   const currencySelect = document.getElementById('global-currency');
   if (!currencySelect) return;
 
   currencySelect.addEventListener('change', (e) => {
     const selectedCode = e.target.value;
+    if (selectedCode === 'AUTO') {
+      localStorage.removeItem('afinancecalc_user_manual_currency');
+      const detected = detectUserLocation();
+      applyUserLocation(detected);
+      showToast(`Auto-detected location: ${detected.country} (${detected.code})`);
+      return;
+    }
+    localStorage.setItem('afinancecalc_user_manual_currency', selectedCode);
     setGlobalCurrency(selectedCode);
+    updateLocationBadge(selectedCode, false);
+
+    // Auto-switch Banking Hub tab when country changed
+    if (typeof window.switchBankingTab === 'function') {
+      if (selectedCode === 'CAD') window.switchBankingTab('ca-banks');
+      else if (selectedCode === 'USD') window.switchBankingTab('us-banks');
+      else window.switchBankingTab('cross-border');
+    }
+
     showToast(`Region & Currency adapted to ${selectedCode} (${currentCurrency})`);
   });
 }
@@ -7369,14 +7628,30 @@ document.addEventListener('DOMContentLoaded', () => {
   updateHistoryCount();
   setupEngineFocusTracking();
 
-  // Try URL restore first, then storage
+  // 1. Initial automatic user location & country detection
+  const detectedLocation = detectUserLocation();
+
+  // 2. Try URL restore first, then storage, then auto-detected country
   const restoredFromUrl = restoreFromUrlHash();
   if (!restoredFromUrl) {
     const loaded = loadStateFromStorage();
     if (!loaded) {
-      setGlobalCurrency('USD');
+      applyUserLocation(detectedLocation);
+    } else {
+      const manual = localStorage.getItem('afinancecalc_user_manual_currency');
+      if (manual) {
+        setGlobalCurrency(manual);
+        updateLocationBadge(manual, false);
+      } else {
+        applyUserLocation(detectedLocation);
+      }
     }
+  } else {
+    updateLocationBadge(currentCurrencyCode, false);
   }
+
+  // 3. Asynchronously refine with IP location in background
+  checkIpLocationAsync();
 
   recalculateAll();
   switchEngine(activeEngineId, false);
