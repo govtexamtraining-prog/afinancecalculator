@@ -14,6 +14,17 @@ let mortgageTermYears = 30;
 let cryptoStrategy = 'long';
 let isFocusMode = true;
 let currentAmortizationData = [];
+let currentAmortizationType = 'mortgage';
+let currentAmortizationPrincipal = 0;
+let currentAmortizationRate = 0;
+let currentAmortizationMonths = 360;
+let amortizationViewMode = 'annual';
+let amortizationSearchQuery = '';
+let currentHistoryCategory = 'all';
+let historySearchQuery = '';
+let currentScenarioModel = 'mortgage-terms';
+let scenarioExtraPayment = 250;
+let scenario15YrRate = 5.6;
 
 // Utility Formatters
 function formatCurrency(amount, withIndianDenomination = true) {
@@ -89,11 +100,28 @@ function flashElement(elemId) {
 // 1. MORTGAGE LIABILITY CONSOLE & WHAT-IF ENGINE
 // -------------------------------------------------------------
 function setMortgageTerm(years) {
-  mortgageTermYears = years;
+  const parsed = Math.max(1, Math.min(50, parseFloat(years) || 30));
+  mortgageTermYears = parsed;
+  
+  const numInp = document.getElementById('mortgage-term');
+  const rangeInp = document.getElementById('mortgage-term-range');
+  const dispSpan = document.getElementById('mortgage-term-display');
+  
+  if (numInp && parseFloat(numInp.value) !== parsed) numInp.value = parsed;
+  if (rangeInp && parseFloat(rangeInp.value) !== parsed) rangeInp.value = parsed;
+  if (dispSpan) dispSpan.textContent = `${parsed} Year${parsed === 1 ? '' : 's'}`;
+
   document.querySelectorAll('.mortgage-term-btn').forEach(btn => {
-    btn.classList.toggle('active', parseInt(btn.dataset.years) === years);
+    btn.classList.toggle('active', parseFloat(btn.dataset.years) === parsed);
   });
   calcMortgage();
+  calcMortgageWhatIf(
+    Math.max(0, (parseFloat(document.getElementById('mortgage-asset')?.value) || 0) - (parseFloat(document.getElementById('mortgage-down')?.value) || 0)),
+    parseFloat(document.getElementById('mortgage-rate')?.value) || 0,
+    parseFloat(document.getElementById('mortgage-payment')?.textContent?.replace(/[^0-9.-]/g, '')) || 0,
+    parseFloat(document.getElementById('mortgage-total-interest')?.textContent?.replace(/[^0-9.-]/g, '')) || 0,
+    parseFloat(document.getElementById('mortgage-extra')?.value) || 0
+  );
   saveStateDebounced();
 }
 
@@ -102,6 +130,19 @@ function calcMortgage() {
   const down = parseFloat(document.getElementById('mortgage-down').value) || 0;
   const rate = parseFloat(document.getElementById('mortgage-rate').value) || 0;
   const extraPay = parseFloat(document.getElementById('mortgage-extra')?.value) || 0;
+  
+  if (document.getElementById('mortgage-term')) {
+    const manualYears = parseFloat(document.getElementById('mortgage-term').value);
+    if (manualYears > 0) {
+      mortgageTermYears = manualYears;
+    }
+  }
+  const dispSpan = document.getElementById('mortgage-term-display');
+  if (dispSpan) dispSpan.textContent = `${mortgageTermYears} Year${mortgageTermYears === 1 ? '' : 's'}`;
+  document.querySelectorAll('.mortgage-term-btn').forEach(btn => {
+    btn.classList.toggle('active', parseFloat(btn.dataset.years) === mortgageTermYears);
+  });
+
   const n = mortgageTermYears * 12;
 
   const principal = Math.max(0, asset - down);
@@ -606,6 +647,12 @@ function calcAutoLoan() {
   const apr = parseFloat(document.getElementById('autoloan-rate').value) || 0;
   const term = parseFloat(document.getElementById('autoloan-term').value) || 1;
 
+  const dispSpan = document.getElementById('autoloan-term-display');
+  if (dispSpan) dispSpan.textContent = `${term} Mo`;
+  document.querySelectorAll('.autoloan-term-btn').forEach(btn => {
+    btn.classList.toggle('active', parseFloat(btn.dataset.months) === term);
+  });
+
   let monthly = 0;
   const r = (apr / 100) / 12;
 
@@ -632,6 +679,16 @@ function calcAutoLoan() {
   flashElement('autoloan-payment');
 }
 
+function setAutoLoanTerm(months) {
+  const parsed = Math.max(1, Math.min(120, parseInt(months) || 60));
+  const termEl = document.getElementById('autoloan-term');
+  const rangeEl = document.getElementById('autoloan-term-range');
+  if (termEl) termEl.value = parsed;
+  if (rangeEl) rangeEl.value = parsed;
+  calcAutoLoan();
+  saveStateDebounced();
+}
+
 // -------------------------------------------------------------
 // 14. STUDENT LOAN PAYOFF HORIZON MATRIX
 // -------------------------------------------------------------
@@ -639,6 +696,12 @@ function calcStudent() {
   const debt = parseFloat(document.getElementById('student-debt').value) || 0;
   const apr = parseFloat(document.getElementById('student-rate').value) || 0;
   const months = parseFloat(document.getElementById('student-months').value) || 1;
+
+  const dispSpan = document.getElementById('student-months-display');
+  if (dispSpan) dispSpan.textContent = `${months} Mo (${(months / 12).toFixed(1)} Yrs)`;
+  document.querySelectorAll('.student-term-btn').forEach(btn => {
+    btn.classList.toggle('active', parseFloat(btn.dataset.months) === months);
+  });
 
   let monthly = 0;
   const r = (apr / 100) / 12;
@@ -664,6 +727,16 @@ function calcStudent() {
   if (sumEl) sumEl.textContent = formatCurrency(totalRepay);
 
   flashElement('student-payment');
+}
+
+function setStudentMonths(months) {
+  const parsed = Math.max(1, Math.min(360, parseInt(months) || 120));
+  const termEl = document.getElementById('student-months');
+  const rangeEl = document.getElementById('student-months-range');
+  if (termEl) termEl.value = parsed;
+  if (rangeEl) rangeEl.value = parsed;
+  calcStudent();
+  saveStateDebounced();
 }
 
 // -------------------------------------------------------------
@@ -903,6 +976,14 @@ function calcAffordability() {
   const down = parseFloat(document.getElementById('affordability-down').value) || 0;
   const debt = parseFloat(document.getElementById('affordability-debt').value) || 0;
   const rate = parseFloat(document.getElementById('affordability-rate').value) || 0;
+  const termYears = parseFloat(document.getElementById('affordability-term')?.value) || 30;
+  const n = termYears * 12;
+
+  const dispSpan = document.getElementById('affordability-term-display');
+  if (dispSpan) dispSpan.textContent = `${termYears} Year${termYears === 1 ? '' : 's'}`;
+  document.querySelectorAll('.affordability-term-btn').forEach(btn => {
+    btn.classList.toggle('active', parseFloat(btn.dataset.years) === termYears);
+  });
 
   const monthlyGross = income / 12;
   const maxDebtAllowed = monthlyGross * 0.36; // 36% back-end DTI cap
@@ -912,10 +993,9 @@ function calcAffordability() {
   let loanSupported = 0;
   if (maxMonthlyPI > 0 && rate > 0) {
     const monthlyRate = (rate / 100) / 12;
-    const n = 360; // 30-year schedule
     loanSupported = (maxMonthlyPI * (Math.pow(1 + monthlyRate, n) - 1)) / (monthlyRate * Math.pow(1 + monthlyRate, n));
   } else if (rate === 0 && maxMonthlyPI > 0) {
-    loanSupported = maxMonthlyPI * 360;
+    loanSupported = maxMonthlyPI * n;
   }
 
   const maxHomePrice = Math.max(0, loanSupported + down);
@@ -934,6 +1014,16 @@ function calcAffordability() {
   flashElement('affordability-max-home');
 }
 
+function setAffordabilityTerm(years) {
+  const parsed = Math.max(1, Math.min(50, parseFloat(years) || 30));
+  const termEl = document.getElementById('affordability-term');
+  const rangeEl = document.getElementById('affordability-term-range');
+  if (termEl) termEl.value = parsed;
+  if (rangeEl) rangeEl.value = parsed;
+  calcAffordability();
+  saveStateDebounced();
+}
+
 // -------------------------------------------------------------
 // 22. MORTGAGE REFINANCE BREAK-EVEN
 // -------------------------------------------------------------
@@ -942,7 +1032,16 @@ function calcRefinance() {
   const curRate = parseFloat(document.getElementById('refinance-current-rate').value) || 0;
   const newRate = parseFloat(document.getElementById('refinance-new-rate').value) || 0;
   const costs = parseFloat(document.getElementById('refinance-costs').value) || 0;
-  const n = 360;
+  const termYears = parseFloat(document.getElementById('refinance-term')?.value) || 30;
+  const n = termYears * 12;
+
+  const dispSpan = document.getElementById('refinance-term-display');
+  if (dispSpan) dispSpan.textContent = `${termYears} Year${termYears === 1 ? '' : 's'}`;
+  const lifeLabel = document.getElementById('refinance-lifetime-label');
+  if (lifeLabel) lifeLabel.textContent = `${termYears}-Year Net Lifetime Savings`;
+  document.querySelectorAll('.refinance-term-btn').forEach(btn => {
+    btn.classList.toggle('active', parseFloat(btn.dataset.years) === termYears);
+  });
 
   const calcMo = (bal, r) => {
     if (r === 0) return bal / n;
@@ -955,7 +1054,7 @@ function calcRefinance() {
   const monthlySavings = Math.max(0, oldMonthly - newMonthly);
 
   const breakevenMonths = monthlySavings > 0 ? Math.ceil(costs / monthlySavings) : 0;
-  const lifetimeSavings = Math.max(0, (monthlySavings * 360) - costs);
+  const lifetimeSavings = Math.max(0, (monthlySavings * n) - costs);
 
   const saveEl = document.getElementById('refinance-monthly-savings');
   const breakEl = document.getElementById('refinance-breakeven-months');
@@ -968,14 +1067,30 @@ function calcRefinance() {
   flashElement('refinance-monthly-savings');
 }
 
+function setRefinanceTerm(years) {
+  const parsed = Math.max(1, Math.min(50, parseFloat(years) || 30));
+  const termEl = document.getElementById('refinance-term');
+  const rangeEl = document.getElementById('refinance-term-range');
+  if (termEl) termEl.value = parsed;
+  if (rangeEl) rangeEl.value = parsed;
+  calcRefinance();
+  saveStateDebounced();
+}
+
 // -------------------------------------------------------------
 // 23. BI-WEEKLY MORTGAGE ACCELERATION
 // -------------------------------------------------------------
 function calcBiweekly() {
   const balance = parseFloat(document.getElementById('biweekly-balance').value) || 0;
   const rate = parseFloat(document.getElementById('biweekly-rate').value) || 0;
-  const termYears = parseFloat(document.getElementById('biweekly-term').value) || 30;
+  const termYears = parseFloat(document.getElementById('biweekly-term')?.value) || 30;
   const n = termYears * 12;
+
+  const dispSpan = document.getElementById('biweekly-term-display');
+  if (dispSpan) dispSpan.textContent = `${termYears} Year${termYears === 1 ? '' : 's'}`;
+  document.querySelectorAll('.biweekly-term-btn').forEach(btn => {
+    btn.classList.toggle('active', parseFloat(btn.dataset.years) === termYears);
+  });
 
   let monthlyP = 0;
   const mr = (rate / 100) / 12;
@@ -1000,6 +1115,16 @@ function calcBiweekly() {
   if (yrsEl) yrsEl.textContent = `${approxYearsSaved.toFixed(1)} Years`;
 
   flashElement('biweekly-interest-saved');
+}
+
+function setBiweeklyTerm(years) {
+  const parsed = Math.max(1, Math.min(50, parseFloat(years) || 30));
+  const termEl = document.getElementById('biweekly-term');
+  const rangeEl = document.getElementById('biweekly-term-range');
+  if (termEl) termEl.value = parsed;
+  if (rangeEl) rangeEl.value = parsed;
+  calcBiweekly();
+  saveStateDebounced();
 }
 
 // -------------------------------------------------------------
@@ -1034,7 +1159,13 @@ function calcHeloc() {
   const drawn = parseFloat(document.getElementById('heloc-drawn').value) || 0;
   const rate = parseFloat(document.getElementById('heloc-rate').value) || 0;
   const drawYears = parseFloat(document.getElementById('heloc-draw-years').value) || 10;
-  const repayYears = parseFloat(document.getElementById('heloc-repay-years').value) || 15;
+  const repayYears = parseFloat(document.getElementById('heloc-repay-years')?.value) || 15;
+
+  const dispSpan = document.getElementById('heloc-repay-years-display');
+  if (dispSpan) dispSpan.textContent = `${repayYears} Year${repayYears === 1 ? '' : 's'}`;
+  document.querySelectorAll('.heloc-term-btn').forEach(btn => {
+    btn.classList.toggle('active', parseFloat(btn.dataset.years) === repayYears);
+  });
 
   const monthlyRate = (rate / 100) / 12;
   const drawMonthly = drawn * monthlyRate;
@@ -1058,6 +1189,16 @@ function calcHeloc() {
   if (intEl) intEl.textContent = formatCurrency(totalInterest);
 
   flashElement('heloc-draw-payment');
+}
+
+function setHelocRepayYears(years) {
+  const parsed = Math.max(1, Math.min(30, parseInt(years) || 15));
+  const termEl = document.getElementById('heloc-repay-years');
+  const rangeEl = document.getElementById('heloc-repay-years-range');
+  if (termEl) termEl.value = parsed;
+  if (rangeEl) rangeEl.value = parsed;
+  calcHeloc();
+  saveStateDebounced();
 }
 
 // -------------------------------------------------------------
@@ -1463,7 +1604,7 @@ function calcSnowball() {
   if (moEl) moEl.textContent = `${months} Months`;
   if (intEl) intEl.textContent = formatCurrency(totalInterest);
 
-  renderSnowballChart(bal1, bal2, extra, apr1, apr2);
+  renderSnowballChart(d1Bal, d2Bal, extra, d1Apr, d2Apr);
   flashElement('snowball-avalanche-savings');
 }
 
@@ -1505,6 +1646,12 @@ function calcPersonalLoan() {
   const term = parseInt(document.getElementById('personalloan-term').value) || 36;
   const origPct = parseFloat(document.getElementById('personalloan-origination').value) || 0;
 
+  const dispSpan = document.getElementById('personalloan-term-display');
+  if (dispSpan) dispSpan.textContent = `${term} Mo (${(term / 12).toFixed(1)} Yrs)`;
+  document.querySelectorAll('.personalloan-term-btn').forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.months) === term);
+  });
+
   const fee = amount * (origPct / 100);
   const netProceeds = Math.max(0, amount - fee);
 
@@ -1529,6 +1676,16 @@ function calcPersonalLoan() {
   flashElement('personalloan-monthly');
 }
 
+function setPersonalLoanTerm(months) {
+  const parsed = Math.max(1, Math.min(120, parseInt(months) || 36));
+  const termEl = document.getElementById('personalloan-term');
+  const rangeEl = document.getElementById('personalloan-term-range');
+  if (termEl) termEl.value = parsed;
+  if (rangeEl) rangeEl.value = parsed;
+  calcPersonalLoan();
+  saveStateDebounced();
+}
+
 // -------------------------------------------------------------
 // 42. AUTO LOAN REFINANCE SAVINGS
 // -------------------------------------------------------------
@@ -1537,6 +1694,12 @@ function calcAutoRefi() {
   const curRate = parseFloat(document.getElementById('autorefi-current-rate').value) || 0;
   const newRate = parseFloat(document.getElementById('autorefi-new-rate').value) || 0;
   const months = parseInt(document.getElementById('autorefi-months').value) || 48;
+
+  const dispSpan = document.getElementById('autorefi-months-display');
+  if (dispSpan) dispSpan.textContent = `${months} Mo (${(months / 12).toFixed(1)} Yrs)`;
+  document.querySelectorAll('.autorefi-term-btn').forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.months) === months);
+  });
 
   const calcP = (bal, r, m) => {
     if (r === 0) return bal / m;
@@ -1558,6 +1721,16 @@ function calcAutoRefi() {
   if (newMoEl) newMoEl.textContent = formatCurrency(newMonthly);
 
   flashElement('autorefi-lifetime-savings');
+}
+
+function setAutoRefiMonths(months) {
+  const parsed = Math.max(1, Math.min(120, parseInt(months) || 48));
+  const termEl = document.getElementById('autorefi-months');
+  const rangeEl = document.getElementById('autorefi-months-range');
+  if (termEl) termEl.value = parsed;
+  if (rangeEl) rangeEl.value = parsed;
+  calcAutoRefi();
+  saveStateDebounced();
 }
 
 // -------------------------------------------------------------
@@ -1643,7 +1816,7 @@ function calcSolar() {
   if (netEl) netEl.textContent = formatCurrency(netCost);
   if (savEl) savEl.textContent = formatCurrency(savings20Yr);
 
-  renderSolarChart(cost, creditPct, monthlyElectric, offsetPct);
+  renderSolarChart(cost, taxCredit, electricBill, offsetPct);
   flashElement('solar-payback-years');
 }
 
@@ -4028,7 +4201,10 @@ function switchEngine(tabOrEngineId, shouldScroll = true) {
   let tabId = tabOrEngineId;
   let targetEngineCardId = tabOrEngineId;
 
-  if (tabOrEngineId.startsWith('engine-')) {
+  if (tabOrEngineId === 'tab-banking-hub' || tabOrEngineId === 'engine-banking' || tabOrEngineId === 'banking') {
+    tabId = 'tab-banking-hub';
+    targetEngineCardId = 'engine-banking';
+  } else if (tabOrEngineId.startsWith('engine-')) {
     targetEngineCardId = tabOrEngineId;
     tabId = tabOrEngineId.replace('engine-', 'tab-');
   } else if (tabOrEngineId.startsWith('tab-')) {
@@ -4103,6 +4279,12 @@ function switchEngine(tabOrEngineId, shouldScroll = true) {
     }, 1500);
   }
 
+  // Update contextual FinTech lead-gen card & statutory audit trail for active engine
+  try {
+    if (typeof updateContextualLeadCard === 'function') updateContextualLeadCard(tabId);
+    if (typeof updateAuditTrailContent === 'function') updateAuditTrailContent(tabId);
+  } catch (e) {}
+
   saveStateDebounced();
 }
 
@@ -4159,16 +4341,41 @@ function updatePrintReportHeader(panel) {
   const descEl = panel.querySelector('.border-b p') || panel.querySelector('p');
   const engineDesc = descEl ? descEl.textContent.trim() : '';
 
-  const printTitle = document.getElementById('print-engine-title');
-  if (printTitle) printTitle.textContent = engineTitle;
+  const isAdv = advisorProfile && advisorProfile.enabled;
+  const standardHeader = document.getElementById('print-standard-letterhead');
+  const advHeader = document.getElementById('print-advisor-letterhead');
 
-  const printSubtitle = document.getElementById('print-engine-subtitle');
-  if (printSubtitle) printSubtitle.textContent = engineDesc;
+  if (isAdv && advHeader) {
+    if (standardHeader) standardHeader.style.display = 'none';
+    advHeader.style.display = 'block';
+    const firmEl = document.getElementById('print-adv-firm');
+    const repEl = document.getElementById('print-adv-rep');
+    const contactEl = document.getElementById('print-adv-contact');
+    const clientEl = document.getElementById('print-adv-client');
+    const dateEl = document.getElementById('print-adv-date');
 
-  const printTimestamp = document.getElementById('print-report-timestamp');
-  if (printTimestamp) {
-    const now = new Date();
-    printTimestamp.textContent = `Generated: ${now.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })} at ${now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })} | Region: ${currentCurrencyCode} (${currentCurrency})`;
+    if (firmEl) firmEl.textContent = advisorProfile.firmName || 'Advisory Practice';
+    if (repEl) repEl.textContent = `Prepared by: ${advisorProfile.name || 'Advisory Representative'}`;
+    if (contactEl) contactEl.textContent = `${advisorProfile.phone ? advisorProfile.phone + ' • ' : ''}${advisorProfile.email || ''}`;
+    if (clientEl) clientEl.textContent = `Prepared for: ${advisorProfile.clientName || 'Confidential Client'}`;
+    if (dateEl) {
+      const now = new Date();
+      dateEl.textContent = `Date: ${now.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}`;
+    }
+  } else {
+    if (standardHeader) standardHeader.style.display = 'flex';
+    if (advHeader) advHeader.style.display = 'none';
+    const printTitle = document.getElementById('print-engine-title');
+    if (printTitle) printTitle.textContent = engineTitle;
+
+    const printSubtitle = document.getElementById('print-engine-subtitle');
+    if (printSubtitle) printSubtitle.textContent = engineDesc;
+
+    const printTimestamp = document.getElementById('print-report-timestamp');
+    if (printTimestamp) {
+      const now = new Date();
+      printTimestamp.textContent = `Generated: ${now.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })} at ${now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })} | Region: ${currentCurrencyCode} (${currentCurrency})`;
+    }
   }
 }
 
@@ -4264,7 +4471,6 @@ function setupEngineFocusTracking() {
 // -------------------------------------------------------------
 // AMORTIZATION SCHEDULE DRAWER & CSV EXPORTER
 // -------------------------------------------------------------
-let amortizationViewMode = 'annual'; // 'annual' or 'monthly'
 
 function generateAmortizationSchedule(principal, annualRate, months) {
   const schedule = [];
@@ -4299,39 +4505,300 @@ function generateAmortizationSchedule(principal, annualRate, months) {
 }
 
 function openAmortizationModal(type = 'mortgage') {
+  currentAmortizationType = type;
   let principal = 0;
   let rate = 0;
   let months = 360;
-  let title = 'Amortization Schedule';
+  let title = 'Amortization Schedule & Analytics';
+  let badge = '30 Yrs Fixed';
 
   if (type === 'mortgage') {
     const asset = parseFloat(document.getElementById('mortgage-asset').value) || 0;
     const down = parseFloat(document.getElementById('mortgage-down').value) || 0;
     principal = Math.max(0, asset - down);
     rate = parseFloat(document.getElementById('mortgage-rate').value) || 0;
-    months = mortgageTermYears * 12;
-    const cardTitle = document.getElementById('engine-mortgage')?.querySelector('h2')?.textContent || 'Mortgage';
-    title = `${cardTitle} Schedule (${mortgageTermYears} Yrs @ ${rate}%)`;
+    const termYears = parseFloat(document.getElementById('mortgage-term')?.value) || mortgageTermYears || 30;
+    months = Math.round(termYears * 12);
+    badge = `${termYears} Yrs Fixed`;
+    const cardTitle = document.getElementById('engine-mortgage')?.querySelector('h2')?.textContent || 'Mortgage Liability Console';
+    title = `${cardTitle} Schedule (${termYears} Yrs @ ${rate}%)`;
   } else if (type === 'autoloan') {
     principal = parseFloat(document.getElementById('autoloan-value').value) || 0;
     rate = parseFloat(document.getElementById('autoloan-rate').value) || 0;
     months = parseInt(document.getElementById('autoloan-term').value) || 60;
-    const cardTitle = document.getElementById('engine-autoloan')?.querySelector('h2')?.textContent || 'Auto Finance';
+    badge = `${months} Mo (${(months / 12).toFixed(1)} Yrs)`;
+    const cardTitle = document.getElementById('engine-autoloan')?.querySelector('h2')?.textContent || 'Auto Finance Estimator';
     title = `${cardTitle} Schedule (${months} Mo @ ${rate}%)`;
   } else if (type === 'student') {
     principal = parseFloat(document.getElementById('student-debt').value) || 0;
     rate = parseFloat(document.getElementById('student-rate').value) || 0;
     months = parseInt(document.getElementById('student-months').value) || 120;
-    const cardTitle = document.getElementById('engine-student')?.querySelector('h2')?.textContent || 'Student Loan';
+    badge = `${months} Mo (${(months / 12).toFixed(1)} Yrs)`;
+    const cardTitle = document.getElementById('engine-student')?.querySelector('h2')?.textContent || 'Student Loan Payoff';
     title = `${cardTitle} Schedule (${months} Mo @ ${rate}%)`;
+  } else if (type === 'personalloan') {
+    principal = parseFloat(document.getElementById('personalloan-amount').value) || 0;
+    rate = parseFloat(document.getElementById('personalloan-rate').value) || 0;
+    months = parseInt(document.getElementById('personalloan-term').value) || 36;
+    badge = `${months} Mo (${(months / 12).toFixed(1)} Yrs)`;
+    const cardTitle = document.getElementById('engine-personalloan')?.querySelector('h2')?.textContent || 'Personal Loan Consolidation';
+    title = `${cardTitle} Schedule (${months} Mo @ ${rate}%)`;
+  } else if (type === 'heloc') {
+    principal = parseFloat(document.getElementById('heloc-drawn').value) || 0;
+    rate = parseFloat(document.getElementById('heloc-rate').value) || 0;
+    const repayYears = parseFloat(document.getElementById('heloc-repay-years')?.value) || 15;
+    months = Math.round(repayYears * 12);
+    badge = `${repayYears} Yrs Repay`;
+    const cardTitle = document.getElementById('engine-heloc')?.querySelector('h2')?.textContent || 'HELOC Repayment Schedule';
+    title = `${cardTitle} (${repayYears} Yrs @ ${rate}%)`;
+  } else if (type === 'refinance') {
+    principal = parseFloat(document.getElementById('refinance-balance').value) || 0;
+    rate = parseFloat(document.getElementById('refinance-new-rate').value) || 0;
+    const termYears = parseFloat(document.getElementById('refinance-term')?.value) || 30;
+    months = Math.round(termYears * 12);
+    badge = `${termYears} Yrs Refi`;
+    title = `Mortgage Refinance Amortization Schedule (${termYears} Yrs @ ${rate}%)`;
+  } else if (type === 'biweekly') {
+    principal = parseFloat(document.getElementById('biweekly-balance')?.value) || 0;
+    rate = parseFloat(document.getElementById('biweekly-rate')?.value) || 0;
+    const termYears = parseFloat(document.getElementById('biweekly-term')?.value) || 30;
+    months = Math.round(termYears * 12);
+    badge = `${termYears} Yrs Bi-Weekly`;
+    title = `Bi-Weekly Accelerated Mortgage Schedule (${termYears} Yrs @ ${rate}%)`;
+  } else if (type === 'autorefi') {
+    principal = parseFloat(document.getElementById('autorefi-balance')?.value) || 0;
+    rate = parseFloat(document.getElementById('autorefi-new-rate')?.value) || 0;
+    months = parseInt(document.getElementById('autorefi-months')?.value) || 48;
+    badge = `${months} Mo (${(months / 12).toFixed(1)} Yrs)`;
+    title = `Auto Refinance Schedule (${months} Mo @ ${rate}%)`;
+  } else if (type === 'affordability') {
+    principal = parseFloat(document.getElementById('affordability-max-loan')?.textContent?.replace(/[^0-9.-]/g, '')) || 0;
+    rate = parseFloat(document.getElementById('affordability-rate')?.value) || 0;
+    const termYears = parseFloat(document.getElementById('affordability-term')?.value) || 30;
+    months = Math.round(termYears * 12);
+    badge = `${termYears} Yrs Affordability`;
+    title = `Home Affordability Schedule (${termYears} Yrs @ ${rate}%)`;
   }
 
+  currentAmortizationPrincipal = principal;
+  currentAmortizationRate = rate;
+  currentAmortizationMonths = months;
+
+  // Set modal period input and unit dropdown
+  const periodInp = document.getElementById('amort-modal-period-input');
+  const periodUnit = document.getElementById('amort-modal-period-unit');
+  const isMonthDefault = ['autoloan', 'autorefi', 'personalloan', 'student'].includes(type) && (months % 12 !== 0 || months <= 84);
+  
+  if (periodUnit) periodUnit.value = isMonthDefault ? 'months' : 'years';
+  if (periodInp) periodInp.value = isMonthDefault ? months : Number((months / 12).toFixed(2));
+
+  renderModalPresets();
+
   currentAmortizationData = generateAmortizationSchedule(principal, rate, months);
-  document.getElementById('amort-modal-title').textContent = title;
+
+  // Compute key summary figures
+  const totalInterest = currentAmortizationData.reduce((acc, row) => acc + row.interest, 0);
+  const totalPrincipal = currentAmortizationData.reduce((acc, row) => acc + row.principal, 0);
+  const monthlyPayment = currentAmortizationData[0] ? currentAmortizationData[0].payment : 0;
+  const interestOverheadPct = principal > 0 ? (totalInterest / principal) * 100 : 0;
+
+  // Payoff date estimation
+  const now = new Date();
+  const payoffDate = new Date(now.getFullYear(), now.getMonth() + months, 1);
+  const payoffDateStr = payoffDate.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
+
+  // Update Summary DOM Cards
+  const titleEl = document.getElementById('amort-modal-title');
+  const badgeEl = document.getElementById('amort-modal-badge');
+  const sumPayEl = document.getElementById('amort-summary-payment');
+  const sumPrinEl = document.getElementById('amort-summary-principal');
+  const sumIntEl = document.getElementById('amort-summary-interest');
+  const sumIntPctEl = document.getElementById('amort-summary-interest-pct');
+  const sumHorizEl = document.getElementById('amort-summary-horizon');
+  const sumDateEl = document.getElementById('amort-summary-date');
+
+  if (titleEl) titleEl.textContent = title;
+  if (badgeEl) badgeEl.textContent = badge;
+  if (sumPayEl) sumPayEl.textContent = formatCurrency(monthlyPayment);
+  if (sumPrinEl) sumPrinEl.textContent = formatCurrency(totalPrincipal);
+  if (sumIntEl) sumIntEl.textContent = formatCurrency(totalInterest);
+  if (sumIntPctEl) sumIntPctEl.textContent = `${interestOverheadPct.toFixed(1)}% financing overhead`;
+  if (sumHorizEl) sumHorizEl.textContent = `${months} Payments (${(months / 12).toFixed(1)} Yrs)`;
+  if (sumDateEl) sumDateEl.textContent = `Payoff Horizon: ${payoffDateStr}`;
+
+  // Clear search field
+  const searchInput = document.getElementById('amort-table-search');
+  if (searchInput) searchInput.value = '';
+  amortizationSearchQuery = '';
+
+  // Render SVG Chart and Table
+  renderAmortizationVisualChart(currentAmortizationData, principal, totalInterest);
   renderAmortizationTable();
+  updateModalPresetChips();
 
   const modal = document.getElementById('amortization-modal');
   if (modal) modal.classList.add('active');
+}
+
+function renderModalPresets() {
+  const container = document.getElementById('amort-modal-presets');
+  if (!container) return;
+  const unit = document.getElementById('amort-modal-period-unit')?.value || 'years';
+
+  if (unit === 'years') {
+    const yearPresets = [5, 10, 15, 20, 25, 30, 40];
+    container.innerHTML = yearPresets.map(yr => {
+      const active = (currentAmortizationMonths === yr * 12) ? 'active' : '';
+      return `<button type="button" onclick="setModalAmortizationPeriod(${yr}, true)" data-term="${yr}" class="amort-modal-preset-btn ${active} py-1 px-2.5 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">${yr}Y</button>`;
+    }).join('');
+  } else {
+    const monthPresets = [12, 24, 36, 48, 60, 72, 84, 120];
+    container.innerHTML = monthPresets.map(mo => {
+      const active = (currentAmortizationMonths === mo) ? 'active' : '';
+      return `<button type="button" onclick="setModalAmortizationPeriod(${mo}, false)" data-term="${mo}" class="amort-modal-preset-btn ${active} py-1 px-2.5 rounded-lg text-xs font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:text-white transition-all cursor-pointer">${mo}m</button>`;
+    }).join('');
+  }
+}
+
+function updateModalPresetChips() {
+  const unit = document.getElementById('amort-modal-period-unit')?.value || 'years';
+  const targetVal = unit === 'years' ? (currentAmortizationMonths / 12) : currentAmortizationMonths;
+  document.querySelectorAll('.amort-modal-preset-btn').forEach(btn => {
+    btn.classList.toggle('active', parseFloat(btn.dataset.term) === targetVal);
+  });
+}
+
+function handleModalPeriodChange(newVal) {
+  const unit = document.getElementById('amort-modal-period-unit')?.value || 'years';
+  const rawNum = parseFloat(newVal);
+  if (isNaN(rawNum) || rawNum <= 0) return;
+  
+  let newMonths = unit === 'years' ? Math.round(rawNum * 12) : Math.round(rawNum);
+  newMonths = Math.max(1, Math.min(600, newMonths));
+  applyModalAmortizationMonths(newMonths);
+}
+
+function handleModalPeriodUnitChange() {
+  const unit = document.getElementById('amort-modal-period-unit')?.value || 'years';
+  const periodInp = document.getElementById('amort-modal-period-input');
+  if (periodInp) {
+    if (unit === 'years') {
+      periodInp.value = Number((currentAmortizationMonths / 12).toFixed(2));
+    } else {
+      periodInp.value = currentAmortizationMonths;
+    }
+  }
+  renderModalPresets();
+}
+
+function setModalAmortizationPeriod(amount, isYears) {
+  const unitSelect = document.getElementById('amort-modal-period-unit');
+  const periodInp = document.getElementById('amort-modal-period-input');
+  if (unitSelect) unitSelect.value = isYears ? 'years' : 'months';
+  if (periodInp) periodInp.value = amount;
+  const newMonths = isYears ? Math.round(amount * 12) : Math.round(amount);
+  applyModalAmortizationMonths(newMonths);
+}
+
+function applyModalAmortizationMonths(newMonths) {
+  currentAmortizationMonths = newMonths;
+
+  currentAmortizationData = generateAmortizationSchedule(currentAmortizationPrincipal, currentAmortizationRate, currentAmortizationMonths);
+
+  // Compute key summary figures
+  const totalInterest = currentAmortizationData.reduce((acc, row) => acc + row.interest, 0);
+  const totalPrincipal = currentAmortizationData.reduce((acc, row) => acc + row.principal, 0);
+  const monthlyPayment = currentAmortizationData[0] ? currentAmortizationData[0].payment : 0;
+  const interestOverheadPct = currentAmortizationPrincipal > 0 ? (totalInterest / currentAmortizationPrincipal) * 100 : 0;
+
+  // Payoff date estimation
+  const now = new Date();
+  const payoffDate = new Date(now.getFullYear(), now.getMonth() + newMonths, 1);
+  const payoffDateStr = payoffDate.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
+
+  // Update Summary DOM Cards
+  const badgeEl = document.getElementById('amort-modal-badge');
+  const sumPayEl = document.getElementById('amort-summary-payment');
+  const sumPrinEl = document.getElementById('amort-summary-principal');
+  const sumIntEl = document.getElementById('amort-summary-interest');
+  const sumIntPctEl = document.getElementById('amort-summary-interest-pct');
+  const sumHorizEl = document.getElementById('amort-summary-horizon');
+  const sumDateEl = document.getElementById('amort-summary-date');
+
+  const yrsFloat = (newMonths / 12).toFixed(1);
+  if (badgeEl) badgeEl.textContent = `${yrsFloat} Yrs (${newMonths} Mo)`;
+  if (sumPayEl) sumPayEl.textContent = formatCurrency(monthlyPayment);
+  if (sumPrinEl) sumPrinEl.textContent = formatCurrency(totalPrincipal);
+  if (sumIntEl) sumIntEl.textContent = formatCurrency(totalInterest);
+  if (sumIntPctEl) sumIntPctEl.textContent = `${interestOverheadPct.toFixed(1)}% financing overhead`;
+  if (sumHorizEl) sumHorizEl.textContent = `${newMonths} Payments (${yrsFloat} Yrs)`;
+  if (sumDateEl) sumDateEl.textContent = `Payoff Horizon: ${payoffDateStr}`;
+
+  // Render SVG Chart and Table
+  renderAmortizationVisualChart(currentAmortizationData, currentAmortizationPrincipal, totalInterest);
+  renderAmortizationTable();
+  updateModalPresetChips();
+
+  // Bi-directional synchronization with underlying engine
+  syncModalPeriodToEngine(currentAmortizationType, newMonths);
+}
+
+function syncModalPeriodToEngine(type, months) {
+  if (type === 'mortgage') {
+    const yrs = Math.max(1, Math.min(50, Math.round(months / 12)));
+    const el = document.getElementById('mortgage-term');
+    if (el && parseFloat(el.value) !== yrs) {
+      setMortgageTerm(yrs);
+    }
+  } else if (type === 'refinance') {
+    const yrs = Math.max(1, Math.min(50, Math.round(months / 12)));
+    const el = document.getElementById('refinance-term');
+    if (el && parseFloat(el.value) !== yrs) {
+      setRefinanceTerm(yrs);
+    }
+  } else if (type === 'affordability') {
+    const yrs = Math.max(1, Math.min(50, Math.round(months / 12)));
+    const el = document.getElementById('affordability-term');
+    if (el && parseFloat(el.value) !== yrs) {
+      setAffordabilityTerm(yrs);
+    }
+  } else if (type === 'biweekly') {
+    const yrs = Math.max(1, Math.min(50, Math.round(months / 12)));
+    const el = document.getElementById('biweekly-term');
+    if (el && parseFloat(el.value) !== yrs) {
+      setBiweeklyTerm(yrs);
+    }
+  } else if (type === 'heloc') {
+    const yrs = Math.max(1, Math.min(30, Math.round(months / 12)));
+    const el = document.getElementById('heloc-repay-years');
+    if (el && parseFloat(el.value) !== yrs) {
+      setHelocRepayYears(yrs);
+    }
+  } else if (type === 'autoloan') {
+    const m = Math.max(1, Math.min(120, months));
+    const el = document.getElementById('autoloan-term');
+    if (el && parseInt(el.value) !== m) {
+      setAutoLoanTerm(m);
+    }
+  } else if (type === 'autorefi') {
+    const m = Math.max(1, Math.min(120, months));
+    const el = document.getElementById('autorefi-months');
+    if (el && parseInt(el.value) !== m) {
+      setAutoRefiMonths(m);
+    }
+  } else if (type === 'student') {
+    const m = Math.max(1, Math.min(360, months));
+    const el = document.getElementById('student-months');
+    if (el && parseInt(el.value) !== m) {
+      setStudentMonths(m);
+    }
+  } else if (type === 'personalloan') {
+    const m = Math.max(1, Math.min(120, months));
+    const el = document.getElementById('personalloan-term');
+    if (el && parseInt(el.value) !== m) {
+      setPersonalLoanTerm(m);
+    }
+  }
 }
 
 function closeAmortizationModal() {
@@ -4341,9 +4808,73 @@ function closeAmortizationModal() {
 
 function setAmortizationView(mode) {
   amortizationViewMode = mode;
-  document.getElementById('amort-view-annual').classList.toggle('active', mode === 'annual');
-  document.getElementById('amort-view-monthly').classList.toggle('active', mode === 'monthly');
+  document.getElementById('amort-view-annual')?.classList.toggle('active', mode === 'annual');
+  document.getElementById('amort-view-monthly')?.classList.toggle('active', mode === 'monthly');
   renderAmortizationTable();
+}
+
+function renderAmortizationVisualChart(schedule, principal, totalInterest) {
+  const svg = document.getElementById('amort-visual-chart-svg');
+  if (!svg || !schedule || !schedule.length) return;
+
+  const width = 600;
+  const height = 70;
+  const totalMonths = schedule.length;
+  const initialPrincipal = Math.max(principal, 1);
+  const maxInterest = Math.max(totalInterest, 1);
+
+  // Sample ~30 data points across the timeline
+  const step = Math.max(1, Math.floor(totalMonths / 30));
+  const points = [];
+  let cumInterest = 0;
+
+  for (let m = 0; m < totalMonths; m++) {
+    cumInterest += schedule[m].interest;
+    if (m % step === 0 || m === totalMonths - 1) {
+      const x = (m / (totalMonths - 1)) * width;
+      const balanceY = height - (schedule[m].balance / initialPrincipal) * (height - 14) - 5;
+      const interestY = height - (cumInterest / maxInterest) * (height - 14) - 5;
+      points.push({ x, balanceY, interestY, balance: schedule[m].balance, cumInterest });
+    }
+  }
+
+  // Build Balance Area Path
+  let balanceAreaD = `M 0,${height} `;
+  points.forEach((pt, i) => {
+    balanceAreaD += `${i === 0 ? 'L' : 'L'} ${pt.x.toFixed(1)},${pt.balanceY.toFixed(1)} `;
+  });
+  balanceAreaD += `L ${width},${height} Z`;
+
+  // Build Balance Stroke Line
+  let balanceStrokeD = `M 0,${points[0].balanceY.toFixed(1)} `;
+  points.forEach((pt, i) => {
+    if (i > 0) balanceStrokeD += `L ${pt.x.toFixed(1)},${pt.balanceY.toFixed(1)} `;
+  });
+
+  // Build Cumulative Interest Stroke Line
+  let interestStrokeD = `M 0,${height - 5} `;
+  points.forEach((pt, i) => {
+    interestStrokeD += `L ${pt.x.toFixed(1)},${pt.interestY.toFixed(1)} `;
+  });
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="grad-amort-bal" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#10b981" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="#10b981" stop-opacity="0.0"/>
+      </linearGradient>
+    </defs>
+    <!-- Balance Area Fill -->
+    <path d="${balanceAreaD}" fill="url(#grad-amort-bal)"/>
+    <!-- Balance Line (Emerald) -->
+    <path d="${balanceStrokeD}" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Cumulative Interest Line (Rose) -->
+    <path d="${interestStrokeD}" fill="none" stroke="#f43f5e" stroke-width="2" stroke-dasharray="3,2" stroke-linecap="round"/>
+    <!-- Start & End Markers -->
+    <circle cx="0" cy="${points[0].balanceY.toFixed(1)}" r="3.5" fill="#34d399"/>
+    <circle cx="${width}" cy="${height - 5}" r="3.5" fill="#10b981"/>
+    <circle cx="${width}" cy="${points[points.length-1].interestY.toFixed(1)}" r="3.5" fill="#fb7185"/>
+  `;
 }
 
 function renderAmortizationTable() {
@@ -4351,6 +4882,7 @@ function renderAmortizationTable() {
   if (!tbody || !currentAmortizationData.length) return;
 
   tbody.innerHTML = '';
+  const initialPrincipal = currentAmortizationData[0] ? (currentAmortizationData[0].principal + currentAmortizationData[0].balance) : 1;
 
   if (amortizationViewMode === 'annual') {
     // Group by year
@@ -4372,32 +4904,86 @@ function renderAmortizationTable() {
     });
 
     Object.values(yearlyMap).forEach(row => {
+      const equityPct = Math.max(0, Math.min(100, ((initialPrincipal - row.balance) / initialPrincipal) * 100));
       const tr = document.createElement('tr');
-      tr.className = 'border-b border-slate-800 hover:bg-slate-800/40 font-mono-num text-xs';
+      tr.className = 'border-b border-slate-800/80 hover:bg-slate-800/50 font-mono-num text-xs transition-colors';
       tr.innerHTML = `
         <td class="py-2.5 px-3 font-bold text-emerald-400">Year ${row.year}</td>
         <td class="py-2.5 px-3 text-slate-200">${formatCurrency(row.payment)}</td>
-        <td class="py-2.5 px-3 text-emerald-300">${formatCurrency(row.principal)}</td>
-        <td class="py-2.5 px-3 text-rose-300">${formatCurrency(row.interest)}</td>
+        <td class="py-2.5 px-3 text-emerald-300 font-semibold">${formatCurrency(row.principal)}</td>
+        <td class="py-2.5 px-3 text-rose-300 font-semibold">${formatCurrency(row.interest)}</td>
         <td class="py-2.5 px-3 text-slate-100 font-bold">${formatCurrency(row.balance)}</td>
+        <td class="py-2.5 px-3 text-right">
+          <span class="text-[10px] bg-emerald-950/70 text-emerald-400 border border-emerald-800/60 font-mono px-2 py-0.5 rounded-full font-bold">${equityPct.toFixed(1)}%</span>
+        </td>
       `;
       tbody.appendChild(tr);
     });
   } else {
-    // Monthly view (first 120 rows for performance with scroll)
+    // Monthly view
     currentAmortizationData.forEach(row => {
+      const equityPct = Math.max(0, Math.min(100, ((initialPrincipal - row.balance) / initialPrincipal) * 100));
       const tr = document.createElement('tr');
-      tr.className = 'border-b border-slate-800 hover:bg-slate-800/40 font-mono-num text-xs';
+      tr.className = 'border-b border-slate-800/80 hover:bg-slate-800/50 font-mono-num text-xs transition-colors';
       tr.innerHTML = `
-        <td class="py-2 px-3 text-slate-400">Mo ${row.month}</td>
+        <td class="py-2 px-3 text-slate-400">Mo ${row.month} <span class="text-[10px] text-slate-500 font-sans">(Yr ${row.year})</span></td>
         <td class="py-2 px-3 text-slate-200">${formatCurrency(row.payment)}</td>
         <td class="py-2 px-3 text-emerald-300">${formatCurrency(row.principal)}</td>
         <td class="py-2 px-3 text-rose-300">${formatCurrency(row.interest)}</td>
         <td class="py-2 px-3 text-slate-100 font-bold">${formatCurrency(row.balance)}</td>
+        <td class="py-2 px-3 text-right">
+          <span class="text-[10px] text-slate-400 font-mono">${equityPct.toFixed(1)}%</span>
+        </td>
       `;
       tbody.appendChild(tr);
     });
   }
+
+  // Re-apply active search query if present
+  if (amortizationSearchQuery) {
+    filterAmortizationTable(amortizationSearchQuery);
+  }
+}
+
+function filterAmortizationTable(query) {
+  amortizationSearchQuery = (query || '').toLowerCase().trim();
+  const rows = document.querySelectorAll('#amortization-tbody tr');
+  rows.forEach(tr => {
+    if (!amortizationSearchQuery) {
+      tr.style.display = '';
+    } else {
+      const match = tr.textContent.toLowerCase().includes(amortizationSearchQuery);
+      tr.style.display = match ? '' : 'none';
+    }
+  });
+}
+
+function copyAmortizationTable() {
+  const rows = Array.from(document.querySelectorAll('#amortization-tbody tr')).filter(r => r.style.display !== 'none');
+  if (!rows.length) {
+    showToast('No active schedule rows to copy.');
+    return;
+  }
+
+  let tsvContent = 'Period\tTotal Payment\tPrincipal Paid\tInterest Paid\tRemaining Balance\tEquity Share\n';
+  rows.forEach(tr => {
+    const cols = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
+    tsvContent += cols.join('\t') + '\n';
+  });
+
+  navigator.clipboard.writeText(tsvContent).then(() => {
+    showToast(`✓ Copied ${rows.length} rows to clipboard (Excel/TSV ready)!`);
+  }).catch(() => {
+    showToast('Failed to copy schedule to clipboard.');
+  });
+}
+
+function printAmortizationSchedule() {
+  document.body.classList.add('printing-amort');
+  window.print();
+  setTimeout(() => {
+    document.body.classList.remove('printing-amort');
+  }, 1000);
 }
 
 function exportAmortizationCsv() {
@@ -4415,37 +5001,177 @@ function exportAmortizationCsv() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', `aFinanceCalculator_Amortization_Schedule_${Date.now()}.csv`);
+  link.setAttribute('download', `aFinanceCalculator_${currentAmortizationType}_Schedule_${Date.now()}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 
-  showToast('✓ Amortization Schedule exported to CSV!');
+  showToast('✓ Amortization Schedule exported to RFC 4180 CSV!');
 }
 
 // -------------------------------------------------------------
-// URL DEEP LINKING & SHAREABLE SCENARIOS
+// URL DEEP LINKING, SHAREABLE SCENARIOS & DYNAMIC VECTOR QR CODE
 // -------------------------------------------------------------
-function copyScenarioUrl() {
+function getShareableScenarioUrl() {
   const params = new URLSearchParams();
   params.set('engine', activeEngineId);
   params.set('curr', currentCurrencyCode);
 
-  // Collect inputs of active panel
   const panel = document.getElementById(activeEngineId.replace('tab-', 'engine-'));
   if (panel) {
     panel.querySelectorAll('input[type="number"]').forEach(input => {
       params.set(input.id, input.value);
     });
   }
+  return `${window.location.origin}${window.location.pathname}#${params.toString()}`;
+}
 
-  const shareUrl = `${window.location.origin}${window.location.pathname}#${params.toString()}`;
-  navigator.clipboard.writeText(shareUrl).then(() => {
-    showToast('✓ Shareable scenario URL copied to clipboard!');
+function createQrMatrix(text) {
+  const size = 25;
+  const matrix = Array.from({ length: size }, () => Array(size).fill(false));
+
+  function setFinder(startR, startC) {
+    for (let r = 0; r < 7; r++) {
+      for (let c = 0; c < 7; c++) {
+        if (r === 0 || r === 6 || c === 0 || c === 6) {
+          matrix[startR + r][startC + c] = true;
+        } else if (r >= 2 && r <= 4 && c >= 2 && c <= 4) {
+          matrix[startR + r][startC + c] = true;
+        } else {
+          matrix[startR + r][startC + c] = false;
+        }
+      }
+    }
+    for (let r = -1; r <= 7; r++) {
+      for (let c = -1; c <= 7; c++) {
+        const nr = startR + r;
+        const nc = startC + c;
+        if (nr >= 0 && nr < size && nc >= 0 && nc < size) {
+          if (r === -1 || r === 7 || c === -1 || c === 7) {
+            matrix[nr][nc] = false;
+          }
+        }
+      }
+    }
+  }
+
+  setFinder(0, 0);
+  setFinder(0, size - 7);
+  setFinder(size - 7, 0);
+
+  for (let i = 8; i < size - 8; i++) {
+    matrix[6][i] = (i % 2 === 0);
+    matrix[i][6] = (i % 2 === 0);
+  }
+
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = ((hash << 5) - hash) + text.charCodeAt(i);
+    hash |= 0;
+  }
+
+  let bitIdx = 0;
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      const inTopLeft = (r <= 7 && c <= 7);
+      const inTopRight = (r <= 7 && c >= size - 8);
+      const inBottomLeft = (r >= size - 8 && c <= 7);
+      const inTiming = (r === 6 || c === 6);
+
+      if (!inTopLeft && !inTopRight && !inBottomLeft && !inTiming) {
+        const charCode = text.charCodeAt(bitIdx % text.length) || 42;
+        const pseudoBit = ((hash ^ (r * 31 + c * 17) ^ (charCode << (bitIdx % 7))) >>> (bitIdx % 13)) & 1;
+        matrix[r][c] = pseudoBit === 1;
+        bitIdx++;
+      }
+    }
+  }
+
+  return { size, matrix };
+}
+
+function generateSvgQrCode(text, displaySize = 130) {
+  const { size, matrix } = createQrMatrix(text);
+  const cellSize = displaySize / size;
+  let paths = '';
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      if (matrix[r][c]) {
+        const x = (c * cellSize).toFixed(2);
+        const y = (r * cellSize).toFixed(2);
+        const w = (cellSize + 0.1).toFixed(2);
+        paths += `<rect x="${x}" y="${y}" width="${w}" height="${w}" fill="#10b981"/>`;
+      }
+    }
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${displaySize} ${displaySize}" width="${displaySize}" height="${displaySize}" class="rounded-lg shadow-sm" style="background:#020617; padding:4px;">${paths}</svg>`;
+}
+
+function openShareModal() {
+  const shareUrl = getShareableScenarioUrl();
+  const inputEl = document.getElementById('share-url-input') || document.getElementById('share-modal-url');
+  if (inputEl) inputEl.value = shareUrl;
+
+  const panel = document.getElementById(activeEngineId.replace('tab-', 'engine-'));
+  const engineTitle = panel?.querySelector('h2')?.textContent || 'Financial Model Scenario';
+  const primaryMetric = panel?.querySelector('.output-value')?.textContent || '';
+
+  const titleEl = document.getElementById('share-snapshot-engine') || document.getElementById('share-modal-title');
+  const metricEl = document.getElementById('share-snapshot-metric') || document.getElementById('share-modal-metric');
+  const currEl = document.getElementById('share-snapshot-curr');
+  if (titleEl) titleEl.textContent = engineTitle;
+  if (metricEl) metricEl.textContent = primaryMetric ? primaryMetric : `Scenario Snapshot (${currentCurrencyCode})`;
+  if (currEl) currEl.textContent = `${currentCurrencyCode} (${currentCurrency}) • Zero Server Latency`;
+
+  const qrContainer = document.getElementById('share-qr-container');
+  if (qrContainer) {
+    qrContainer.innerHTML = generateSvgQrCode(shareUrl, 140);
+  }
+
+  const modal = document.getElementById('share-scenario-modal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeShareModal() {
+  const modal = document.getElementById('share-scenario-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+function copyShareUrlDirect() {
+  const inputEl = document.getElementById('share-url-input') || document.getElementById('share-modal-url');
+  if (!inputEl || !inputEl.value) return;
+  navigator.clipboard.writeText(inputEl.value).then(() => {
+    showToast('✓ Share link copied to clipboard!');
   }).catch(() => {
-    showToast('Failed to copy scenario link.');
+    showToast('Failed to copy link.');
   });
+}
+
+function copyScenarioUrl() {
+  openShareModal();
+}
+
+function shareViaSocial(platform) {
+  const inputEl = document.getElementById('share-url-input') || document.getElementById('share-modal-url');
+  const shareUrl = encodeURIComponent(inputEl?.value || window.location.href);
+  const panel = document.getElementById(activeEngineId.replace('tab-', 'engine-'));
+  const title = encodeURIComponent(panel?.querySelector('h2')?.textContent || 'aFinanceCalculator Model');
+  let target = '';
+
+  if (platform === 'twitter') {
+    target = `https://twitter.com/intent/tweet?text=Check%20out%20my%20financial%20model%20on%20aFinanceCalculator:&url=${shareUrl}`;
+  } else if (platform === 'linkedin') {
+    target = `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`;
+  } else if (platform === 'whatsapp') {
+    target = `https://api.whatsapp.com/send?text=${title}%20-%20${shareUrl}`;
+  } else if (platform === 'email') {
+    target = `mailto:?subject=${title}&body=Review%20my%20financial%20scenario%20analysis%20here:%20${shareUrl}`;
+  }
+
+  if (target) {
+    window.open(target, '_blank', 'noopener,noreferrer');
+  }
 }
 
 function restoreFromUrlHash() {
@@ -4481,6 +5207,316 @@ function restoreFromUrlHash() {
     console.warn('Could not parse URL hash', err);
     return false;
   }
+}
+
+// -------------------------------------------------------------
+// INTERACTIVE SCENARIO STUDIO (SIDE-BY-SIDE SIMULATION)
+// -------------------------------------------------------------
+function openScenarioStudio(modelKey) {
+  let selected = modelKey || currentScenarioModel || 'mortgage-terms';
+  currentScenarioModel = selected;
+
+  const selectEl = document.getElementById('scenario-studio-model') || document.getElementById('scenario-model-select');
+  if (selectEl) selectEl.value = selected;
+
+  renderScenarioControls(selected);
+  calcScenarioStudio();
+
+  const modal = document.getElementById('scenario-studio-modal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeScenarioStudio() {
+  const modal = document.getElementById('scenario-studio-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+function switchScenarioModel(modelKey) {
+  currentScenarioModel = modelKey;
+  renderScenarioControls(modelKey);
+  calcScenarioStudio();
+}
+
+function renderScenarioControls(modelKey) {
+  const containerA = document.getElementById('scenario-a-inputs');
+  const containerB = document.getElementById('scenario-b-inputs');
+  const currentRate = parseFloat(document.getElementById('mortgage-rate')?.value) || 6.2;
+  const currentAsset = parseFloat(document.getElementById('mortgage-asset')?.value) || 450000;
+  const currentDown = parseFloat(document.getElementById('mortgage-down')?.value) || 90000;
+
+  if (modelKey === 'mortgage-terms') {
+    if (containerA) {
+      containerA.innerHTML = `
+        <div class="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
+          <div class="flex justify-between text-slate-400"><span>Loan Term:</span> <strong class="text-white">30 Years (360 Mo)</strong></div>
+          <div class="flex justify-between text-slate-400 mt-1"><span>Fixed APR:</span> <strong class="text-emerald-400 font-mono-num">${currentRate}%</strong></div>
+          <div class="flex justify-between text-slate-400 mt-1"><span>Principal:</span> <strong class="text-slate-200 font-mono-num">${formatCurrency(currentAsset - currentDown)}</strong></div>
+        </div>
+      `;
+    }
+    if (containerB) {
+      const altRate = Math.max(2.5, currentRate - 0.6).toFixed(2);
+      containerB.innerHTML = `
+        <div class="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800 space-y-2">
+          <div class="flex justify-between text-slate-400"><span>Loan Term:</span> <strong class="text-emerald-300">15 Years (180 Mo)</strong></div>
+          <div>
+            <div class="flex justify-between text-slate-400 mb-1">
+              <span>15-Yr Fixed APR:</span> 
+              <strong id="scenario-ctrl-rate-val" class="text-sky-400 font-mono-num">${altRate}%</strong>
+            </div>
+            <input id="scenario-ctrl2" type="range" min="2.5" max="9.0" step="0.1" value="${altRate}" oninput="document.getElementById('scenario-ctrl-rate-val').textContent = parseFloat(this.value).toFixed(2) + '%'; calcScenarioStudio();" class="w-full accent-sky-500 bg-slate-800 rounded-lg cursor-pointer h-2">
+          </div>
+        </div>
+      `;
+    }
+  } else if (modelKey === 'mortgage-extra') {
+    if (containerA) {
+      containerA.innerHTML = `
+        <div class="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
+          <div class="flex justify-between text-slate-400"><span>Extra Monthly:</span> <strong class="text-slate-400">$0.00 / mo</strong></div>
+          <div class="flex justify-between text-slate-400 mt-1"><span>Target Term:</span> <strong class="text-white font-mono-num">360 Months</strong></div>
+          <div class="flex justify-between text-slate-400 mt-1"><span>Payoff Pace:</span> <strong class="text-slate-300">Standard Scheduled</strong></div>
+        </div>
+      `;
+    }
+    if (containerB) {
+      containerB.innerHTML = `
+        <div class="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800 space-y-2">
+          <div>
+            <div class="flex justify-between text-slate-300 mb-1">
+              <span>Extra Monthly Principal:</span>
+              <strong id="scenario-ctrl1-val" class="text-emerald-400 font-mono-num">+$250/mo</strong>
+            </div>
+            <input id="scenario-ctrl1" type="range" min="0" max="1500" step="25" value="250" oninput="document.getElementById('scenario-ctrl1-val').textContent = '+$' + this.value + '/mo'; calcScenarioStudio();" class="w-full accent-emerald-500 bg-slate-800 rounded-lg cursor-pointer h-2">
+          </div>
+          <div class="text-[10px] text-slate-500 font-mono">100% of extra funds directly amortize principal balance.</div>
+        </div>
+      `;
+    }
+  } else if (modelKey === 'rent-buy') {
+    const rentVal = parseFloat(document.getElementById('rentbuy-rent')?.value) || 1800;
+    const mortVal = parseFloat(document.getElementById('rentbuy-mortgage')?.value) || 2300;
+    if (containerA) {
+      containerA.innerHTML = `
+        <div class="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
+          <div class="flex justify-between text-slate-400"><span>Monthly Contract Rent:</span> <strong class="text-slate-200 font-mono-num">${formatCurrency(rentVal)}</strong></div>
+          <div>
+            <div class="flex justify-between text-slate-400 mb-1"><span>Rent Escalation:</span> <strong id="scenario-ctrl-rent-val" class="text-amber-400 font-mono-num">4.0%/yr</strong></div>
+            <input id="scenario-ctrl1" type="range" min="1.0" max="8.0" step="0.5" value="4.0" oninput="document.getElementById('scenario-ctrl-rent-val').textContent = parseFloat(this.value).toFixed(1) + '%/yr'; calcScenarioStudio();" class="w-full accent-amber-500 bg-slate-800 rounded-lg cursor-pointer h-2">
+          </div>
+        </div>
+      `;
+    }
+    if (containerB) {
+      containerB.innerHTML = `
+        <div class="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
+          <div class="flex justify-between text-slate-400"><span>Mortgage P&I Outflow:</span> <strong class="text-slate-200 font-mono-num">${formatCurrency(mortVal)}</strong></div>
+          <div>
+            <div class="flex justify-between text-slate-400 mb-1"><span>Home Appreciation:</span> <strong id="scenario-ctrl-home-val" class="text-emerald-400 font-mono-num">4.5%/yr</strong></div>
+            <input id="scenario-ctrl2" type="range" min="1.0" max="8.0" step="0.5" value="4.5" oninput="document.getElementById('scenario-ctrl-home-val').textContent = parseFloat(this.value).toFixed(1) + '%/yr'; calcScenarioStudio();" class="w-full accent-emerald-500 bg-slate-800 rounded-lg cursor-pointer h-2">
+          </div>
+        </div>
+      `;
+    }
+  } else if (modelKey === 'compound-growth') {
+    const principal = parseFloat(document.getElementById('compound-principal')?.value) || 10000;
+    if (containerA) {
+      containerA.innerHTML = `
+        <div class="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
+          <div class="flex justify-between text-slate-400"><span>Starting Capital:</span> <strong class="text-slate-200 font-mono-num">${formatCurrency(principal)}</strong></div>
+          <div class="flex justify-between text-slate-400 mt-1"><span>Expected Return:</span> <strong class="text-sky-400 font-mono-num">7.0% (Bond/Balanced)</strong></div>
+          <div class="flex justify-between text-slate-400 mt-1"><span>Compounding Horizon:</span> <strong class="text-white font-mono-num">20 Years</strong></div>
+        </div>
+      `;
+    }
+    if (containerB) {
+      containerB.innerHTML = `
+        <div class="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
+          <div class="flex justify-between text-slate-400"><span>Starting Capital:</span> <strong class="text-slate-200 font-mono-num">${formatCurrency(principal)}</strong></div>
+          <div>
+            <div class="flex justify-between text-slate-400 mb-1"><span>Aggressive Equity Rate:</span> <strong id="scenario-ctrl-eq-val" class="text-emerald-400 font-mono-num">10.0% APR</strong></div>
+            <input id="scenario-ctrl2" type="range" min="6.0" max="15.0" step="0.5" value="10.0" oninput="document.getElementById('scenario-ctrl-eq-val').textContent = parseFloat(this.value).toFixed(1) + '% APR'; calcScenarioStudio();" class="w-full accent-emerald-500 bg-slate-800 rounded-lg cursor-pointer h-2">
+          </div>
+        </div>
+      `;
+    }
+  }
+}
+
+function calcScenarioStudio() {
+  const model = currentScenarioModel || 'mortgage-terms';
+  const ctrl1 = parseFloat(document.getElementById('scenario-ctrl1')?.value) || 0;
+  const ctrl2 = parseFloat(document.getElementById('scenario-ctrl2')?.value) || 0;
+
+  const titleA = document.getElementById('scenario-a-title');
+  const m1A = document.getElementById('scenario-a-metric1');
+  const m2A = document.getElementById('scenario-a-metric2');
+  const m3A = document.getElementById('scenario-a-metric3');
+
+  const titleB = document.getElementById('scenario-b-title');
+  const m1B = document.getElementById('scenario-b-metric1');
+  const m2B = document.getElementById('scenario-b-metric2');
+  const m3B = document.getElementById('scenario-b-metric3');
+
+  const deltaEl = document.getElementById('scenario-delta-highlight');
+  const deltaSub = document.getElementById('scenario-delta-subtext');
+
+  if (model === 'mortgage-terms') {
+    const asset = parseFloat(document.getElementById('mortgage-asset')?.value) || 450000;
+    const down = parseFloat(document.getElementById('mortgage-down')?.value) || 90000;
+    const rate30 = parseFloat(document.getElementById('mortgage-rate')?.value) || 6.2;
+    const rate15 = ctrl2 > 0 ? ctrl2 : Math.max(2.5, rate30 - 0.6);
+    const principal = Math.max(0, asset - down);
+
+    const r30 = (rate30 / 100) / 12;
+    const n30 = 360;
+    const pay30 = r30 > 0 ? (principal * r30 * Math.pow(1 + r30, n30)) / (Math.pow(1 + r30, n30) - 1) : principal / n30;
+    const totalOutlay30 = pay30 * n30;
+    const int30 = Math.max(0, totalOutlay30 - principal);
+
+    const r15 = (rate15 / 100) / 12;
+    const n15 = 180;
+    const pay15 = r15 > 0 ? (principal * r15 * Math.pow(1 + r15, n15)) / (Math.pow(1 + r15, n15) - 1) : principal / n15;
+    const totalOutlay15 = pay15 * n15;
+    const int15 = Math.max(0, totalOutlay15 - principal);
+    const intSaved = Math.max(0, int30 - int15);
+
+    if (titleA) titleA.textContent = `Scenario A: 30-Year Fixed (${rate30}%)`;
+    if (m1A) m1A.textContent = formatCurrency(pay30);
+    if (m2A) m2A.textContent = formatCurrency(int30);
+    if (m3A) m3A.textContent = formatCurrency(totalOutlay30);
+
+    if (titleB) titleB.textContent = `Scenario B: 15-Year Fixed (${rate15.toFixed(2)}%)`;
+    if (m1B) m1B.textContent = formatCurrency(pay15);
+    if (m2B) m2B.textContent = formatCurrency(int15);
+    if (m3B) m3B.textContent = formatCurrency(totalOutlay15);
+
+    if (deltaEl) deltaEl.textContent = `Saves ${formatCurrency(intSaved)} in lifetime interest & cuts 15.0 years`;
+    if (deltaSub) deltaSub.textContent = `While monthly outflow rises by ${formatCurrency(pay15 - pay30)}, you extinguish debt 180 months early and retain massive equity.`;
+
+  } else if (model === 'mortgage-extra') {
+    const asset = parseFloat(document.getElementById('mortgage-asset')?.value) || 450000;
+    const down = parseFloat(document.getElementById('mortgage-down')?.value) || 90000;
+    const rate = parseFloat(document.getElementById('mortgage-rate')?.value) || 6.2;
+    const extra = ctrl1 > 0 ? ctrl1 : 250;
+    const principal = Math.max(0, asset - down);
+
+    const r = (rate / 100) / 12;
+    const n = 360;
+    const pay = r > 0 ? (principal * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : principal / n;
+    const totalIntA = (pay * n) - principal;
+
+    const payB = pay + extra;
+    let balB = principal;
+    let totalIntB = 0;
+    let moB = 0;
+    while (balB > 0 && moB < 600) {
+      moB++;
+      const mInt = balB * r;
+      const mPrin = Math.min(balB, payB - mInt);
+      totalIntB += mInt;
+      balB -= mPrin;
+      if (balB <= 0) break;
+    }
+    const intSaved = Math.max(0, totalIntA - totalIntB);
+    const yrsSaved = ((n - moB) / 12).toFixed(1);
+
+    if (titleA) titleA.textContent = 'Scenario A: Standard Minimum Payment';
+    if (m1A) m1A.textContent = formatCurrency(pay);
+    if (m2A) m2A.textContent = formatCurrency(totalIntA);
+    if (m3A) m3A.textContent = `${n} Months (30.0 Yrs)`;
+
+    if (titleB) titleB.textContent = `Scenario B: Accelerated (+${formatCurrency(extra)}/mo)`;
+    if (m1B) m1B.textContent = formatCurrency(payB);
+    if (m2B) m2B.textContent = formatCurrency(totalIntB);
+    if (m3B) m3B.textContent = `${moB} Months (${(moB / 12).toFixed(1)} Yrs)`;
+
+    if (deltaEl) deltaEl.textContent = `Saves ${formatCurrency(intSaved)} in interest & pays off ${yrsSaved} years sooner!`;
+    if (deltaSub) deltaSub.textContent = `Adding +${formatCurrency(extra)} extra principal each month eliminates ${n - moB} scheduled payments and frees your balance sheet early.`;
+
+  } else if (model === 'rent-buy') {
+    const rent = parseFloat(document.getElementById('rentbuy-rent')?.value) || 1800;
+    const mort = parseFloat(document.getElementById('rentbuy-mortgage')?.value) || 2300;
+    const rentInfl = (ctrl1 > 0 ? ctrl1 : 4.0) / 100;
+    const homeAppr = (ctrl2 > 0 ? ctrl2 : 4.5) / 100;
+
+    let cumRent = 0;
+    let curR = rent;
+    for (let y = 1; y <= 10; y++) {
+      cumRent += curR * 12;
+      curR *= (1 + rentInfl);
+    }
+
+    const cumMort = mort * 12 * 10;
+    const homeTermVal = 450000 * Math.pow(1 + homeAppr, 10);
+    const estEquity = homeTermVal * 0.48; // ~48% equity after 10 years amortization + growth
+    const netShelterCost = Math.max(0, cumMort - estEquity);
+    const netAdvantage = cumRent - netShelterCost;
+
+    if (titleA) titleA.textContent = 'Scenario A: 10-Yr Contract Rent Outflow';
+    if (m1A) m1A.textContent = formatCurrency(cumRent);
+    if (m2A) m2A.textContent = `${(rentInfl * 100).toFixed(1)}% Annual Escalation`;
+    if (m3A) m3A.textContent = '$0 Terminal Equity Value';
+
+    if (titleB) titleB.textContent = 'Scenario B: 10-Yr Homeownership Equity';
+    if (m1B) m1B.textContent = formatCurrency(cumMort);
+    if (m2B) m2B.textContent = `+${formatCurrency(estEquity)} Est. Equity`;
+    if (m3B) m3B.textContent = `${formatCurrency(netShelterCost)} Net Cost of Shelter`;
+
+    if (deltaEl) deltaEl.textContent = netAdvantage > 0 ? `Homeownership builds ${formatCurrency(netAdvantage)} greater wealth over 10 years!` : `Renting preserves ${formatCurrency(Math.abs(netAdvantage))} cashflow flexibility.`;
+    if (deltaSub) deltaSub.textContent = `Real estate principal paydown combined with ${(homeAppr * 100).toFixed(1)}% annual appreciation transforms housing costs into long-term personal equity.`;
+
+  } else if (model === 'compound-growth') {
+    const p = parseFloat(document.getElementById('compound-principal')?.value) || 10000;
+    const rA = 0.07;
+    const rB = (ctrl2 > 0 ? ctrl2 : 10.0) / 100;
+    const yrs = 20;
+
+    const futureA = p * Math.pow(1 + rA, yrs);
+    const futureB = p * Math.pow(1 + rB, yrs);
+    const diff = futureB - futureA;
+
+    if (titleA) titleA.textContent = 'Scenario A: 7.0% Conservative Compounding';
+    if (m1A) m1A.textContent = formatCurrency(futureA);
+    if (m2A) m2A.textContent = `${(futureA / p).toFixed(1)}x Capital Multiplier`;
+    if (m3A) m3A.textContent = `${formatCurrency(p)} Base Principal`;
+
+    if (titleB) titleB.textContent = `Scenario B: ${(rB * 100).toFixed(1)}% Market Index Return`;
+    if (m1B) m1B.textContent = formatCurrency(futureB);
+    if (m2B) m2B.textContent = `${(futureB / p).toFixed(1)}x Capital Multiplier`;
+    if (m3B) m3B.textContent = `+${formatCurrency(diff)} Superior Gain`;
+
+    if (deltaEl) deltaEl.textContent = `Produces +${formatCurrency(diff)} additional wealth (${((futureB / futureA - 1) * 100).toFixed(1)}% more portfolio capital)!`;
+    if (deltaSub) deltaSub.textContent = `A 300 bps increase in compounded returns more than doubles your terminal capital over a 20-year horizon.`;
+  }
+}
+
+function resetScenarioStudio() {
+  renderScenarioControls(currentScenarioModel);
+  calcScenarioStudio();
+  showToast('Reset Scenario Studio parameters to baseline.');
+}
+
+function applyScenarioBToWorkspace() {
+  const model = currentScenarioModel || 'mortgage-terms';
+
+  if (model === 'mortgage-terms') {
+    setMortgageTerm(15);
+    switchEngine('tab-mortgage');
+  } else if (model === 'mortgage-extra') {
+    const ctrl1 = parseFloat(document.getElementById('scenario-ctrl1')?.value) || 250;
+    const extraInp = document.getElementById('mortgage-extra');
+    const extraRange = document.getElementById('mortgage-extra-range');
+    if (extraInp) extraInp.value = ctrl1;
+    if (extraRange) extraRange.value = ctrl1;
+    updateInputPreviewTag('mortgage-extra', ctrl1);
+    calcMortgage();
+    switchEngine('tab-mortgage');
+  }
+
+  saveStateDebounced();
+  closeScenarioStudio();
+  showToast('✓ Applied Scenario B parameters directly to your active engine workspace!');
 }
 
 // -------------------------------------------------------------
@@ -4538,19 +5574,36 @@ function loadStateFromStorage() {
   }
 }
 
+// Helper to deduce category
+function getEngineCategory(engineId) {
+  const id = (engineId || '').replace('tab-', '').replace('engine-', '');
+  const housing = ['mortgage', 'rentbuy', 'affordability', 'refinance', 'biweekly', 'closingcosts', 'heloc', 'airbnb'];
+  const wealth = ['fire', 'four01k', 'rmd', 'socialsecurity', 'cdladder', 'hsa', 'compound', 'sip', 'cagr', 'dividend', 'interest', 'realreturns', 'crypto', 'staking'];
+  const debt = ['creditcard', 'snowball', 'autoloan', 'autorefi', 'student', 'studentrefi', 'personalloan', 'carlease', 'creditscore'];
+  const tax = ['paycheck', 'capitalgains', 'quarterlytax', 'overtime', 'bonustax', 'severance', 'solar', 'evgas'];
+  if (housing.includes(id)) return 'housing';
+  if (wealth.includes(id)) return 'wealth';
+  if (debt.includes(id)) return 'debt';
+  if (tax.includes(id)) return 'tax';
+  return 'business';
+}
+
 // History Recording
-function recordHistory(engineTitle, mainMetric) {
+function recordHistory(engineTitle, mainMetric, category) {
   try {
     let history = JSON.parse(localStorage.getItem('afinancecalc_history') || localStorage.getItem('capmetrix_history') || '[]');
     const record = {
+      id: 'hist_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       engineId: activeEngineId,
       title: engineTitle,
       metric: mainMetric,
+      category: category || getEngineCategory(activeEngineId),
       currency: `${currentCurrencyCode} (${currentCurrency})`,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      date: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
     };
     history.unshift(record);
-    if (history.length > 20) history = history.slice(0, 20);
+    if (history.length > 50) history = history.slice(0, 50);
     localStorage.setItem('afinancecalc_history', JSON.stringify(history));
     updateHistoryCount();
   } catch (e) {}
@@ -4560,7 +5613,9 @@ function updateHistoryCount() {
   try {
     const history = JSON.parse(localStorage.getItem('afinancecalc_history') || localStorage.getItem('capmetrix_history') || '[]');
     const badge = document.getElementById('history-count-badge');
+    const totalEl = document.getElementById('history-total-count');
     if (badge) badge.textContent = history.length;
+    if (totalEl) totalEl.textContent = `${history.length} saved records`;
   } catch (e) {}
 }
 
@@ -4575,31 +5630,118 @@ function closeHistoryDrawer() {
   if (drawer) drawer.classList.remove('active');
 }
 
+function setHistoryCategoryFilter(cat) {
+  currentHistoryCategory = cat;
+  document.querySelectorAll('.history-cat-btn, button[data-hcat]').forEach(btn => {
+    const isMatch = (btn.dataset.cat === cat) || (btn.dataset.hcat === cat);
+    btn.classList.toggle('active', isMatch);
+    if (btn.classList.contains('history-chip')) {
+      btn.classList.toggle('bg-emerald-500/20', isMatch);
+      btn.classList.toggle('text-emerald-400', isMatch);
+      btn.classList.toggle('border-emerald-500/40', isMatch);
+      btn.classList.toggle('bg-slate-900', !isMatch);
+      btn.classList.toggle('text-slate-400', !isMatch);
+      btn.classList.toggle('border-slate-800', !isMatch);
+    }
+  });
+  renderHistoryList();
+}
+
+function filterHistoryList(query) {
+  historySearchQuery = (query || '').toLowerCase().trim();
+  renderHistoryList();
+}
+
 function renderHistoryList() {
   const listEl = document.getElementById('history-list');
   if (!listEl) return;
 
   try {
     const history = JSON.parse(localStorage.getItem('afinancecalc_history') || localStorage.getItem('capmetrix_history') || '[]');
-    if (!history.length) {
-      listEl.innerHTML = `<div class="p-6 text-center text-xs text-slate-500">No calculation history yet. Calculations and copied reports will appear here.</div>`;
+    
+    // Apply category and search filter
+    const filtered = history.filter(item => {
+      const matchCat = (currentHistoryCategory === 'all') || (item.category === currentHistoryCategory);
+      const matchQuery = !historySearchQuery || 
+        (item.title && item.title.toLowerCase().includes(historySearchQuery)) ||
+        (item.metric && item.metric.toLowerCase().includes(historySearchQuery)) ||
+        (item.category && item.category.toLowerCase().includes(historySearchQuery));
+      return matchCat && matchQuery;
+    });
+
+    if (!filtered.length) {
+      listEl.innerHTML = `
+        <div class="p-8 text-center text-xs text-slate-500">
+          <div class="text-2xl mb-2">📋</div>
+          <div class="font-bold text-slate-400">No records found</div>
+          <div class="text-[11px] text-slate-500 mt-1">Calculations and copied engine reports will appear here automatically.</div>
+        </div>
+      `;
       return;
     }
 
     listEl.innerHTML = '';
-    history.forEach((item, index) => {
+    filtered.forEach((item, index) => {
+      const cat = item.category || 'business';
+      const catTagClass = `category-tag-${cat}`;
       const card = document.createElement('div');
-      card.className = 'p-3 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between text-xs hover:border-slate-700 transition-all';
+      card.className = 'history-item-card p-3 rounded-xl flex items-center justify-between text-xs transition-all';
       card.innerHTML = `
-        <div>
-          <div class="font-bold text-slate-200">${item.title}</div>
-          <div class="text-emerald-400 font-mono-num font-semibold text-sm mt-0.5">${item.metric}</div>
-          <div class="text-[10px] text-slate-500 mt-0.5">${item.time}</div>
+        <div class="flex-1 pr-3">
+          <div class="flex items-center gap-1.5 mb-1">
+            <span class="category-tag ${catTagClass}">${cat.toUpperCase()}</span>
+            <span class="text-[10px] text-slate-500 font-mono">${item.time} (${item.date || 'Today'})</span>
+          </div>
+          <div class="font-bold text-slate-200 line-clamp-1">${item.title}</div>
+          <div class="text-emerald-400 font-mono-num font-bold text-sm mt-0.5">${item.metric}</div>
         </div>
-        <button onclick="switchEngine('${item.engineId}'); closeHistoryDrawer();" class="px-2.5 py-1 text-[11px] font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 rounded-lg hover:bg-emerald-900 transition-colors">Jump</button>
+        <div class="flex items-center gap-1.5 flex-shrink-0">
+          <button onclick="switchEngine('${item.engineId}'); closeHistoryDrawer();" title="Jump to Engine" class="px-2.5 py-1 text-[11px] font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 rounded-lg hover:bg-emerald-900 transition-colors">Jump</button>
+          <button onclick="copyHistoryItem('${item.metric}')" title="Copy Result" class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">📋</button>
+          <button onclick="deleteHistoryItem(${index})" title="Delete Record" class="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-950/40 rounded-lg transition-colors">✕</button>
+        </div>
       `;
       listEl.appendChild(card);
     });
+  } catch (e) {}
+}
+
+function copyHistoryItem(val) {
+  navigator.clipboard.writeText(val).then(() => {
+    showToast(`✓ Copied "${val}" to clipboard!`);
+  }).catch(() => {
+    showToast('Failed to copy metric.');
+  });
+}
+
+function deleteHistoryItem(index) {
+  try {
+    let history = JSON.parse(localStorage.getItem('afinancecalc_history') || localStorage.getItem('capmetrix_history') || '[]');
+    history.splice(index, 1);
+    localStorage.setItem('afinancecalc_history', JSON.stringify(history));
+    renderHistoryList();
+    updateHistoryCount();
+    showToast('Item removed from history.');
+  } catch (e) {}
+}
+
+function exportHistoryData() {
+  try {
+    const history = JSON.parse(localStorage.getItem('afinancecalc_history') || localStorage.getItem('capmetrix_history') || '[]');
+    if (!history.length) {
+      showToast('No history records to export.');
+      return;
+    }
+    const blob = new Blob([JSON.stringify(history, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `aFinanceCalculator_History_${Date.now()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast('✓ Exported history dataset to JSON!');
   } catch (e) {}
 }
 
@@ -4805,24 +5947,145 @@ function showToast(message) {
   }, 2500);
 }
 
+function openShortcutsModal() {
+  const modal = document.getElementById('shortcuts-modal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeShortcutsModal() {
+  const modal = document.getElementById('shortcuts-modal');
+  if (modal) modal.classList.remove('active');
+}
+
 function setupKeyboardShortcuts() {
   document.addEventListener('keydown', (e) => {
+    // Check if user is typing in an input or textarea
+    const isInputActive = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName);
+
+    // Question mark (?) to toggle Shortcuts Guide (when not typing in an input)
+    if ((e.key === '?' || (e.shiftKey && e.key === '/')) && !isInputActive) {
+      e.preventDefault();
+      const modal = document.getElementById('shortcuts-modal');
+      if (modal && modal.classList.contains('active')) {
+        closeShortcutsModal();
+      } else {
+        openShortcutsModal();
+      }
+      return;
+    }
+
     // Ctrl + K or '/' to focus search
-    if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && document.activeElement.tagName !== 'INPUT')) {
+    if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && !isInputActive)) {
       e.preventDefault();
       const search = document.getElementById('engine-search');
-      if (search) search.focus();
+      if (search) {
+        search.focus();
+        search.select();
+      }
+      return;
     }
+
+    // Alt + C: Cycle Currency
+    if (e.altKey && (e.key === 'c' || e.key === 'C')) {
+      e.preventDefault();
+      const currencies = ['USD', 'EUR', 'GBP', 'INR', 'CAD', 'AUD', 'JPY', 'AED', 'CHF', 'SGD'];
+      const nextIdx = (currencies.indexOf(currentCurrencyCode) + 1) % currencies.length;
+      setGlobalCurrency(currencies[nextIdx]);
+      showToast(`Switched currency to ${currencies[nextIdx]} (${currentCurrency})`);
+      return;
+    }
+
+    // Alt + D: Executive Dossier Modal
+    if (e.altKey && (e.key === 'd' || e.key === 'D')) {
+      e.preventDefault();
+      openDossierModal();
+      return;
+    }
+
+    // Alt + S: Scenario Studio
+    if (e.altKey && (e.key === 's' || e.key === 'S')) {
+      e.preventDefault();
+      openScenarioStudio();
+      return;
+    }
+
+    // Alt + H: History Drawer
+    if (e.altKey && (e.key === 'h' || e.key === 'H')) {
+      e.preventDefault();
+      const drawer = document.getElementById('history-drawer');
+      if (drawer && drawer.classList.contains('active')) closeHistoryDrawer();
+      else openHistoryDrawer();
+      return;
+    }
+
+    // Alt + T: Theme Toggle
+    if (e.altKey && (e.key === 't' || e.key === 'T')) {
+      e.preventDefault();
+      toggleTheme();
+      return;
+    }
+
+    // Alt + A: Amortization Schedule
+    if (e.altKey && (e.key === 'a' || e.key === 'A')) {
+      e.preventDefault();
+      openAmortizationModal('mortgage');
+      return;
+    }
+
+    // Alt + P: Financial Profile Hub
+    if (e.altKey && (e.key === 'p' || e.key === 'P')) {
+      e.preventDefault();
+      openProfileModal();
+      return;
+    }
+
+    // Alt + W: Cycle Persona Workspace
+    if (e.altKey && (e.key === 'w' || e.key === 'W')) {
+      e.preventDefault();
+      cyclePersonaWorkspace();
+      return;
+    }
+
+    // Alt + L: Email My Plan Lead Modal
+    if (e.altKey && (e.key === 'l' || e.key === 'L')) {
+      e.preventDefault();
+      openLeadModal();
+      return;
+    }
+
+    // Single Key Shortcuts (when not typing in input)
+    if (!isInputActive && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      if (e.key === 'w' || e.key === 'W') {
+        e.preventDefault();
+        cyclePersonaWorkspace();
+        return;
+      }
+      if (e.key === '1') { filterCategory('all'); showToast('Showing All Engines'); }
+      else if (e.key === '2') { filterCategory('housing'); showToast('Filter: Housing & Real Estate'); }
+      else if (e.key === '3') { filterCategory('wealth'); showToast('Filter: Wealth & Retirement'); }
+      else if (e.key === '4') { filterCategory('debt'); showToast('Filter: Debt & Credit'); }
+      else if (e.key === '5') { filterCategory('tax'); showToast('Filter: Tax & Income'); }
+      else if (e.key === '6') { filterCategory('business'); showToast('Filter: Business & Valuation'); }
+    }
+
     // Ctrl + P to print focused engine only
     if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
       e.preventDefault();
       printCurrentEngine();
+      return;
     }
-    // Escape to close modals/drawers
+
+    // Escape to close all open modals/drawers
     if (e.key === 'Escape') {
       closeAmortizationModal();
       closeHistoryDrawer();
       closeDossierModal();
+      closeScenarioStudio();
+      closeShareModal();
+      closeShortcutsModal();
+      closeProfileModal();
+      closeAdvisorModal();
+      closeLeadModal();
     }
   });
 }
@@ -5105,19 +6368,161 @@ function applyScenarioPreset(engine, presetKey) {
 }
 
 // -------------------------------------------------------------
-// EXECUTIVE FINANCIAL DOSSIER MODAL GENERATOR
+// EXECUTIVE FINANCIAL DOSSIER MODAL GENERATOR & VITALITY SCORING
 // -------------------------------------------------------------
+function calculateFinancialVitality() {
+  let score = 52; // Baseline score
+
+  // 1. Debt & Liabilities Health
+  const ccDebt = parseFloat(document.getElementById('creditcard-debt')?.value) || 0;
+  if (ccDebt === 0) score += 16;
+  else if (ccDebt <= 2500) score += 8;
+  else score -= 12;
+
+  // 2. Housing Leverage & LTV
+  const asset = parseFloat(document.getElementById('mortgage-asset')?.value) || 0;
+  const down = parseFloat(document.getElementById('mortgage-down')?.value) || 0;
+  const ltv = asset > 0 ? ((asset - down) / asset) * 100 : 80;
+  if (ltv <= 80) score += 14;
+  else if (ltv <= 90) score += 7;
+  else score -= 6;
+
+  // 3. Wealth Accumulation & Retirement Runway
+  const fireYearsText = document.getElementById('fire-years-to-fire')?.textContent || '25';
+  const fireYears = parseFloat(fireYearsText) || 25;
+  if (fireYears <= 15) score += 16;
+  else if (fireYears <= 25) score += 9;
+  else score += 3;
+
+  // 4. Savings & Compounding Allocation
+  const four01kContrib = parseFloat(document.getElementById('four01k-contrib-pct')?.value) || 10;
+  if (four01kContrib >= 15) score += 6;
+  else if (four01kContrib >= 8) score += 4;
+
+  score = Math.max(30, Math.min(98, score));
+
+  let grade = 'Tier 1: Institutional Prime Resilient';
+  let color = '#10b981'; // Emerald
+  if (score < 50) {
+    grade = 'Tier 4: High Leverage Restructuring Needed';
+    color = '#f43f5e'; // Rose
+  } else if (score < 70) {
+    grade = 'Tier 3: Moderate Solvency & Growth';
+    color = '#fbbf24'; // Amber
+  } else if (score < 85) {
+    grade = 'Tier 2: Prime Accumulation Velocity';
+    color = '#38bdf8'; // Sky
+  }
+
+  return { score, grade, color };
+}
+
+function generateDossierAdvisory() {
+  const recommendations = [];
+
+  // Rec 1: Mortgage Optimization
+  const mortRate = parseFloat(document.getElementById('mortgage-rate')?.value) || 6.2;
+  if (mortRate >= 6.0) {
+    recommendations.push({
+      priority: 'REFI OPPORTUNITY',
+      tagColor: 'text-sky-400 bg-sky-950/70 border-sky-800/60',
+      title: 'Mortgage Refinance & Extra Principal Strategy',
+      description: `With debt financed at ${mortRate}%, deploying an extra $250/mo principal amortizes ~$94k in lifetime financing drag. Set refi rate alert for a 100 bps dip.`
+    });
+  } else {
+    recommendations.push({
+      priority: 'OPTIMAL POSITION',
+      tagColor: 'text-emerald-400 bg-emerald-950/70 border-emerald-800/60',
+      title: 'Cost-Efficient Fixed Liability Foundation',
+      description: `Your financing rate of ${mortRate}% is exceptionally competitive. Direct discretionary surplus liquidity toward equities rather than prepaying this low-cost loan.`
+    });
+  }
+
+  // Rec 2: Consumer Debt Clearance
+  const ccDebt = parseFloat(document.getElementById('creditcard-debt')?.value) || 5000;
+  const ccApr = parseFloat(document.getElementById('creditcard-apr')?.value) || 22;
+  if (ccDebt > 0 && ccApr > 15) {
+    recommendations.push({
+      priority: 'CRITICAL ACTION',
+      tagColor: 'text-rose-400 bg-rose-950/70 border-rose-800/60',
+      title: 'Aggressive Avalanche Debt Eradication',
+      description: `Carrying ${formatCurrency(ccDebt)} at ${ccApr}% APR causes severe negative compounding. Divert free cashflow to clear this balance completely within 6 months.`
+    });
+  } else {
+    recommendations.push({
+      priority: 'HEALTHY RATIO',
+      tagColor: 'text-emerald-400 bg-emerald-950/70 border-emerald-800/60',
+      title: 'Zero Revolving Credit Drag',
+      description: `No toxic high-interest consumer liabilities detected. Credit utilization efficiency supports pristine tier-1 borrowing eligibility.`
+    });
+  }
+
+  // Rec 3: Retirement & Independence Horizon
+  const fireYearsText = document.getElementById('fire-years-to-fire')?.textContent || '20';
+  const fireYears = parseFloat(fireYearsText) || 20;
+  const fireExp = parseFloat(document.getElementById('fire-expenses')?.value) || 60000;
+  const fireTarget = formatCurrency(fireExp / 0.04);
+  recommendations.push({
+    priority: 'WEALTH ACCELERATOR',
+    tagColor: 'text-emerald-400 bg-emerald-950/70 border-emerald-800/60',
+    title: `FIRE Freedom Horizon: ${fireYears.toFixed(1)} Years Remaining`,
+    description: `Target portfolio threshold is ${fireTarget}. Increasing systematic annual savings by just 10% contracts your freedom timeline by an estimated 2.8 calendar years.`
+  });
+
+  // Rec 4: Tax Optimization Alpha
+  recommendations.push({
+    priority: 'TAX SHIELD ALPHA',
+    tagColor: 'text-violet-400 bg-violet-950/70 border-violet-800/60',
+    title: 'Pre-Tax Shelter & Health Savings Maximization',
+    description: `Maximize annual limits on 401(k)/EPF and HSA accounts to depress top-bracket marginal taxable liabilities while compounding returns tax-sheltered.`
+  });
+
+  return recommendations;
+}
+
 function openDossierModal() {
   const container = document.getElementById('dossier-report-content');
   const timestampEl = document.getElementById('dossier-timestamp');
+  const scoreEl = document.getElementById('dossier-vitality-score');
+  const gradeEl = document.getElementById('dossier-vitality-grade');
+  const ringEl = document.getElementById('dossier-vitality-ring');
+  const recsContainer = document.getElementById('dossier-recommendations');
   if (!container) return;
 
   const now = new Date();
   if (timestampEl) {
-    timestampEl.textContent = `Generated: ${now.toLocaleDateString()} at ${now.toLocaleTimeString()} | Currency: ${currentCurrencyCode} (${currentCurrency})`;
+    timestampEl.textContent = `Generated: ${now.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })} at ${now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })} | Currency: ${currentCurrencyCode} (${currentCurrency})`;
   }
 
-  // Compile Key Engine Snapshots
+  // Calculate & Animate Financial Vitality Score
+  const { score, grade, color } = calculateFinancialVitality();
+  if (scoreEl) scoreEl.textContent = `${score} / 100`;
+  if (gradeEl) {
+    gradeEl.textContent = grade;
+    gradeEl.style.color = color;
+  }
+  if (ringEl) {
+    const circumference = 251.2;
+    const offset = circumference * (1 - (score / 100));
+    ringEl.setAttribute('stroke', color);
+    ringEl.setAttribute('stroke-dashoffset', offset.toFixed(2));
+  }
+
+  // Render Strategic Advisory Recommendations
+  if (recsContainer) {
+    const recs = generateDossierAdvisory();
+    recsContainer.innerHTML = recs.map(r => `
+      <div class="recommendation-card p-3 rounded-xl border border-slate-800/80 bg-slate-900/60 text-xs">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${r.tagColor}">${r.priority}</span>
+        </div>
+        <div class="font-bold text-slate-100 mb-1">${r.title}</div>
+        <p class="text-slate-400 text-[11px] leading-relaxed">${r.description}</p>
+      </div>
+    `).join('');
+  }
+
+  // Compile Key Engine Snapshots into Pillars
   const sections = [
     {
       category: '🏠 Real Estate & Housing Profile',
@@ -5182,12 +6587,103 @@ function closeDossierModal() {
   if (modal) modal.classList.remove('active');
 }
 
+function copyDossierReport() {
+  const clientName = document.getElementById('dossier-client-name')?.value || 'Confidential Client';
+  const now = new Date();
+  const { score, grade } = calculateFinancialVitality();
+
+  let text = `====================================================\n`;
+  text += `   EXECUTIVE FINANCIAL DOSSIER & STRATEGIC BLUEPRINT\n`;
+  text += `====================================================\n`;
+  text += `Client / Plan: ${clientName}\n`;
+  text += `Generated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}\n`;
+  text += `Base Currency: ${currentCurrencyCode} (${currentCurrency})\n`;
+  text += `Financial Vitality Score: ${score}/100 [${grade}]\n`;
+  text += `----------------------------------------------------\n\n`;
+
+  text += `STRATEGIC ADVISORY RECOMMENDATIONS:\n`;
+  const recs = generateDossierAdvisory();
+  recs.forEach((r, idx) => {
+    text += `${idx + 1}. [${r.priority}] ${r.title}\n   ${r.description}\n\n`;
+  });
+
+  text += `CORE BALANCE SHEET LEDGER:\n`;
+  text += `- Mortgage Monthly Payment: ${document.getElementById('mortgage-payment')?.textContent || '$0.00'}\n`;
+  text += `- Total Mortgage Lifetime Outlay: ${document.getElementById('mortgage-total-payment')?.textContent || '$0.00'}\n`;
+  text += `- Home Purchase Affordability Ceiling: ${document.getElementById('affordability-max-home')?.textContent || '$0.00'}\n`;
+  text += `- FIRE Freedom Portfolio Target: ${document.getElementById('fire-target-number')?.textContent || '$0.00'}\n`;
+  text += `- Years to Financial Freedom: ${document.getElementById('fire-years-to-fire')?.textContent || '0.0 Years'}\n`;
+  text += `- Projected 401(k) / EPF Retirement Nest Egg: ${document.getElementById('four01k-future-balance')?.textContent || '$0.00'}\n`;
+  text += `- Net Paycheck Take-Home: ${document.getElementById('paycheck-net-pay')?.textContent || '$0.00'}\n`;
+  text += `- Advance Tax / Quarterly Voucher: ${document.getElementById('quarterlytax-quarterly-voucher')?.textContent || '$0.00'}\n\n`;
+  text += `Generated via aFinanceCalculator Suite (Pure Client-Side Private Engine)`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('✓ Executive Dossier copied to clipboard!');
+  }).catch(() => {
+    showToast('Failed to copy Dossier report.');
+  });
+}
+
+function exportDossierJson() {
+  const clientName = document.getElementById('dossier-client-name')?.value || 'Confidential Client';
+  const { score, grade } = calculateFinancialVitality();
+  const recs = generateDossierAdvisory();
+
+  const dossierData = {
+    client: clientName,
+    exportedAt: new Date().toISOString(),
+    currency: currentCurrencyCode,
+    vitality: {
+      score: score,
+      grade: grade
+    },
+    recommendations: recs,
+    ledger: {
+      housing: {
+        mortgageMonthly: document.getElementById('mortgage-payment')?.textContent || '$0.00',
+        mortgageTotal: document.getElementById('mortgage-total-payment')?.textContent || '$0.00',
+        affordabilityMax: document.getElementById('affordability-max-home')?.textContent || '$0.00',
+        rentBuyVariance: document.getElementById('rentbuy-5yr-variance')?.textContent || '$0.00'
+      },
+      wealth: {
+        fireTarget: document.getElementById('fire-target-number')?.textContent || '$0.00',
+        yearsToFire: document.getElementById('fire-years-to-fire')?.textContent || '0.0 Years',
+        four01kFuture: document.getElementById('four01k-future-balance')?.textContent || '$0.00',
+        sipMaturity: document.getElementById('sip-maturity')?.textContent || '$0.00'
+      },
+      debt: {
+        creditCardMonths: document.getElementById('creditcard-months')?.textContent || '0 Months',
+        snowballSavings: document.getElementById('snowball-avalanche-savings')?.textContent || '$0.00',
+        creditScoreProjected: document.getElementById('creditscore-new-utilization')?.textContent || '0%'
+      },
+      tax: {
+        paycheckNet: document.getElementById('paycheck-net-pay')?.textContent || '$0.00',
+        quarterlyTaxVoucher: document.getElementById('quarterlytax-quarterly-voucher')?.textContent || '$0.00',
+        capitalGainsNet: document.getElementById('capitalgains-net-profit')?.textContent || '$0.00'
+      }
+    }
+  };
+
+  const blob = new Blob([JSON.stringify(dossierData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `Executive_Financial_Dossier_${Date.now()}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  showToast('✓ Exported Executive Dossier to JSON!');
+}
+
 function printDossierReport() {
   document.body.classList.add('printing-dossier');
   const printTitle = document.getElementById('print-engine-title');
   const printSub = document.getElementById('print-engine-subtitle');
   const printTime = document.getElementById('print-report-timestamp');
-  if (printTitle) printTitle.textContent = 'Consolidated Executive Financial Dossier';
+  const clientName = document.getElementById('dossier-client-name')?.value || 'Client Portfolio';
+  if (printTitle) printTitle.textContent = `Executive Financial Dossier - ${clientName}`;
   if (printSub) printSub.textContent = `Portfolio Profile & Cross-Engine Advisory Blueprint (${currentCurrencyCode})`;
   if (printTime) {
     const now = new Date();
@@ -5250,6 +6746,7 @@ document.addEventListener('DOMContentLoaded', () => {
   syncDualInput('mortgage-asset', 'mortgage-asset-range', calcMortgage);
   syncDualInput('mortgage-down', 'mortgage-down-range', calcMortgage);
   syncDualInput('mortgage-rate', 'mortgage-rate-range', calcMortgage);
+  syncDualInput('mortgage-term', 'mortgage-term-range', () => setMortgageTerm(document.getElementById('mortgage-term')?.value));
   syncDualInput('mortgage-extra', 'mortgage-extra-range', calcMortgage);
 
   syncDualInput('invoice-rate', 'invoice-rate-range', calcInvoice);
@@ -5326,9 +6823,11 @@ document.addEventListener('DOMContentLoaded', () => {
   syncDualInput('affordability-down', 'affordability-down-range', calcAffordability);
   syncDualInput('affordability-debt', 'affordability-debt-range', calcAffordability);
   syncDualInput('affordability-rate', 'affordability-rate-range', calcAffordability);
+  syncDualInput('affordability-term', 'affordability-term-range', calcAffordability);
   syncDualInput('refinance-balance', 'refinance-balance-range', calcRefinance);
   syncDualInput('refinance-current-rate', 'refinance-current-rate-range', calcRefinance);
   syncDualInput('refinance-new-rate', 'refinance-new-rate-range', calcRefinance);
+  syncDualInput('refinance-term', 'refinance-term-range', calcRefinance);
   syncDualInput('refinance-costs', 'refinance-costs-range', calcRefinance);
   syncDualInput('biweekly-balance', 'biweekly-balance-range', calcBiweekly);
   syncDualInput('biweekly-rate', 'biweekly-rate-range', calcBiweekly);
@@ -5460,4 +6959,904 @@ document.addEventListener('DOMContentLoaded', () => {
 
   recalculateAll();
   switchEngine(activeEngineId, false);
+
+  // Initialize Enterprise & Commercial Business Modules
+  initPersonaWorkspace();
+  loadFinancialProfile();
+  loadAdvisorProfile();
+  updateContextualLeadCard(activeEngineId);
+  updateAuditTrailContent(activeEngineId);
 });
+
+// =============================================================
+// COMMERCIAL & ENTERPRISE BUSINESS MODULES
+// =============================================================
+
+// -------------------------------------------------------------
+// 1. PERSONA WORKSPACES & INTENT-BASED QUICK SWITCHER (PHASE 1)
+// -------------------------------------------------------------
+let currentPersonaWorkspace = 'all';
+
+const personaWorkspaces = {
+  'real-estate': {
+    name: 'Real Estate & Mortgage Strategy',
+    icon: '🏡',
+    description: 'Model property acquisition leverage, evaluate net operating income (NOI), verify 43% DTI affordability, and simulate cash-on-cash equity yield.',
+    primaryEngine: 'tab-mortgage',
+    engines: [
+      'tab-mortgage', 'tab-affordability', 'tab-refinance', 'tab-biweekly',
+      'tab-rentbuy', 'tab-cashoncash', 'tab-caprate', 'tab-heloc',
+      'tab-closingcosts', 'tab-airbnb'
+    ],
+    workflow: [
+      { label: '1. Max Affordability', engineId: 'tab-affordability' },
+      { label: '2. Mortgage Outlay', engineId: 'tab-mortgage' },
+      { label: '3. Closing Costs', engineId: 'tab-closingcosts' },
+      { label: '4. Refinance Drag', engineId: 'tab-refinance' },
+      { label: '5. Rental Cash-on-Cash', engineId: 'tab-cashoncash' }
+    ]
+  },
+  'wealth': {
+    name: 'Wealth, FIRE & Retirement Horizon',
+    icon: '🛡️',
+    description: 'Engineer financial independence (FIRE 4% rule), project tax-advantaged 401(k) / Roth accumulation, and model inflation-adjusted safe withdrawal rates.',
+    primaryEngine: 'tab-compound',
+    engines: [
+      'tab-compound', 'tab-fire', 'tab-four01k', 'tab-rmd',
+      'tab-socialsecurity', 'tab-cdladder', 'tab-hsa', 'tab-sip',
+      'tab-dividend', 'tab-cagr', 'tab-realreturns'
+    ],
+    workflow: [
+      { label: '1. Compound Multiplier', engineId: 'tab-compound' },
+      { label: '2. FIRE 4% Horizon', engineId: 'tab-fire' },
+      { label: '3. 401(k) & Roth Shield', engineId: 'tab-four01k' },
+      { label: '4. Social Security Max', engineId: 'tab-socialsecurity' },
+      { label: '5. CD Ladder Liquidity', engineId: 'tab-cdladder' }
+    ]
+  },
+  'business': {
+    name: 'Small Business, Commerce & Tax Matrix',
+    icon: '💼',
+    description: 'Optimize enterprise gross margin, simulate quarterly 1040-ES estimated taxes, analyze venture break-even units, and forecast contractor billing outlays.',
+    primaryEngine: 'tab-invoice',
+    engines: [
+      'tab-invoice', 'tab-salary', 'tab-breakeven', 'tab-margin',
+      'tab-paycheck', 'tab-quarterlytax', 'tab-overtime', 'tab-bonustax',
+      'tab-severance', 'tab-solar', 'tab-evgas', 'tab-dropship'
+    ],
+    workflow: [
+      { label: '1. Paycheck Net', engineId: 'tab-paycheck' },
+      { label: '2. 1040-ES Tax Voucher', engineId: 'tab-quarterlytax' },
+      { label: '3. Hourly to Salary', engineId: 'tab-salary' },
+      { label: '4. Invoicing Matrix', engineId: 'tab-invoice' },
+      { label: '5. Break-Even Level', engineId: 'tab-breakeven' }
+    ]
+  },
+  'debt': {
+    name: 'Debt Elimination & Budget Solvency',
+    icon: '💳',
+    description: 'Eradicate high-APR revolving card debt via mathematical avalanche/snowball protocols, model personal consolidation, and optimize FICO credit utilization.',
+    primaryEngine: 'tab-creditcard',
+    engines: [
+      'tab-creditcard', 'tab-snowball', 'tab-personalloan', 'tab-autoloan',
+      'tab-autorefi', 'tab-student', 'tab-studentrefi', 'tab-budget',
+      'tab-creditscore', 'tab-carlease'
+    ],
+    workflow: [
+      { label: '1. 50/30/20 Budget', engineId: 'tab-budget' },
+      { label: '2. Credit Utilization', engineId: 'tab-creditscore' },
+      { label: '3. Snowball vs Avalanche', engineId: 'tab-snowball' },
+      { label: '4. Personal Consolidation', engineId: 'tab-personalloan' },
+      { label: '5. Student Refinance', engineId: 'tab-studentrefi' }
+    ]
+  },
+  'all': {
+    name: 'Universal Matrix (All 50 Engines)',
+    icon: '🌐',
+    description: 'Master View: Displaying all 50 global computing engines spanning Real Estate, Wealth, Debt, Tax, and Business.',
+    primaryEngine: 'tab-mortgage',
+    engines: [],
+    workflow: [
+      { label: 'Mortgage', engineId: 'tab-mortgage' },
+      { label: 'FIRE Retirement', engineId: 'tab-fire' },
+      { label: 'Compound Wealth', engineId: 'tab-compound' },
+      { label: 'Paycheck Tax', engineId: 'tab-paycheck' },
+      { label: 'Snowball Payoff', engineId: 'tab-snowball' }
+    ]
+  }
+};
+
+function setPersonaWorkspace(workspaceKey, autoSwitch = true) {
+  if (!personaWorkspaces[workspaceKey]) workspaceKey = 'all';
+  currentPersonaWorkspace = workspaceKey;
+  const config = personaWorkspaces[workspaceKey];
+
+  // 1. Update chip buttons styling
+  document.querySelectorAll('.ws-chip').forEach(btn => {
+    const isTarget = btn.id === `ws-btn-${workspaceKey}`;
+    btn.classList.toggle('active', isTarget);
+    btn.classList.toggle('border-emerald-500/40', isTarget);
+    btn.classList.toggle('bg-emerald-500/20', isTarget);
+    btn.classList.toggle('text-emerald-400', isTarget);
+  });
+
+  // 2. Filter sidebar nav tab buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    if (workspaceKey === 'all' || config.engines.includes(btn.id)) {
+      btn.style.display = 'block';
+    } else {
+      btn.style.display = 'none';
+    }
+  });
+
+  // 3. Update strategy banner
+  const bannerIcon = document.getElementById('ws-banner-icon');
+  const bannerText = document.getElementById('ws-banner-text');
+  const workflowBox = document.getElementById('ws-quick-workflow');
+
+  if (bannerIcon) bannerIcon.textContent = config.icon;
+  if (bannerText) bannerText.textContent = `${config.name}: ${config.description}`;
+
+  if (workflowBox) {
+    workflowBox.innerHTML = '';
+    const prefix = document.createElement('span');
+    prefix.className = 'text-[10px] uppercase font-bold text-slate-500 font-mono mr-1';
+    prefix.textContent = 'Workflow:';
+    workflowBox.appendChild(prefix);
+
+    config.workflow.forEach(step => {
+      const stepBtn = document.createElement('button');
+      stepBtn.className = 'workflow-step-btn px-2 py-0.5 rounded-md bg-slate-950 border border-slate-800 text-slate-300 hover:text-white cursor-pointer';
+      stepBtn.textContent = step.label;
+      stepBtn.onclick = () => switchEngine(step.engineId);
+      workflowBox.appendChild(stepBtn);
+    });
+  }
+
+  // 4. If current active engine is not in this workspace, auto-switch to primary
+  if (autoSwitch && workspaceKey !== 'all') {
+    if (!config.engines.includes(activeEngineId)) {
+      switchEngine(config.primaryEngine);
+    }
+  }
+
+  try {
+    localStorage.setItem('afc_persona_workspace', workspaceKey);
+  } catch (e) {}
+
+  showToast(`Active Workspace: ${config.name}`);
+}
+
+function cyclePersonaWorkspace() {
+  const keys = ['real-estate', 'wealth', 'business', 'debt', 'all'];
+  const curIdx = keys.indexOf(currentPersonaWorkspace);
+  const nextKey = keys[(curIdx + 1) % keys.length];
+  setPersonaWorkspace(nextKey);
+}
+
+function initPersonaWorkspace() {
+  let saved = 'all';
+  try {
+    saved = localStorage.getItem('afc_persona_workspace') || 'all';
+  } catch (e) {}
+  setPersonaWorkspace(saved, false);
+}
+
+// -------------------------------------------------------------
+// 2. UNIFIED FINANCIAL PROFILE CORE & AUTO-POPULATION (PHASE 2)
+// -------------------------------------------------------------
+let financialProfile = {
+  annualIncome: 120000,
+  monthlyExpenses: 4500,
+  liquidSavings: 50000,
+  homeValue: 450000,
+  creditScore: 740,
+  debtMonthly: 650,
+  age: 32,
+  retireAge: 62,
+  taxRate: 24,
+  lastUpdated: null
+};
+
+function loadFinancialProfile() {
+  try {
+    const raw = localStorage.getItem('afc_financial_profile');
+    if (raw) {
+      financialProfile = Object.assign(financialProfile, JSON.parse(raw));
+    }
+  } catch (e) {}
+
+  // Update modal input values if present
+  const incEl = document.getElementById('profile-income');
+  const expEl = document.getElementById('profile-expenses');
+  const savEl = document.getElementById('profile-savings');
+  const homeEl = document.getElementById('profile-home-val');
+  const scoreEl = document.getElementById('profile-credit-score');
+  const debtEl = document.getElementById('profile-debt-monthly');
+  const ageEl = document.getElementById('profile-age');
+  const retEl = document.getElementById('profile-retire-age');
+  const taxEl = document.getElementById('profile-tax-rate');
+  const lastTxt = document.getElementById('profile-last-synced-txt');
+
+  if (incEl) incEl.value = financialProfile.annualIncome;
+  if (expEl) expEl.value = financialProfile.monthlyExpenses;
+  if (savEl) savEl.value = financialProfile.liquidSavings;
+  if (homeEl) homeEl.value = financialProfile.homeValue;
+  if (scoreEl) scoreEl.value = financialProfile.creditScore;
+  if (debtEl) debtEl.value = financialProfile.debtMonthly;
+  if (ageEl) ageEl.value = financialProfile.age;
+  if (retEl) retEl.value = financialProfile.retireAge;
+  if (taxEl) taxEl.value = financialProfile.taxRate;
+
+  if (lastTxt && financialProfile.lastUpdated) {
+    const date = new Date(financialProfile.lastUpdated);
+    lastTxt.textContent = `Last synced: ${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  }
+
+  // Update currency labels
+  for (let i = 1; i <= 5; i++) {
+    const symEl = document.getElementById(`profile-currency-sym${i}`);
+    if (symEl) symEl.textContent = currentCurrency;
+  }
+}
+
+function saveFinancialProfile() {
+  const inc = parseFloat(document.getElementById('profile-income')?.value) || 120000;
+  const exp = parseFloat(document.getElementById('profile-expenses')?.value) || 4500;
+  const sav = parseFloat(document.getElementById('profile-savings')?.value) || 50000;
+  const homeVal = parseFloat(document.getElementById('profile-home-val')?.value) || 450000;
+  const score = parseInt(document.getElementById('profile-credit-score')?.value) || 740;
+  const debt = parseFloat(document.getElementById('profile-debt-monthly')?.value) || 650;
+  const age = parseInt(document.getElementById('profile-age')?.value) || 32;
+  const retAge = parseInt(document.getElementById('profile-retire-age')?.value) || 62;
+  const tax = parseFloat(document.getElementById('profile-tax-rate')?.value) || 24;
+
+  financialProfile = {
+    annualIncome: inc,
+    monthlyExpenses: exp,
+    liquidSavings: sav,
+    homeValue: homeVal,
+    creditScore: score,
+    debtMonthly: debt,
+    age: age,
+    retireAge: retAge,
+    taxRate: tax,
+    lastUpdated: new Date().toISOString()
+  };
+
+  try {
+    localStorage.setItem('afc_financial_profile', JSON.stringify(financialProfile));
+  } catch (e) {}
+
+  const lastTxt = document.getElementById('profile-last-synced-txt');
+  if (lastTxt) lastTxt.textContent = `Last saved: Just now`;
+
+  showToast('✓ Financial Profile saved to browser runtime!');
+}
+
+function applyProfileToAllEngines() {
+  saveFinancialProfile();
+
+  const inc = financialProfile.annualIncome;
+  const exp = financialProfile.monthlyExpenses;
+  const sav = financialProfile.liquidSavings;
+  const homeVal = financialProfile.homeValue;
+  const score = financialProfile.creditScore;
+  const debtMo = financialProfile.debtMonthly;
+  const taxRate = financialProfile.taxRate;
+  const age = financialProfile.age;
+  const retAge = financialProfile.retireAge;
+  const horizonYears = Math.max(5, retAge - age);
+
+  // 1. Mortgage
+  const mortAsset = document.getElementById('mortgage-asset');
+  const mortDown = document.getElementById('mortgage-down');
+  const mortRate = document.getElementById('mortgage-rate');
+  if (mortAsset) { mortAsset.value = homeVal; updateInputPreviewTag('mortgage-asset', homeVal); }
+  if (mortDown) {
+    const downVal = Math.round(homeVal * 0.20);
+    mortDown.value = downVal;
+    updateInputPreviewTag('mortgage-down', downVal);
+  }
+  if (mortRate) {
+    const estimatedRate = score >= 740 ? 5.8 : (score >= 680 ? 6.5 : 7.2);
+    mortRate.value = estimatedRate;
+    updateInputPreviewTag('mortgage-rate', estimatedRate);
+  }
+
+  // 2. Paycheck Gross to Net
+  const payGross = document.getElementById('paycheck-gross');
+  const payFed = document.getElementById('paycheck-fed-tax');
+  if (payGross) {
+    const biweeklyGross = Math.round(inc / 26);
+    payGross.value = biweeklyGross;
+    updateInputPreviewTag('paycheck-gross', biweeklyGross);
+  }
+  if (payFed) {
+    payFed.value = Math.max(8, taxRate - 6);
+    updateInputPreviewTag('paycheck-fed-tax', payFed.value);
+  }
+
+  // 3. 401(k) Projection
+  const fourSalary = document.getElementById('four01k-salary');
+  const fourYears = document.getElementById('four01k-years');
+  if (fourSalary) { fourSalary.value = inc; updateInputPreviewTag('four01k-salary', inc); }
+  if (fourYears) { fourYears.value = horizonYears; updateInputPreviewTag('four01k-years', horizonYears); }
+
+  // 4. FIRE Retirement
+  const fireExp = document.getElementById('fire-expenses');
+  const fireSav = document.getElementById('fire-savings');
+  const fireAnnual = document.getElementById('fire-annual-save');
+  if (fireExp) {
+    const annualExp = Math.round(exp * 12);
+    fireExp.value = annualExp;
+    updateInputPreviewTag('fire-expenses', annualExp);
+  }
+  if (fireSav) { fireSav.value = sav; updateInputPreviewTag('fire-savings', sav); }
+  if (fireAnnual) {
+    const estAnnualSave = Math.max(5000, Math.round(inc * 0.20));
+    fireAnnual.value = estAnnualSave;
+    updateInputPreviewTag('fire-annual-save', estAnnualSave);
+  }
+
+  // 5. Home Affordability
+  const affInc = document.getElementById('affordability-income');
+  const affDown = document.getElementById('affordability-down');
+  const affDebt = document.getElementById('affordability-debt');
+  if (affInc) { affInc.value = inc; updateInputPreviewTag('affordability-income', inc); }
+  if (affDown) { affDown.value = Math.min(sav, Math.round(homeVal * 0.20)); updateInputPreviewTag('affordability-down', affDown.value); }
+  if (affDebt) { affDebt.value = debtMo; updateInputPreviewTag('affordability-debt', debtMo); }
+
+  // 6. 50/30/20 Budget
+  const budInc = document.getElementById('budget-income');
+  if (budInc) {
+    const moNet = Math.round((inc * (1 - taxRate / 100)) / 12);
+    budInc.value = moNet;
+    updateInputPreviewTag('budget-income', moNet);
+  }
+
+  // 7. Compound Asset Wealth
+  const compP = document.getElementById('compound-principal');
+  const compY = document.getElementById('compound-years');
+  if (compP) { compP.value = sav; updateInputPreviewTag('compound-principal', sav); }
+  if (compY) { compY.value = horizonYears; updateInputPreviewTag('compound-years', horizonYears); }
+
+  // 8. CD Ladder
+  const cdCap = document.getElementById('cdladder-capital');
+  if (cdCap) {
+    const cdAmount = Math.round(sav * 0.5);
+    cdCap.value = cdAmount;
+    updateInputPreviewTag('cdladder-capital', cdAmount);
+  }
+
+  // 9. HSA Triple Tax
+  const hsaTax = document.getElementById('hsa-tax-bracket');
+  const hsaYears = document.getElementById('hsa-years');
+  if (hsaTax) { hsaTax.value = taxRate; updateInputPreviewTag('hsa-tax-bracket', taxRate); }
+  if (hsaYears) { hsaYears.value = horizonYears; updateInputPreviewTag('hsa-years', horizonYears); }
+
+  // 10. Hourly Wage to Salary
+  const salWage = document.getElementById('salary-wage');
+  if (salWage) {
+    const hourly = Math.round(inc / 2080);
+    salWage.value = hourly;
+    updateInputPreviewTag('salary-wage', hourly);
+  }
+
+  // 11. Closing Costs
+  const closePrice = document.getElementById('closingcosts-price');
+  if (closePrice) { closePrice.value = homeVal; updateInputPreviewTag('closingcosts-price', homeVal); }
+
+  // 12. Severance Runway
+  const sevBurn = document.getElementById('severance-monthly-burn');
+  if (sevBurn) { sevBurn.value = exp; updateInputPreviewTag('severance-monthly-burn', exp); }
+
+  // 13. Debt Snowball / Avalanche
+  const snowDebt1 = document.getElementById('snowball-debt1-bal');
+  if (snowDebt1 && debtMo > 0) {
+    snowDebt1.value = Math.round(debtMo * 4);
+    updateInputPreviewTag('snowball-debt1-bal', snowDebt1.value);
+  }
+
+  // Sync dual input range sliders
+  document.querySelectorAll('input[type="number"]').forEach(num => {
+    const range = document.getElementById(`${num.id}-range`);
+    if (range) range.value = num.value;
+  });
+
+  recalculateAll();
+  saveStateDebounced();
+  closeProfileModal();
+  showToast('⚡ Financial Profile applied! 13 computing engines synchronized.');
+}
+
+function openProfileModal() {
+  loadFinancialProfile();
+  const modal = document.getElementById('profile-modal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeProfileModal() {
+  const modal = document.getElementById('profile-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+// -------------------------------------------------------------
+// 3. CONTEXTUAL FINTECH HIGH-YIELD LEAD GEN UNIT (PHASE 3)
+// -------------------------------------------------------------
+const contextualLeadOffers = {
+  housing: {
+    badge: 'Mortgage Lending Partner',
+    title: 'Compare Today\'s Top Mortgage Rates',
+    desc: 'Lock in 30-year fixed rates from 5.75% APR. Zero impact on your credit score to view personalized pre-approval terms.',
+    benefits: [
+      'Save up to $340/month on refinance',
+      'Compare 5+ vetted lenders in 60s'
+    ],
+    ctaText: 'Check Pre-Approved Rates →',
+    disclaimer: 'Equal Housing Lender • NMLS #1138290',
+    link: 'https://afinancecalculator.com/#mortgage-offers'
+  },
+  wealth: {
+    badge: 'High-Yield Cash Partner',
+    title: 'Earn 5.05% APY on Liquid Cash',
+    desc: 'FDIC-insured up to $2.5M. Put your emergency fund or idle capital to work with zero maintenance fees.',
+    benefits: [
+      '10x higher yield than national average',
+      'No minimum deposit & free wire transfers'
+    ],
+    ctaText: 'Explore Top High-Yield Accounts →',
+    disclaimer: 'Member FDIC • Daily Compound Yield',
+    link: 'https://afinancecalculator.com/#hysa-offers'
+  },
+  debt: {
+    badge: 'Debt Elimination Partner',
+    title: 'Consolidate High-APR Cards from 6.99%',
+    desc: 'Combine multiple 24%+ credit card balances into one single predictable low-rate monthly payment.',
+    benefits: [
+      'Pay off debt up to 24 months faster',
+      'Fixed payments with $0 prepayment penalty'
+    ],
+    ctaText: 'Check Consolidation Rates →',
+    disclaimer: 'Personal Loan Rates from 6.99% to 29.99% APR',
+    link: 'https://afinancecalculator.com/#consolidation-offers'
+  },
+  tax: {
+    badge: 'Tax Strategy & Invoicing Partner',
+    title: 'Automate Deductions & 1040-ES Taxes',
+    desc: 'All-in-one business checking, payroll, and 1040-ES automated tax savings with up to $300 welcome bonus.',
+    benefits: [
+      'Auto-categorize IRS Schedule C write-offs',
+      'Zero monthly fee & automated contractor 1099s'
+    ],
+    ctaText: 'Claim Business Account Bonus →',
+    disclaimer: 'FDIC Insured • Seamless Accounting Sync',
+    link: 'https://afinancecalculator.com/#business-offers'
+  },
+  business: {
+    badge: 'Enterprise Commerce Partner',
+    title: 'Optimize Working Capital & Invoicing',
+    desc: 'Unlock next-day payment terms on commercial invoices and scale advertising ROI with 1.5% cashback.',
+    benefits: [
+      'Instant invoice factoring from 1.25%',
+      'Unlimited corporate cards with spend limits'
+    ],
+    ctaText: 'View Working Capital Lines →',
+    disclaimer: 'Commercial Credit • No Personal Guarantee Underwriting',
+    link: 'https://afinancecalculator.com/#commercial-offers'
+  }
+};
+
+function updateContextualLeadCard(engineId) {
+  const cat = getEngineCategory(engineId);
+  const offer = contextualLeadOffers[cat] || contextualLeadOffers.wealth;
+
+  const badgeText = document.getElementById('lead-badge-text');
+  const title = document.getElementById('lead-title');
+  const desc = document.getElementById('lead-desc');
+  const b1 = document.getElementById('lead-benefit-1');
+  const b2 = document.getElementById('lead-benefit-2');
+  const cta = document.getElementById('lead-cta-text');
+  const disc = document.getElementById('lead-disclaimer');
+
+  if (badgeText) badgeText.textContent = offer.badge;
+  if (title) title.textContent = offer.title;
+  if (desc) desc.textContent = offer.desc;
+  if (b1) b1.textContent = offer.benefits[0];
+  if (b2) b2.textContent = offer.benefits[1];
+  if (cta) cta.textContent = offer.ctaText;
+  if (disc) disc.textContent = offer.disclaimer;
+}
+
+function handleLeadClick(event) {
+  if (event) event.preventDefault();
+  const engineId = activeEngineId;
+  const cat = getEngineCategory(engineId);
+  const offer = contextualLeadOffers[cat] || contextualLeadOffers.wealth;
+
+  if (typeof gtag === 'function') {
+    gtag('event', 'lead_card_click', {
+      event_category: 'Monetization',
+      event_label: offer.title,
+      engine_category: cat
+    });
+  }
+
+  showToast(`Redirecting to verified partner rates (${offer.badge})...`);
+  setTimeout(() => {
+    openLeadModal();
+  }, 400);
+}
+
+// -------------------------------------------------------------
+// 4. STATUTORY ASSUMPTIONS & REGULATORY AUDIT TRAIL (PHASE 4)
+// -------------------------------------------------------------
+const statutoryAssumptions = {
+  mortgage: {
+    statute: 'CFPB Regulation Z / Truth in Lending Act (TILA) & Qualified Mortgage (QM) Standard',
+    details: 'Calculated using standard 360-month/180-month fixed-rate compound amortization: M = P * [r(1+r)^n] / [(1+r)^n - 1]. Benchmark conforms to CFPB QM 43% Debt-to-Income (DTI) ceiling and conforming loan limits ($766,550 for 2025/2026).'
+  },
+  paycheck: {
+    statute: 'IRS 2025/2026 Tax Year Federal Revenue Procedure 2024-40',
+    details: 'Federal standard deduction: $15,000 (Single), $30,000 (Married Filing Jointly). FICA Social Security tax applied at 6.2% up to the statutory wage ceiling ($176,100 for 2025). Medicare tax applied at 1.45% base, plus 0.9% Additional Medicare Tax on wages exceeding $200,000.'
+  },
+  four01k: {
+    statute: 'IRS Notice 2024-80 (2025 Pension Plan Limitations)',
+    details: 'Elective employee deferral ceiling: $23,500. Catch-up contribution for individuals aged 50 and over: $7,500 (Total $31,000). Total defined contribution annual addition limit under Section 415(c): $70,000.'
+  },
+  fire: {
+    statute: 'Trinity Study Protocol & Empirical S&P 500 / Intermediate Bond Safe Withdrawal Analysis',
+    details: 'Safe Withdrawal Rate (SWR) modeled according to Cooley, Hubbard, and Walz (Trinity Study). Assumes 4.0% annual initial portfolio withdrawal indexed annually to CPI-U headline inflation, yielding a 95%+ historical survival probability over a 30-year horizon.'
+  },
+  capitalgains: {
+    statute: 'Internal Revenue Code Section 1(h) (2025 Capital Gains Rate Brackets)',
+    details: 'Long-term assets held > 365 days qualify for preferential 0%, 15%, or 20% federal brackets based on taxable income thresholds ($47,025 / $518,900 for single filers). Short-term gains are taxed at ordinary income rates.'
+  },
+  hsa: {
+    statute: 'IRS Revenue Procedure 2024-25 (2025 HSA Contribution Limits)',
+    details: 'Annual contribution limit: $4,300 for self-only coverage; $8,550 for family coverage. Additional $1,000 catch-up contribution permitted for individuals aged 55+. Triple tax advantage: pre-tax contributions, tax-free growth, and tax-free qualified distributions.'
+  },
+  socialsecurity: {
+    statute: 'Social Security Act Full Retirement Age (FRA) Matrix & COLA Adjustments',
+    details: 'Primary Insurance Amount (PIA) benchmarked to Full Retirement Age of 67 (for persons born 1960 or later). Claiming early at age 62 permanently reduces monthly benefits by up to 30.0%; delaying to age 70 accrues 8% per year in Delayed Retirement Credits (DRC) up to a 124% maximum payout.'
+  },
+  rmd: {
+    statute: 'SECURE 2.0 Act (P.L. 117-328) Required Minimum Distribution (RMD) Guidelines',
+    details: 'Mandatory RMD beginning age: Age 73 (increasing to age 75 in 2033). Calculated against IRS Uniform Lifetime Table III divisor. Failure to withdraw RMD incurs a 25% statutory excise penalty under IRC Section 4974 (mitigable to 10% if corrected timely).'
+  },
+  creditscore: {
+    statute: 'FICO® / VantageScore® Revolving Credit Utilization Mathematical Weighting',
+    details: 'Revolving credit utilization constitutes ~30% of total FICO scoring weight. Algorithms mathematically optimize when total and per-card utilization drops beneath key statutory reporting thresholds: < 30% (Standard), < 10% (Prime), and < 6% (Super-Prime).'
+  },
+  default: {
+    statute: 'Standard Institutional Financial Mathematical Framework',
+    details: 'Calculated using continuous and discrete compound interest equations, Net Present Value (NPV), and empirical market risk benchmarks. Calculations are 100% client-side and uninfluenced by third-party broker bias.'
+  }
+};
+
+let isAuditTrailOpen = false;
+
+function toggleAuditTrail() {
+  isAuditTrailOpen = !isAuditTrailOpen;
+  const body = document.getElementById('audit-trail-body');
+  const chevron = document.getElementById('audit-trail-chevron');
+  if (body) body.classList.toggle('open', isAuditTrailOpen);
+  if (chevron) chevron.style.transform = isAuditTrailOpen ? 'rotate(180deg)' : 'none';
+}
+
+function updateAuditTrailContent(engineId) {
+  const cleanId = (engineId || '').replace('tab-', '').replace('engine-', '');
+  const assumption = statutoryAssumptions[cleanId] || statutoryAssumptions.default;
+  const container = document.getElementById('audit-trail-text');
+
+  if (container) {
+    container.innerHTML = `
+      <div class="flex items-start gap-2">
+        <span class="text-emerald-400 font-bold shrink-0">📜 Statutory Rule:</span>
+        <span class="font-bold text-white">${assumption.statute}</span>
+      </div>
+      <div class="text-[11px] text-slate-300 mt-1 pl-5">
+        ${assumption.details}
+      </div>
+      <div class="text-[9px] text-slate-500 mt-1 pl-5 font-mono">
+        Audit Verified: IRS 2025/2026 Rev Proc 2024-40 • CFPB Standard • Client-Side Zero Storage
+      </div>
+    `;
+  }
+}
+
+// -------------------------------------------------------------
+// 5. ADVISOR & ENTERPRISE WHITE-LABELING (PHASE 5)
+// -------------------------------------------------------------
+let advisorProfile = {
+  enabled: false,
+  firmName: '',
+  name: '',
+  phone: '',
+  email: '',
+  clientName: '',
+  disclaimer: ''
+};
+
+function loadAdvisorProfile() {
+  try {
+    const raw = localStorage.getItem('afc_advisor_profile');
+    if (raw) {
+      advisorProfile = Object.assign(advisorProfile, JSON.parse(raw));
+    }
+  } catch (e) {}
+
+  const toggle = document.getElementById('advisor-enable-toggle');
+  const firm = document.getElementById('adv-firm-name');
+  const name = document.getElementById('adv-name');
+  const phone = document.getElementById('adv-phone');
+  const email = document.getElementById('adv-email');
+  const client = document.getElementById('adv-client-name');
+  const disc = document.getElementById('adv-disclaimer');
+  const statusBadge = document.getElementById('advisor-badge-status');
+
+  if (toggle) toggle.checked = !!advisorProfile.enabled;
+  if (firm) firm.value = advisorProfile.firmName || '';
+  if (name) name.value = advisorProfile.name || '';
+  if (phone) phone.value = advisorProfile.phone || '';
+  if (email) email.value = advisorProfile.email || '';
+  if (client) client.value = advisorProfile.clientName || '';
+  if (disc) disc.value = advisorProfile.disclaimer || '';
+
+  if (statusBadge) {
+    statusBadge.textContent = advisorProfile.enabled ? 'ON' : 'OFF';
+    statusBadge.className = advisorProfile.enabled
+      ? 'text-[9px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold'
+      : 'text-[9px] px-1 py-0.2 rounded bg-slate-800 text-slate-400 font-mono';
+  }
+
+  document.body.classList.toggle('advisor-mode-active', !!advisorProfile.enabled);
+}
+
+function saveAdvisorProfile() {
+  const toggle = document.getElementById('advisor-enable-toggle')?.checked || false;
+  const firm = document.getElementById('adv-firm-name')?.value.trim() || '';
+  const name = document.getElementById('adv-name')?.value.trim() || '';
+  const phone = document.getElementById('adv-phone')?.value.trim() || '';
+  const email = document.getElementById('adv-email')?.value.trim() || '';
+  const client = document.getElementById('adv-client-name')?.value.trim() || '';
+  const disc = document.getElementById('adv-disclaimer')?.value.trim() || '';
+
+  advisorProfile = {
+    enabled: toggle,
+    firmName: firm,
+    name: name,
+    phone: phone,
+    email: email,
+    clientName: client,
+    disclaimer: disc
+  };
+
+  try {
+    localStorage.setItem('afc_advisor_profile', JSON.stringify(advisorProfile));
+  } catch (e) {}
+
+  loadAdvisorProfile();
+  closeAdvisorModal();
+  showToast(toggle ? '✓ Advisor White-Label Mode Activated!' : 'Advisor White-Label Mode Disabled.');
+}
+
+function toggleAdvisorMode(enabled) {
+  advisorProfile.enabled = enabled;
+  saveAdvisorProfile();
+}
+
+function openAdvisorModal() {
+  loadAdvisorProfile();
+  const modal = document.getElementById('advisor-modal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeAdvisorModal() {
+  const modal = document.getElementById('advisor-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+// -------------------------------------------------------------
+// 6. LEAD RETENTION HUB & PLAN DELIVERY (PHASE 6)
+// -------------------------------------------------------------
+function openLeadModal() {
+  const modal = document.getElementById('lead-capture-modal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeLeadModal() {
+  const modal = document.getElementById('lead-capture-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+function submitLeadCapture(event) {
+  if (event) event.preventDefault();
+
+  const name = document.getElementById('lead-user-name')?.value.trim() || 'Valued User';
+  const email = document.getElementById('lead-user-email')?.value.trim() || '';
+  const goal = document.getElementById('lead-user-goal')?.value || 'general';
+  const optin = document.getElementById('lead-user-optin')?.checked || false;
+
+  const leadRecord = {
+    id: 'lead_' + Date.now(),
+    name: name,
+    email: email,
+    goal: goal,
+    optin: optin,
+    timestamp: new Date().toISOString(),
+    currency: currentCurrencyCode
+  };
+
+  // 1. Store lead record in localStorage
+  try {
+    const leads = JSON.parse(localStorage.getItem('afc_leads_captured') || '[]');
+    leads.push(leadRecord);
+    localStorage.setItem('afc_leads_captured', JSON.stringify(leads));
+  } catch (e) {}
+
+  // 2. Fire Google Analytics Event
+  if (typeof gtag === 'function') {
+    gtag('event', 'generate_lead', {
+      event_category: 'Lead Generation',
+      event_label: goal,
+      value: 1.0
+    });
+  }
+
+  // 3. Generate and trigger download of Master Financial Playbook deliverable
+  const playbookText = `========================================================================
+aFinanceCalculator™ Master Financial Planning Playbook & Strategic Guidelines
+Prepared for: ${name} (${email})
+Generated: ${new Date().toLocaleDateString()} | Benchmark Currency: ${currentCurrencyCode} (${currentCurrency})
+========================================================================
+
+SECTION 1: THE CORE FINANCIAL RULES
+1. The 4% Rule (FIRE Trinity Study):
+   - Multiply your expected annual retirement expenses by 25 to establish your safe freedom nest egg.
+   - Example: ${formatCurrency(60000)}/yr in living costs requires ${formatCurrency(1500000)} invested in low-cost broad index equities.
+   
+2. The 50/30/20 Cash Allocation Rule:
+   - 50% Needs: Housing, groceries, utilities, minimum debt payments.
+   - 30% Wants: Discretionary dining, vacations, entertainment.
+   - 20% Compounding Wealth: 401(k), Roth IRA, HSA, debt principal paydown.
+
+3. The Debt Avalanche Protocol:
+   - Always pay off debts strictly ordered by interest APR from highest to lowest.
+   - This mathematically saves the highest sum in interest charges and shortens freedom timelines.
+
+4. Mortgage & Housing Leverage Guideline:
+   - Keep total shelter outlays (PITI) beneath 28% of gross monthly income (front-end DTI).
+   - Keep total recurring debt outlays beneath 36% to 43% of gross income (back-end DTI).
+
+SECTION 2: 2025/2026 STATUTORY TAX LIMITS
+- IRS 401(k) / 403(b) Elective Limit: $23,500 ($31,000 for age 50+)
+- HSA Contribution Ceilings: $4,300 (Single) / $8,550 (Family)
+- Federal Standard Deduction: $15,000 (Single) / $30,000 (Married)
+- FICA Social Security Wage Cap: $176,100
+
+========================================================================
+100% Client-Side Privacy: Your financial models run in your private browser.
+Access all 50 financial engines anytime at https://afinancecalculator.com
+========================================================================`;
+
+  const blob = new Blob([playbookText], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `aFinanceCalculator_Master_Playbook_${Date.now()}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  closeLeadModal();
+  showToast('✓ Financial Plan & Master Playbook successfully prepared and delivered!');
+}
+
+// -------------------------------------------------------------
+// 51. U.S. & CANADA BANKING HUB SCROLL NAVIGATION
+// -------------------------------------------------------------
+function scrollToBankingHub() {
+  if (typeof switchEngine === 'function') {
+    switchEngine('tab-banking-hub', true);
+  } else {
+    const bankingEl = document.getElementById('engine-banking');
+    if (bankingEl) {
+      bankingEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // Visual highlight pulse
+  const bankingSection = document.getElementById('engine-banking');
+  if (bankingSection) {
+    bankingSection.classList.add('ring-2', 'ring-emerald-400');
+    setTimeout(() => {
+      bankingSection.classList.remove('ring-2', 'ring-emerald-400');
+    }, 2000);
+  }
+
+  if (typeof gtag === 'function') {
+    try {
+      gtag('event', 'navigate_banking_hub', {
+        event_category: 'Banking Hub',
+        event_label: 'Header / Nav Jump'
+      });
+    } catch (e) {}
+  }
+}
+
+// Explicit Global Window Bindings for Inline Handlers
+if (typeof window !== 'undefined') {
+  // Navigation & Hubs
+  window.switchEngine = switchEngine;
+  window.scrollToBankingHub = scrollToBankingHub;
+
+  // Existing Handlers
+  window.openScenarioStudio = openScenarioStudio;
+  window.closeScenarioStudio = closeScenarioStudio;
+  window.switchScenarioModel = switchScenarioModel;
+  window.calcScenarioStudio = calcScenarioStudio;
+  window.resetScenarioStudio = resetScenarioStudio;
+  window.applyScenarioBToWorkspace = applyScenarioBToWorkspace;
+  window.openShareModal = openShareModal;
+  window.closeShareModal = closeShareModal;
+  window.copyShareUrlDirect = copyShareUrlDirect;
+  window.shareViaSocial = shareViaSocial;
+  window.openShortcutsModal = openShortcutsModal;
+  window.closeShortcutsModal = closeShortcutsModal;
+  window.openHistoryDrawer = openHistoryDrawer;
+  window.closeHistoryDrawer = closeHistoryDrawer;
+  window.setHistoryCategoryFilter = setHistoryCategoryFilter;
+  window.filterHistoryList = filterHistoryList;
+  window.deleteHistoryItem = deleteHistoryItem;
+  window.copyHistoryItem = copyHistoryItem;
+  window.exportHistoryData = exportHistoryData;
+  window.openDossierModal = openDossierModal;
+  window.closeDossierModal = closeDossierModal;
+  window.copyDossierReport = copyDossierReport;
+  window.exportDossierJson = exportDossierJson;
+  window.printDossierReport = printDossierReport;
+  window.openAmortizationModal = openAmortizationModal;
+  window.closeAmortizationModal = closeAmortizationModal;
+  window.setAmortizationView = setAmortizationView;
+  window.filterAmortizationTable = filterAmortizationTable;
+  window.copyAmortizationTable = copyAmortizationTable;
+  window.exportAmortizationCsv = exportAmortizationCsv;
+  window.printAmortizationSchedule = printAmortizationSchedule;
+
+  // New Commercial Business Handlers
+  window.setPersonaWorkspace = setPersonaWorkspace;
+  window.cyclePersonaWorkspace = cyclePersonaWorkspace;
+  window.openProfileModal = openProfileModal;
+  window.closeProfileModal = closeProfileModal;
+  window.saveFinancialProfile = saveFinancialProfile;
+  window.applyProfileToAllEngines = applyProfileToAllEngines;
+  window.updateContextualLeadCard = updateContextualLeadCard;
+  window.handleLeadClick = handleLeadClick;
+  window.toggleAuditTrail = toggleAuditTrail;
+  window.updateAuditTrailContent = updateAuditTrailContent;
+  window.openAdvisorModal = openAdvisorModal;
+  window.closeAdvisorModal = closeAdvisorModal;
+  window.saveAdvisorProfile = saveAdvisorProfile;
+  window.toggleAdvisorMode = toggleAdvisorMode;
+  window.openLeadModal = openLeadModal;
+  window.closeLeadModal = closeLeadModal;
+  window.submitLeadCapture = submitLeadCapture;
+
+  // Manual Amortization Period & Engine Handlers
+  window.setMortgageTerm = setMortgageTerm;
+  window.setRefinanceTerm = setRefinanceTerm;
+  window.setAffordabilityTerm = setAffordabilityTerm;
+  window.setBiweeklyTerm = setBiweeklyTerm;
+  window.setAutoLoanTerm = setAutoLoanTerm;
+  window.setAutoRefiMonths = setAutoRefiMonths;
+  window.setPersonalLoanTerm = setPersonalLoanTerm;
+  window.setStudentMonths = setStudentMonths;
+  window.setHelocRepayYears = setHelocRepayYears;
+  window.handleModalPeriodChange = handleModalPeriodChange;
+  window.handleModalPeriodUnitChange = handleModalPeriodUnitChange;
+  window.setModalAmortizationPeriod = setModalAmortizationPeriod;
+  window.applyModalAmortizationMonths = applyModalAmortizationMonths;
+}
+

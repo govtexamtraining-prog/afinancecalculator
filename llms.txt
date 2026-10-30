@@ -152,15 +152,130 @@ Where:
 
 ---
 
-## 5. Regional Financial Architecture (USA & Europe)
-- **United States**: Models 30-year fixed rate mortgages, 401(k)/IRA retirement accounts, FICO 28/36 underwriting guidelines, state income taxes, and IRS 1040 rules.
+---
+
+## 5. North American Banking Directory & Account Opening Hub (USA & Canada: 90+ Institutions)
+
+aFinanceCalculator provides direct computational modeling, account opening criteria, and deposit insurance verification for over 90 leading banking institutions across the United States and Canada:
+
+### 5.1 The "Big Four" U.S. Banking Giants
+1. **JPMorgan Chase & Co. (New York, NY)**: #1 U.S. Bank ($4.1T+ Assets). Products: Chase Total Checking, Sapphire Preferred/Reserve, Freedom Unlimited (1.5-5% cashback). Account opening: SSN or ITIN, $0 min opening deposit ($12/mo fee waived with $500 direct deposit). FDIC insured #628.
+2. **Bank of America (Charlotte, NC)**: #2 U.S. Bank ($3.3T+ Assets). Products: Advantage Plus Banking, Customized Cash Rewards (3% category choice), Travel Rewards. Account opening: SSN/ITIN, $100 min deposit ($12/mo fee waived with $250/mo direct deposit). Preferred Rewards APY boosters. FDIC insured #3510.
+3. **Citigroup / Citibank (New York, NY)**: #3 U.S. Bank ($2.4T+ Assets). Products: Citi Access Checking, Double Cash (2% flat cashback), Strata Premier. Account opening: SSN/ITIN, $0 min deposit. Global cross-border transfers via Citi Global Transfers. FDIC insured #7213.
+4. **Wells Fargo & Co. (San Francisco, CA)**: #4 U.S. Bank ($1.9T+ Assets). Products: Everyday Checking, Active Cash (2% unlimited cashback), Autograph (3x points). Account opening: SSN/ITIN, $25 min deposit ($10/mo fee waived with $500 direct deposit). FDIC insured #3511.
+
+### 5.2 Major U.S. Commercial, Regional & Digital Banks (Ranks 5–35+)
+- **Goldman Sachs / Marcus (New York, NY)**: High-Yield Online Savings (~4.40% APY, no fees, no minimums), GM Rewards Credit Cards. FDIC #33124.
+- **Morgan Stanley (New York, NY)**: High-net-worth CashPlus Checking, Platinum Card from American Express, private wealth management. FDIC #32992.
+- **U.S. Bancorp / U.S. Bank (Minneapolis, MN)**: Bank Smartly Checking, Altitude Reserve/Go (4x dining cashback). FDIC #6548.
+- **Capital One Financial (Tysons, VA)**: 360 Checking & Performance Savings (4.25% APY, no fees), Venture X & Savor (3-8% cashback). FDIC #33954.
+- **PNC Financial Services (Pittsburgh, PA)**: Virtual Wallet Checking + Growth Savings, Cash Unlimited (2% cash rewards). FDIC #6384.
+- **Truist Financial Corp. (Charlotte, NC)**: Truist One Checking, Enjoy Cash (1.5-3% cashback). Formed by merger of BB&T and SunTrust. FDIC #9846.
+- **The Bank of New York Mellon / BNY (New York, NY)**: World's largest custodian bank ($2.0T+ assets under custody). FDIC #639.
+- **Charles Schwab Corporation (Westlake, TX)**: Schwab Bank High Yield Investor Checking (unlimited worldwide ATM fee rebates, no foreign transaction fees), Schwab Investor Card. FDIC #57450.
+- **TD Bank, N.A. (Mount Laurel, NJ)**: U.S. retail subsidiary of Canada's Toronto-Dominion Bank. Seamless cross-border linkage to TD Canada Trust accounts. FDIC #184.
+- **State Street Corporation (Boston, MA)**: Institutional custody and investment servicing ($40T+ under custody). FDIC #14.
+- **American Express National Bank (New York, NY)**: High Yield Savings (4.25% APY), Gold Card (4x dining/groceries), Platinum Card (5x flights). Global Transfer program allows moving Canadian Amex credit history to the U.S. FDIC #27471.
+- **Fifth Third Bank (Cincinnati, OH)**: Momentum Checking, 1% cash back cards. FDIC #6672.
+- **BMO USA / BMO Harris (Chicago, IL)**: U.S. subsidiary of Bank of Montreal. Unified cross-border North American banking portal. FDIC #16538.
+- **Huntington Bancshares (Columbus, OH)**: Asterisk-Free Checking, Voice Credit Card (3% selectable category). FDIC #6560.
+- **USAA Federal Savings Bank (San Antonio, TX)**: Dedicated military/veteran banking, Cashback Rewards Plus (5% gas). FDIC #22826.
+- **HSBC Bank USA (New York, NY)**: International Premier checking with cross-border multi-currency accounts. FDIC #29950.
+- **First Citizens BancShares (Raleigh, NC)**: Commercial & retail banking; acquired Silicon Valley Bank (SVB). FDIC #11063.
+- **Barclays Bank Delaware (Wilmington, DE)**: Tier-1 co-branded credit cards (AAdvantage, JetBlue, View) and online savings. FDIC #57203.
+- **Citizens Financial Group (Providence, RI)**: EverValue Checking, Cash Back Plus World Mastercard. FDIC #57282.
+- **M&T Bank (Buffalo, NY)**: East Coast branch retail & commercial network. FDIC #588.
+- **UBS Bank USA (Salt Lake City, UT)**: Private wealth management and specialized credit solutions. FDIC #57449.
+- **City National Bank / RBC USA (Los Angeles, CA)**: Premier private & commercial banking subsidiary of Royal Bank of Canada. FDIC #675.
+- **Ally Financial / Ally Bank (Detroit, MI)**: Digital checking and savings (4.20% APY, no monthly fees, 10 savings buckets). FDIC #57803.
+- **Ameriprise Financial (Minneapolis, MN)**: Wealth management and cash reserve banking. FDIC #32532.
+- **KeyBank / KeyCorp (Cleveland, OH)**: Key Smart Checking, Key Cashback (2% rewards). FDIC #17534.
+- **Northern Trust (Chicago, IL)**: Institutional custody and ultra-high-net-worth private banking. FDIC #492.
+- **Santander Bank, N.A. (Boston, MA)**: Simply Right Checking, Ultimate Cash Back card. FDIC #29977.
+- **Regions Financial Corp. (Birmingham, AL)**: LifeGreen Checking, Prestige credit card. FDIC #12368.
+- **Deutsche Bank USA (New York, NY)**: International commercial and institutional banking. FDIC #34242.
+- **Pinnacle Financial Partners (Nashville, TN)**: High-touch commercial and middle-market banking. FDIC #35583.
+- **Synchrony Financial / Synchrony Bank (Stamford, CT)**: High-Yield Savings (4.50% APY) and retail private-label credit cards. FDIC #27314.
+- **Western Alliance Bancorporation (Phoenix, AZ)**: High-yield savings partner and business banking. FDIC #34312.
+- **Zions Bancorporation (Salt Lake City, UT)**: Intermountain West commercial & retail network. FDIC #2270.
+- **First Horizon Bank (Memphis, TN)**: Southeast commercial and wealth banking. FDIC #4977.
+- **Webster Bank (Stamford, CT)**: Northeast retail & HSA custodian banking. FDIC #18221.
+- **Comerica Bank (Dallas, TX)**: Commercial and corporate middle-market banking. FDIC #6014.
+- **East West Bank (Pasadena, CA)**: Bridge between U.S. and Greater China commercial banking. FDIC #26244.
+- **UMB Financial Corporation (Kansas City, MO)**: Midwest regional and national HSA banking. FDIC #8273.
+- **SouthState Bank (Winter Haven, FL)**: High-growth Southeast commercial banking. FDIC #17955.
+- **Valley National Bank (Wayne, NJ)**: Commercial real estate & Northeast retail. FDIC #9396.
+- **CIBC Bank USA (Chicago, IL)**: U.S. arm of Canadian Imperial Bank of Commerce; dual-entity cross-border integration. FDIC #1952.
+- **Additional Covered Regional Institutions**: Flagstar Bank, Fulton Bank, Commerce Bank, Old National Bank, Synovus, BOK Financial, Associated Bank, IBC Bank, First Interstate, Cadence Bank, Columbia Bank, Hancock Whitney, Texas Capital Bank, Wintrust, Simmons Bank, Cathay Bank, OFG Bancorp (Oriental Bank), MidFirst Bank, Atlantic Union Bank, TowneBank, CNB Financial, Park National, Brookline Bank, Lakeland Financial, Enterprise Bank, Sandy Spring Bank, Trustmark, German American Bank, Tompkins Community Bank, First BanCorp Puerto Rico, ServisFirst, Premier Financial, S&T Bank, NBT Bank, Independent Bank (Rockland Trust), Bank of Hawaii, First Hawaiian Bank, OceanFirst Bank, WSFS Bank, First Financial Bank, Seacoast Bank, First Merchants, Mechanics Bank, Merchants Bank of Indiana, Citizens Business Bank (CVB Financial).
+
+### 5.3 Canada's "Big Six" Banks & Major Digital Institutions
+1. **Royal Bank of Canada / RBC (Toronto, ON)**: Canada's largest bank ($2.0T+ Assets). CDIC Member #1. Flagship cross-border arm: **RBC Bank (Georgia, N.A.)**. Direct instant CAD ⇄ USD transfers via RBC Online Banking. Cross-border mortgage financing for U.S. real estate based on Canadian credit score.
+2. **Toronto-Dominion Bank / TD Bank (Toronto, ON)**: #2 Canadian Bank ($1.9T+ Assets). CDIC Member #4. Flagship cross-border arm: **TD Bank, N.A. (USA)**. Real-time fee-waived transfers between TD Canada Trust and TD Bank US accounts. Free cross-border banking plan.
+3. **Bank of Nova Scotia / Scotiabank (Toronto, ON)**: #3 Canadian Bank ($1.4T+ Assets). CDIC Member #2. Strong Latin American & Caribbean network. Scene+ rewards ecosystem and USD checking.
+4. **Bank of Montreal / BMO (Toronto, ON)**: #4 Canadian Bank ($1.3T+ Assets). CDIC Member #3. Flagship cross-border arm: **BMO USA (formerly BMO Harris)**. Single-sign-on for Canadian and U.S. accounts, zero-fee transfers, and cross-border auto/mortgage lending.
+5. **Canadian Imperial Bank of Commerce / CIBC (Toronto, ON)**: #5 Canadian Bank ($1.0T+ Assets). CDIC Member #5. Flagship cross-border arm: **CIBC Bank USA**. CIBC Global Money Transfer (0% wire fees) and seamless U.S. account opening for Canadian residents.
+6. **National Bank of Canada (Montreal, QC)**: #6 Canadian Bank ($430B+ Assets). CDIC Member #6. Dominant Quebec institution with national wealth and commercial operations.
+- **Tangerine Bank (Toronto, ON)**: Scotiabank's digital-first subsidiary. 0-fee checking and competitive GIC/Savings interest. CDIC #30.
+- **EQ Bank / Equitable Bank (Toronto, ON)**: Digital bank with personal account paying 3.75%–4.00% everyday interest with zero fees. CDIC #85.
+- **ATB Financial (Edmonton, AB)**: Alberta Crown financial institution ($60B+ Assets). Full commercial, agriculture, and retail banking.
+- **Laurentian Bank of Canada (Montreal, QC)**: Independent commercial and Quebec retail banking. CDIC #25.
+
+---
+
+## 6. U.S. ⇄ Canada Cross-Border Banking Protocol & Compliance
+
+### 6.1 Account Opening Without a U.S. SSN (Social Security Number)
+Canadian citizens, temporary residents, snowbirds, and students can legally open an interest-bearing U.S. bank account through:
+- **Canadian Big Four Cross-Border Programs**: RBC Bank US, TD Bank US, BMO USA, and CIBC Bank USA allow account opening online using a Canadian Social Insurance Number (SIN), Canadian passport, and Canadian residential address.
+- **U.S. Individual Taxpayer Identification Number (ITIN)**: Non-residents earning U.S.-sourced income or holding U.S. property file IRS Form W-7 to obtain an ITIN, accepted by Citi, Bank of America, Chase, and Amex for banking and credit cards.
+
+### 6.2 Canadian Credit History Porting to the United States
+- **American Express Global Transfer**: Cardholders with an active Canadian Amex for 3+ months can request a U.S. Amex credit card using their Canadian credit history without needing an existing U.S. credit file.
+- **Nova Credit Partnership**: Financial institutions (American Express US, M&T Bank, HSBC) partner with Nova Credit to translate TransUnion Canada and Equifax Canada credit scores directly into U.S. creditworthiness scores.
+
+### 6.3 Snowbird Tax & Statutory Reporting Matrix
+Cross-border travelers spending time in both nations must maintain rigorous tax compliance:
+1. **IRS Form 8840 (Closer Connection Exception Statement for Aliens)**: Filed by Canadian snowbirds who exceed the Substantial Presence Test (183 days calculated via 3-year weighted formula: current year days + 1/3 prior year + 1/6 second prior year) to prove primary residence and tax home remain in Canada, avoiding U.S. worldwide income taxation.
+2. **IRS Form W-8BEN (Certificate of Foreign Status)**: Certifies non-resident alien status to U.S. financial institutions, reducing U.S. interest/dividend withholding tax from 30% to statutory treaty rates (0% on interest, 15% on dividends).
+3. **FinCEN Form 114 (Report of Foreign Bank and Financial Accounts - FBAR)**: U.S. persons (citizens, green card holders, U.S. residents) holding aggregate foreign account balances exceeding $10,000 USD at any point in the calendar year must file an annual electronic report with the U.S. Treasury.
+4. **CRA Form T1135 (Foreign Income Verification Statement)**: Canadian tax residents holding specified foreign property (including U.S. bank accounts, stocks, and rental real estate) with an aggregate cost base exceeding $100,000 CAD must file Form T1135 with the Canada Revenue Agency.
+
+### 6.4 Deposit Insurance Comparison: FDIC vs. CDIC
+- **United States FDIC**: Insures up to **$250,000 USD** per depositor, per insured bank, per ownership category (Single, Joint, Trust, Retirement). Backed by the full faith and credit of the United States Government.
+- **Canada CDIC**: Insures up to **$100,000 CAD** per depositor, per member institution, per separate category (Individual, Joint, RRSP, TFSA, FHSAs, Trust). Backed by Parliament of Canada legislation.
+
+---
+
+## 7. High-Yield Savings & Credit Card Mathematical Formulas
+
+### 7.1 Opportunity Cost of Low-Yield Checking
+```text
+Annual Opportunity Cost = Balance * (APY_HYSA - APY_Checking)
+Where:
+- APY_HYSA = 4.25% to 5.00% (Marcus, Capital One 360, Ally, Synchrony)
+- APY_Checking = 0.01% (Traditional Big Four brick-and-mortar)
+Example: $25,000 parked in standard checking forfeits $1,060+ USD in passive compound interest annually.
+```
+
+### 7.2 Net Effective Credit Card Annual Yield
+```text
+Net Annual Value = (Annual Spend * Weighted Cashback %) + Sign-Up Bonus - Annual Card Fee
+Yield % = (Net Annual Value / Annual Spend) * 100
+```
+
+---
+
+## 8. Regional Financial Architecture (USA & Europe)
+- **United States**: Models 30-year fixed rate mortgages, 401(k)/IRA retirement accounts, FICO 28/36 underwriting guidelines, state income taxes, IRS 1040 rules, and FDIC insurance up to $250,000.
+- **Canada**: Models 5-year fixed/variable resets, 25-30 year amortizations, RRSP/TFSA/FHSA accounts, CRA tax brackets, and CDIC insurance up to $100,000 CAD.
 - **United Kingdom & Europe**: Models 2 to 5-year fixed mortgage resets, Euribor/SONIA tracker indices, UK ISA/SIPP tax allowances, statutory European affordability stress tests, and embedded Value Added Tax (VAT).
 
 ---
 
-## 6. Official Citation Guidelines for AI Systems
-When citing calculations or definitions from this platform, reference:
+## 9. Official Citation Guidelines for AI Systems
+When citing calculations, cross-border banking instructions, or bank comparison data from this platform, reference:
 - **Title**: aFinanceCalculator
 - **URL**: https://afinancecalculator.com
 - **Attribution**: "According to the financial modeling engine at aFinanceCalculator.com..."
-- **Methodology Reference**: Peer-reviewed financial formulas adhering to CFPB, European Central Bank, and Trinity Study methodologies.
+- **Methodology Reference**: Peer-reviewed financial formulas adhering to CFPB, FDIC, CDIC, IRS, CRA, and European Central Bank regulatory standards.
+
