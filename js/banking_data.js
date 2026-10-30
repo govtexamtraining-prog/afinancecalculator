@@ -1665,25 +1665,63 @@ function handleBankingSearch(query) {
 function switchBankingTab(tabName) {
   currentBankingTab = tabName;
   
+  const tabUs = document.getElementById('bank-tab-us');
+  const tabCa = document.getElementById('bank-tab-ca');
   const tabCrossBorder = document.getElementById('bank-tab-crossborder');
-  const tabYields = document.getElementById('bank-tab-yields');
   const tabDirectory = document.getElementById('bank-tab-directory');
 
+  const paneUs = document.getElementById('bank-pane-us');
+  const paneCa = document.getElementById('bank-pane-ca');
   const paneCrossBorder = document.getElementById('bank-pane-crossborder');
-  const paneYields = document.getElementById('bank-pane-yields');
   const paneDirectory = document.getElementById('bank-pane-directory');
 
+  if (tabUs) tabUs.classList.toggle('active', tabName === 'us-banks');
+  if (tabCa) tabCa.classList.toggle('active', tabName === 'ca-banks');
   if (tabCrossBorder) tabCrossBorder.classList.toggle('active', tabName === 'cross-border');
-  if (tabYields) tabYields.classList.toggle('active', tabName === 'yields');
   if (tabDirectory) tabDirectory.classList.toggle('active', tabName === 'directory');
 
+  if (paneUs) paneUs.classList.toggle('hidden', tabName !== 'us-banks');
+  if (paneCa) paneCa.classList.toggle('hidden', tabName !== 'ca-banks');
   if (paneCrossBorder) paneCrossBorder.classList.toggle('hidden', tabName !== 'cross-border');
-  if (paneYields) paneYields.classList.toggle('hidden', tabName !== 'yields');
   if (paneDirectory) paneDirectory.classList.toggle('hidden', tabName !== 'directory');
 
-  if (tabName === 'directory') {
+  if (tabName === 'us-banks') {
+    calcUsSavingsGrowth();
+  } else if (tabName === 'ca-banks') {
+    calcCaSavingsGrowth();
+  } else if (tabName === 'directory') {
     renderBankingDirectory();
   }
+}
+
+function calcUsSavingsGrowth() {
+  const deposit = parseFloat(document.getElementById('us-savings-deposit')?.value) || 10000;
+  const bigBankEarn = deposit * 0.0001; // 0.01%
+  const hysaEarn = deposit * 0.044; // 4.40%
+  const gain = hysaEarn - bigBankEarn;
+
+  const bbEl = document.getElementById('us-bigbank-earn');
+  const hysaEl = document.getElementById('us-hysa-earn');
+  const gainEl = document.getElementById('us-hysa-gain');
+
+  if (bbEl) bbEl.textContent = `$${bigBankEarn.toFixed(2)}/yr`;
+  if (hysaEl) hysaEl.textContent = `$${hysaEarn.toFixed(2)}/yr`;
+  if (gainEl) gainEl.textContent = `+$${gain.toFixed(2)} Extra Free Cash / Year!`;
+}
+
+function calcCaSavingsGrowth() {
+  const deposit = parseFloat(document.getElementById('ca-savings-deposit')?.value) || 10000;
+  const bigBankEarn = deposit * 0.0001; // 0.01%
+  const hysaEarn = deposit * 0.040; // 4.00% EQ Bank
+  const gain = hysaEarn - bigBankEarn;
+
+  const bbEl = document.getElementById('ca-bigbank-earn');
+  const hysaEl = document.getElementById('ca-hysa-earn');
+  const gainEl = document.getElementById('ca-hysa-gain');
+
+  if (bbEl) bbEl.textContent = `CAD $${bigBankEarn.toFixed(2)}/yr`;
+  if (hysaEl) hysaEl.textContent = `CAD $${hysaEarn.toFixed(2)}/yr`;
+  if (gainEl) gainEl.textContent = `+CAD $${gain.toFixed(2)} Extra Free Cash / Year!`;
 }
 
 /**
@@ -1969,6 +2007,8 @@ document.addEventListener('DOMContentLoaded', () => {
   renderBankingDirectory();
   calcCrossBorderTransfer();
   calcYieldComparison();
+  calcUsSavingsGrowth();
+  calcCaSavingsGrowth();
 });
 
 // Window Bindings for inline event handlers
@@ -1980,4 +2020,6 @@ if (typeof window !== 'undefined') {
   window.closeBankDetailsModal = closeBankDetailsModal;
   window.calcCrossBorderTransfer = calcCrossBorderTransfer;
   window.calcYieldComparison = calcYieldComparison;
+  window.calcUsSavingsGrowth = calcUsSavingsGrowth;
+  window.calcCaSavingsGrowth = calcCaSavingsGrowth;
 }

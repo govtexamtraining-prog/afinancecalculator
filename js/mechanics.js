@@ -179,6 +179,12 @@ function calcMortgage() {
   // Calculate What-If Scenarios (30yr vs 15yr comparison & Extra payment)
   calcMortgageWhatIf(principal, rate, monthlyPayment, totalInterest, extraPay);
 
+  // Update Plain English Solution Card
+  const solTextEl = document.getElementById('mortgage-solution-text');
+  if (solTextEl) {
+    solTextEl.innerHTML = `To buy a home priced at <strong>${formatCurrency(asset)}</strong> with <strong>${formatCurrency(down)}</strong> down, your exact monthly payment is <strong class="text-emerald-400 font-bold">${formatCurrency(monthlyPayment)}/mo</strong>. Over ${mortgageTermYears} years, you will pay <strong class="text-rose-400 font-bold">${formatCurrency(totalInterest)}</strong> in interest to the bank.`;
+  }
+
   flashElement('mortgage-payment');
 }
 
@@ -223,12 +229,22 @@ function calcMortgageWhatIf(principal, rate, currentPayment, currentInterest, ex
 
     const extraIntEl = document.getElementById('mortgage-extra-int-saved');
     if (extraIntEl) extraIntEl.textContent = formatCurrency(extraInterestSaved);
+
+    const solTipEl = document.getElementById('mortgage-solution-tip');
+    if (solTipEl) {
+      solTipEl.innerHTML = `<strong>Action Plan:</strong> Paying an extra <strong>${formatCurrency(extraPay)}/month</strong> pays off your loan <strong>${(monthsSaved / 12).toFixed(1)} years earlier</strong> and keeps <strong>${formatCurrency(extraInterestSaved)} in your pocket</strong>!`;
+    }
   } else {
     const extraMonthsEl = document.getElementById('mortgage-extra-months-saved');
     if (extraMonthsEl) extraMonthsEl.textContent = `0 Months`;
 
     const extraIntEl = document.getElementById('mortgage-extra-int-saved');
     if (extraIntEl) extraIntEl.textContent = formatCurrency(0);
+
+    const solTipEl = document.getElementById('mortgage-solution-tip');
+    if (solTipEl) {
+      solTipEl.innerHTML = `<strong>Action Plan:</strong> Adding just <strong>$100 extra each month</strong> directly towards your principal can shave up to <strong>4.5 years</strong> off your loan and save tens of thousands in interest!`;
+    }
   }
 }
 
@@ -382,6 +398,11 @@ function calcCompound() {
 
   const multEl = document.getElementById('compound-multiplier');
   if (multEl) multEl.textContent = `${multiplier.toFixed(2)}x`;
+
+  const solCompEl = document.getElementById('compound-solution-text');
+  if (solCompEl) {
+    solCompEl.innerHTML = `You deposit <strong>${formatCurrency(principal)}</strong> of your own money. Over <strong>${years} years</strong> at <strong>${rate}% annual growth</strong>, compound interest earns you <strong class="text-emerald-400 font-bold">${formatCurrency(totalInterest)} in 100% free money</strong>, multiplying your savings by <strong>${multiplier.toFixed(2)}x</strong> without extra work! Total future wealth: <strong class="text-white">${formatCurrency(futureVal)}</strong>.`;
+  }
 
   renderGrowthCurve('compound-growth-svg', principal, rate, years);
   flashElement('compound-future-val');
@@ -552,6 +573,16 @@ function calcCreditCard() {
 
   const paidEl = document.getElementById('creditcard-total-paid');
   if (paidEl) paidEl.textContent = formatCurrency(totalPaid);
+
+  const solCardEl = document.getElementById('creditcard-solution-text');
+  if (solCardEl) {
+    if (months > 0 && months < 600) {
+      const yrs = (months / 12).toFixed(1);
+      solCardEl.innerHTML = `At your current payment of <strong>${formatCurrency(payment)}/month</strong>, you will be completely debt-free in <strong class="text-emerald-400 font-bold">${months} months (${yrs} years)</strong>. The card company will take <strong class="text-rose-400 font-bold">${formatCurrency(totalInterest)} in pure interest fees</strong>. Total payback: <strong>${formatCurrency(totalPaid)}</strong>.`;
+    } else {
+      solCardEl.innerHTML = `<span class="text-rose-400 font-bold">⚠️ Warning:</span> Your monthly payment is too low to beat interest charges. Increase your monthly payment to start paying off the principal!`;
+    }
+  }
 
   flashElement('creditcard-months');
 }
