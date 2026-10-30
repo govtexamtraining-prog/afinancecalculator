@@ -1923,15 +1923,17 @@
                 </div>
             </section>
 
-            <!-- 11. Residential Housing Analysis Framework -->
-            <section id="engine-rentbuy" class="engine-panel hidden glass-panel rounded-2xl p-6 sm:p-8">
+            <!-- 11. Residential Housing Analysis Framework / Rent vs Buy Decision Matrix -->
+            <section id="engine-rentbuy" class="engine-panel hidden glass-panel rounded-2xl p-6 sm:p-8 border border-slate-800/80 shadow-2xl relative overflow-hidden transition-all">
+                
+                <!-- Engine Header -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-800/80 gap-3">
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="text-2xl">🏘️</span>
-                            <h2 class="text-xl sm:text-2xl font-black text-white">Residential Housing Analysis Framework</h2>
+                            <h2 class="text-xl sm:text-2xl font-black text-white">Rent vs Buy Home Decision Matrix</h2>
                         </div>
-                        <p class="text-sm text-slate-400 mt-1">Contrast recurring lease commitments against homeownership mortgage outlays.</p>
+                        <p class="text-sm text-slate-400 mt-1">Get a crystal-clear, definitive answer: Should you rent or buy based on cash flow, equity growth, and your stay horizon?</p>
                     </div>
                     <div class="engine-actions flex items-center gap-2 no-print">
                         <button onclick="resetEngine('rentbuy')" class="px-3 py-1.5 text-xs text-slate-400 hover:text-white bg-slate-900 border border-slate-800 rounded-lg hover:border-slate-700 transition-colors">Reset</button>
@@ -1940,66 +1942,204 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <!-- 1-Click Rent vs Buy Presets -->
-                    <div class="flex flex-wrap items-center gap-1.5 mb-2 text-[11px] font-semibold col-span-1 md:col-span-2">
-                        <span class="text-slate-400 text-[10px] uppercase tracking-wider font-bold">Market Tier:</span>
-                        <button type="button" onclick="applyScenarioPreset('rentbuy', 'metro')" class="preset-chip px-2.5 py-0.5 rounded-lg bg-slate-950 text-slate-300 hover:text-white border border-slate-800 transition-all cursor-pointer">Metro City</button>
-                        <button type="button" onclick="applyScenarioPreset('rentbuy', 'suburban')" class="preset-chip active px-2.5 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 transition-all cursor-pointer">Suburban</button>
-                        <button type="button" onclick="applyScenarioPreset('rentbuy', 'affordable')" class="preset-chip px-2.5 py-0.5 rounded-lg bg-slate-950 text-slate-300 hover:text-white border border-slate-800 transition-all cursor-pointer">Affordable Area</button>
-                    </div>
-                    <div class="space-y-5">
+                <!-- Presets & Planned Horizon Bar -->
+                <div class="mt-6 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-800/80">
+                        <!-- Market Tier Presets -->
                         <div>
-                            <div class="flex justify-between text-xs font-bold text-slate-300 mb-1.5">
-                                <label for="rentbuy-rent">Monthly Rent Contract</label>
-                                <span class="text-emerald-400 font-mono-num"><span class="currency-symbol-tag">$</span> 1,800</span>
+                            <span class="text-slate-400 text-[10px] uppercase tracking-wider font-bold block mb-1.5">1-Click Market Tier:</span>
+                            <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-semibold">
+                                <button type="button" onclick="applyScenarioPreset('rentbuy', 'metro')" class="preset-chip px-2.5 py-1 rounded-lg bg-slate-950 text-slate-300 hover:text-white border border-slate-800 transition-all cursor-pointer">Metro City</button>
+                                <button type="button" onclick="applyScenarioPreset('rentbuy', 'suburban')" class="preset-chip active px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 transition-all cursor-pointer">Suburban</button>
+                                <button type="button" onclick="applyScenarioPreset('rentbuy', 'affordable')" class="preset-chip px-2.5 py-1 rounded-lg bg-slate-950 text-slate-300 hover:text-white border border-slate-800 transition-all cursor-pointer">Affordable Area</button>
                             </div>
-                            <div class="relative">
-                                <span class="absolute left-3 top-2.5 text-slate-500 font-mono currency-symbol-tag">$</span>
-                                <input type="number" id="rentbuy-rent" value="1800" min="100" max="25000" step="50" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
-                            </div>
-                            <input type="range" id="rentbuy-rent-range" value="1800" min="500" max="8000" step="50" class="w-full mt-2">
                         </div>
 
+                        <!-- Planned Stay Horizon (Crucial for Decision!) -->
                         <div>
-                            <div class="flex justify-between text-xs font-bold text-slate-300 mb-1.5">
-                                <label for="rentbuy-mortgage">Monthly Purchase Mortgage Outflow</label>
-                                <span class="text-emerald-400 font-mono-num"><span class="currency-symbol-tag">$</span> 2,300</span>
+                            <span class="text-slate-400 text-[10px] uppercase tracking-wider font-bold block mb-1.5">📅 How long do you plan to stay in this home?</span>
+                            <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-semibold">
+                                <button type="button" data-years="3" onclick="setRentBuyHorizon(3)" class="rentbuy-horizon-btn px-2.5 py-1 rounded-lg bg-slate-950 text-slate-300 hover:text-white border border-slate-800 transition-all cursor-pointer">3 Years (Short)</button>
+                                <button type="button" data-years="5" onclick="setRentBuyHorizon(5)" class="rentbuy-horizon-btn active px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 transition-all cursor-pointer">5 Years (Standard)</button>
+                                <button type="button" data-years="7" onclick="setRentBuyHorizon(7)" class="rentbuy-horizon-btn px-2.5 py-1 rounded-lg bg-slate-950 text-slate-300 hover:text-white border border-slate-800 transition-all cursor-pointer">7 Years (Medium)</button>
+                                <button type="button" data-years="10" onclick="setRentBuyHorizon(10)" class="rentbuy-horizon-btn px-2.5 py-1 rounded-lg bg-slate-950 text-slate-300 hover:text-white border border-slate-800 transition-all cursor-pointer">10+ Years (Long)</button>
                             </div>
-                            <div class="relative">
-                                <span class="absolute left-3 top-2.5 text-slate-500 font-mono currency-symbol-tag">$</span>
-                                <input type="number" id="rentbuy-mortgage" value="2300" min="100" max="35000" step="50" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
-                            </div>
-                            <input type="range" id="rentbuy-mortgage-range" value="2300" min="500" max="10000" step="50" class="w-full mt-2">
                         </div>
                     </div>
 
-                    <div class="space-y-4">
-                        <div class="result-display-card rounded-2xl p-6 text-center output-item">
-                            <span class="output-label text-xs uppercase font-bold tracking-wider text-slate-400">Annual Premium Cash Flow Variance</span>
-                            <div id="rentbuy-annual-variance" class="output-value text-3xl sm:text-4xl font-black text-emerald-400 font-mono-num mt-2">$ 0.00 / Annum</div>
-                            <p id="rentbuy-verdict" class="text-[11px] text-slate-400 mt-2 font-medium">Monthly cash flow disparity between contract renting vs mortgage purchase.</p>
+                    <!-- Main Grid: Left Inputs / Right Decision Output -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-4">
+                        
+                        <!-- Left Column: Inputs (5 Cols) -->
+                        <div class="lg:col-span-5 space-y-4">
+                            <!-- Monthly Rent Contract -->
+                            <div class="bg-slate-900/70 p-4 rounded-2xl border border-slate-800/80">
+                                <div class="flex justify-between text-xs font-bold text-slate-300 mb-1.5">
+                                    <label for="rentbuy-rent">Monthly House Rent & Society Dues</label>
+                                    <span class="text-emerald-400 font-mono-num"><span class="currency-symbol-tag">$</span> 1,800</span>
+                                </div>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-2.5 text-slate-500 font-mono currency-symbol-tag">$</span>
+                                    <input type="number" id="rentbuy-rent" value="1800" min="100" max="250000" step="50" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                </div>
+                                <input type="range" id="rentbuy-rent-range" value="1800" min="500" max="15000" step="50" class="w-full mt-2">
+                                <span class="text-[10px] text-slate-500 block mt-1">Includes rent, maintenance charges, and tenant insurance.</span>
+                            </div>
+
+                            <!-- Expected Monthly EMI -->
+                            <div class="bg-slate-900/70 p-4 rounded-2xl border border-slate-800/80">
+                                <div class="flex justify-between text-xs font-bold text-slate-300 mb-1.5">
+                                    <label for="rentbuy-mortgage">Expected Monthly Home Loan EMI</label>
+                                    <span class="text-emerald-400 font-mono-num"><span class="currency-symbol-tag">$</span> 2,300</span>
+                                </div>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-2.5 text-slate-500 font-mono currency-symbol-tag">$</span>
+                                    <input type="number" id="rentbuy-mortgage" value="2300" min="100" max="350000" step="50" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                </div>
+                                <input type="range" id="rentbuy-mortgage-range" value="2300" min="500" max="25000" step="50" class="w-full mt-2">
+                                <span class="text-[10px] text-slate-500 block mt-1">Monthly loan repayment principal & interest.</span>
+                            </div>
+
+                            <!-- Expandable Real-World Assumptions -->
+                            <div class="bg-slate-900/50 rounded-2xl border border-slate-800/60 overflow-hidden">
+                                <button type="button" onclick="toggleRentBuyAssumptions()" class="w-full px-4 py-3 flex items-center justify-between text-left text-xs font-bold text-slate-300 hover:text-white transition-colors cursor-pointer">
+                                    <span class="flex items-center gap-1.5">
+                                        <span>⚙️</span> Real-World Assumptions (Rent Hikes, Growth & Return)
+                                    </span>
+                                    <span id="rentbuy-assumptions-icon" class="text-xs text-slate-500">▼</span>
+                                </button>
+                                <div id="rentbuy-assumptions-panel" class="hidden p-4 pt-1 border-t border-slate-800/60 space-y-3 bg-slate-950/40 text-xs">
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <div>
+                                            <label class="text-[10px] text-slate-400 block mb-1">Rent Hike /yr</label>
+                                            <input type="number" id="rentbuy-rent-growth" value="5" min="0" max="20" step="0.5" oninput="calcRentBuy()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs font-mono font-bold text-white">
+                                            <span class="text-[9px] text-slate-500 mt-0.5 block">Std: 5%</span>
+                                        </div>
+                                        <div>
+                                            <label class="text-[10px] text-slate-400 block mb-1">Home Growth /yr</label>
+                                            <input type="number" id="rentbuy-home-appreciation" value="4" min="0" max="20" step="0.5" oninput="calcRentBuy()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs font-mono font-bold text-white">
+                                            <span class="text-[9px] text-slate-500 mt-0.5 block">Std: 4%</span>
+                                        </div>
+                                        <div>
+                                            <label class="text-[10px] text-slate-400 block mb-1">SIP Return /yr</label>
+                                            <input type="number" id="rentbuy-invest-return" value="8" min="0" max="25" step="0.5" oninput="calcRentBuy()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs font-mono font-bold text-white">
+                                            <span class="text-[9px] text-slate-500 mt-0.5 block">Std: 8%</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 leading-tight">Models how monthly savings invested in mutual funds/SIP compare to property equity.</p>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800/80 output-item">
-                                <span class="output-label text-[10px] uppercase font-bold text-slate-400">Monthly Net Variance</span>
-                                <div id="rentbuy-monthly-variance" class="output-value text-base font-bold text-slate-200 font-mono-num mt-1">$ 0.00</div>
-                            </div>
-                            <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800/80 output-item">
-                                <span class="output-label text-[10px] uppercase font-bold text-slate-400">5-Year Cumulative Delta</span>
-                                <div id="rentbuy-5yr-variance" class="output-value text-base font-bold text-emerald-400 font-mono-num mt-1">$ 0.00</div>
-                            </div>
-                        </div>
-                        <!-- Visual Comparison Chart -->
-                        <div class="bg-slate-900/60 rounded-xl p-3 border border-slate-800/80 mt-3">
-                            <div class="flex justify-between items-center text-[10px] uppercase font-bold text-slate-400 mb-1">
-                                <span>10-Year Cumulative Cash Outflow Comparison</span>
-                                <span class="text-emerald-400 font-mono" id="rentbuy-chart-delta">Rent vs Buy</span>
-                            </div>
-                            <svg id="rentbuy-comparison-svg" class="w-full h-20" viewBox="0 0 340 80"></svg>
-                        </div>
+                        <!-- Right Column: The Clear Executive Decision & Solution (7 Cols) -->
+                        <div class="lg:col-span-7 space-y-4">
+                            
+                            <!-- 1. THE BIG DECISION VERDICT CARD -->
+                            <div id="rentbuy-decision-card" class="rounded-2xl p-5 border border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 via-slate-900/90 to-slate-950 shadow-xl transition-all relative overflow-hidden">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="flex items-center gap-2.5">
+                                        <span id="rentbuy-decision-icon" class="text-3xl">🏆</span>
+                                        <div>
+                                            <span class="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 block">Clear Decision Recommendation</span>
+                                            <h3 id="rentbuy-decision-headline" class="text-base sm:text-lg font-black text-emerald-400 leading-tight">
+                                                RECOMMENDED DECISION: RENTING IS BETTER FOR YOU
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <span id="rentbuy-decision-badge" class="px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shrink-0 font-mono">
+                                        Saves $ 500 / mo
+                                    </span>
+                                </div>
 
+                                <!-- Plain English Rationale -->
+                                <p id="rentbuy-decision-summary" class="text-xs sm:text-sm text-slate-200 mt-3 leading-relaxed">
+                                    Renting keeps positive operational cash flow over purchasing.
+                                </p>
+
+                                <!-- Key Highlights Mini-Cards -->
+                                <div class="grid grid-cols-3 gap-2.5 mt-4 pt-3 border-t border-slate-800/80">
+                                    <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/70 text-center">
+                                        <span class="text-[9px] uppercase tracking-wider font-bold text-slate-400 block">Monthly Savings</span>
+                                        <span id="rentbuy-summary-savings" class="text-xs sm:text-sm font-black text-emerald-400 font-mono-num mt-0.5 block">$ 500.00</span>
+                                    </div>
+                                    <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/70 text-center">
+                                        <span class="text-[9px] uppercase tracking-wider font-bold text-slate-400 block">Break-Even Horizon</span>
+                                        <span id="rentbuy-summary-breakeven" class="text-xs sm:text-sm font-black text-sky-400 font-mono-num mt-0.5 block">~8.5 Years</span>
+                                    </div>
+                                    <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/70 text-center">
+                                        <span class="text-[9px] uppercase tracking-wider font-bold text-slate-400 block">5-Yr Cash Delta</span>
+                                        <span id="rentbuy-summary-5yr" class="text-xs sm:text-sm font-black text-purple-400 font-mono-num mt-0.5 block">$ 30,000</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. SIDE-BY-SIDE REALITY SCORECARD TABLE -->
+                            <div class="bg-slate-900/80 rounded-2xl p-4 border border-slate-800/80 shadow-lg">
+                                <h4 class="text-xs font-black uppercase tracking-wider text-slate-300 mb-3 flex items-center justify-between">
+                                    <span>⚖️ Rent vs Buy Direct Scorecard</span>
+                                    <span class="text-[10px] text-slate-500 font-normal">Based on your inputs</span>
+                                </h4>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left text-xs">
+                                        <thead>
+                                            <tr class="border-b border-slate-800 text-[10px] uppercase tracking-wider text-slate-400">
+                                                <th class="pb-2 font-bold">Criteria</th>
+                                                <th class="pb-2 font-bold">Renting Option</th>
+                                                <th class="pb-2 font-bold">Buying Option</th>
+                                                <th class="pb-2 font-bold text-right">Winner</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rentbuy-scorecard-body" class="divide-y divide-slate-800/60">
+                                            <!-- Dynamically injected rows -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 3. Existing Backward-Compatible Variance Card (Preserved for scripts & print) -->
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                                <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800/80 output-item">
+                                    <span class="output-label text-[9px] uppercase font-bold text-slate-400">Monthly Net Variance</span>
+                                    <div id="rentbuy-monthly-variance" class="output-value text-sm font-bold text-slate-200 font-mono-num mt-1">$ 0.00</div>
+                                </div>
+                                <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800/80 output-item">
+                                    <span class="output-label text-[9px] uppercase font-bold text-slate-400">Annual Cash Variance</span>
+                                    <div id="rentbuy-annual-variance" class="output-value text-sm font-bold text-emerald-400 font-mono-num mt-1">$ 0.00 / Annum</div>
+                                </div>
+                                <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800/80 output-item col-span-2 sm:col-span-1">
+                                    <span class="output-label text-[9px] uppercase font-bold text-slate-400">5-Year Cumulative Delta</span>
+                                    <div id="rentbuy-5yr-variance" class="output-value text-sm font-bold text-emerald-400 font-mono-num mt-1">$ 0.00</div>
+                                </div>
+                            </div>
+
+                            <p id="rentbuy-verdict" class="hidden"></p>
+
+                            <!-- 4. Visual 10-Year Cumulative Cash Outflow Chart -->
+                            <div class="bg-slate-900/60 rounded-xl p-3 border border-slate-800/80">
+                                <div class="flex justify-between items-center text-[10px] uppercase font-bold text-slate-400 mb-1">
+                                    <span>10-Year Cumulative Cash Outflow Comparison</span>
+                                    <span class="text-emerald-400 font-mono" id="rentbuy-chart-delta">Rent vs Buy</span>
+                                </div>
+                                <svg id="rentbuy-comparison-svg" class="w-full h-20" viewBox="0 0 340 80"></svg>
+                            </div>
+
+                            <!-- 5. Clear Actionable Next Steps ("What Should I Do Now?") -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
+                                <div class="bg-emerald-950/20 p-3.5 rounded-xl border border-emerald-900/40">
+                                    <span class="text-emerald-400 font-bold block mb-1">📌 If You Choose to Rent:</span>
+                                    <ul id="rentbuy-action-rent-tips" class="space-y-1 text-slate-300 text-[11px] list-disc list-inside">
+                                        <!-- Injected dynamically -->
+                                    </ul>
+                                </div>
+                                <div class="bg-blue-950/20 p-3.5 rounded-xl border border-blue-900/40">
+                                    <span class="text-sky-400 font-bold block mb-1">🏡 If You Choose to Buy:</span>
+                                    <ul id="rentbuy-action-buy-tips" class="space-y-1 text-slate-300 text-[11px] list-disc list-inside">
+                                        <!-- Injected dynamically -->
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </section>

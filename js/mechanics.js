@@ -582,16 +582,144 @@ function calcStockAvg() {
 }
 
 // -------------------------------------------------------------
-// 11. RESIDENTIAL HOUSING ANALYSIS FRAMEWORK
+// 11. RESIDENTIAL HOUSING ANALYSIS FRAMEWORK (RENT VS BUY DECISION MATRIX)
 // -------------------------------------------------------------
-function calcRentBuy() {
-  const rent = parseFloat(document.getElementById('rentbuy-rent').value) || 0;
-  const mortgage = parseFloat(document.getElementById('rentbuy-mortgage').value) || 0;
+let rentbuyHorizonYears = 5;
 
-  const monthlyVariance = mortgage - rent;
+function setRentBuyHorizon(years) {
+  rentbuyHorizonYears = parseInt(years) || 5;
+  document.querySelectorAll('.rentbuy-horizon-btn').forEach(btn => {
+    const btnYears = parseInt(btn.dataset.years) || 5;
+    const match = btnYears === rentbuyHorizonYears;
+    btn.classList.toggle('active', match);
+    btn.classList.toggle('bg-emerald-500/20', match);
+    btn.classList.toggle('text-emerald-400', match);
+    btn.classList.toggle('border-emerald-500/40', match);
+    btn.classList.toggle('bg-slate-950', !match);
+    btn.classList.toggle('text-slate-300', !match);
+    btn.classList.toggle('border-slate-800', !match);
+  });
+  calcRentBuy();
+  saveStateDebounced();
+}
+
+function toggleRentBuyAssumptions() {
+  const panel = document.getElementById('rentbuy-assumptions-panel');
+  const icon = document.getElementById('rentbuy-assumptions-icon');
+  if (panel) {
+    const isHidden = panel.classList.contains('hidden');
+    panel.classList.toggle('hidden');
+    if (icon) icon.textContent = isHidden ? '▲' : '▼';
+  }
+}
+
+function updateRentBuyScorecard(rent, mortgage, horizon, monthlyDiff, totalRentPaid, totalMortPaid, investedWealth, homeEquity, breakEvenYear) {
+  const tbody = document.getElementById('rentbuy-scorecard-body');
+  if (!tbody) return;
+
+  const rentWinsMonthly = monthlyDiff > 0;
+  const buyWinsMonthly = monthlyDiff < 0;
+
+  const rows = [
+    {
+      criteria: 'Monthly Outlay',
+      renting: `${formatCurrency(rent)}`,
+      buying: `${formatCurrency(mortgage)}`,
+      winner: rentWinsMonthly 
+        ? `<span class="text-emerald-400 font-bold">🟢 Rent saves ${formatCurrency(monthlyDiff)}/mo</span>`
+        : (buyWinsMonthly ? `<span class="text-sky-400 font-bold">🟢 Buy saves ${formatCurrency(Math.abs(monthlyDiff))}/mo</span>` : `<span class="text-slate-400">⚖️ Equal Parity</span>`)
+    },
+    {
+      criteria: `${horizon}-Year Total Outflow`,
+      renting: `${formatCurrency(totalRentPaid)} <span class="text-[10px] text-slate-500 block">(w/ 5% annual rent hikes)</span>`,
+      buying: `${formatCurrency(totalMortPaid)} <span class="text-[10px] text-slate-500 block">(Fixed loan payments)</span>`,
+      winner: totalMortPaid > totalRentPaid
+        ? `<span class="text-emerald-400 font-bold">🟢 Rent saves ${formatCurrency(totalMortPaid - totalRentPaid)}</span>`
+        : `<span class="text-sky-400 font-bold">🟢 Buy saves ${formatCurrency(totalRentPaid - totalMortPaid)}</span>`
+    },
+    {
+      criteria: `${horizon}-Year Net Wealth Outlook`,
+      renting: `${formatCurrency(investedWealth)} <span class="text-[10px] text-slate-500 block">(If monthly savings invested @ 8%)</span>`,
+      buying: `${formatCurrency(homeEquity)} <span class="text-[10px] text-slate-500 block">(Home equity + 4% growth)</span>`,
+      winner: investedWealth > homeEquity
+        ? `<span class="text-emerald-400 font-bold">🟢 Renting creates more liquid wealth</span>`
+        : `<span class="text-sky-400 font-bold">🟢 Buying creates more property wealth</span>`
+    },
+    {
+      criteria: 'Maintenance, Repairs & Taxes',
+      renting: `<span class="text-emerald-400 font-semibold">${formatCurrency(0)}</span> (Landlord obligation)`,
+      buying: `~${formatCurrency(mortgage * 0.10)}/mo <span class="text-slate-500 text-[10px] block">(Repairs, society dues, tax)</span>`,
+      winner: `<span class="text-emerald-400 font-bold">🟢 Renting (Zero maintenance liability)</span>`
+    },
+    {
+      criteria: 'Relocation & Job Flexibility',
+      renting: `<span class="text-emerald-400 font-semibold">High</span> (30-day notice to move)`,
+      buying: `<span class="text-rose-400 font-semibold">Low</span> (Takes 3-6 mos to sell, 6-8% fees)`,
+      winner: `<span class="text-emerald-400 font-bold">🟢 Renting (Maximum freedom)</span>`
+    }
+  ];
+
+  tbody.innerHTML = rows.map(r => `
+    <tr class="hover:bg-slate-800/30 transition-colors">
+      <td class="py-2.5 font-bold text-slate-200">${r.criteria}</td>
+      <td class="py-2.5 font-mono text-slate-300">${r.renting}</td>
+      <td class="py-2.5 font-mono text-slate-300">${r.buying}</td>
+      <td class="py-2.5 text-right font-medium">${r.winner}</td>
+    </tr>
+  `).join('');
+}
+
+function updateRentBuyActionTips(monthlyDiff, horizon, breakEvenYear, investReturnPct) {
+  const rentList = document.getElementById('rentbuy-action-rent-tips');
+  const buyList = document.getElementById('rentbuy-action-buy-tips');
+
+  if (rentList) {
+    if (monthlyDiff > 0) {
+      rentList.innerHTML = `
+        <li>Automate an SIP / investment of <strong>${formatCurrency(monthlyDiff)}/mo</strong> into mutual funds or index funds yielding ~${investReturnPct}%.</li>
+        <li>Enjoy zero liability for unexpected roof repairs, plumbing issues, or property tax hikes.</li>
+        <li>Retain complete freedom to move for higher-paying career opportunities without taking a 6-8% hit on selling fees.</li>
+      `;
+    } else {
+      rentList.innerHTML = `
+        <li>Only rent if you plan to stay less than 2-3 years, as monthly rent is currently more expensive than purchasing.</li>
+        <li>Negotiate a multi-year fixed lease to protect yourself against local rent inflation.</li>
+      `;
+    }
+  }
+
+  if (buyList) {
+    if (monthlyDiff > 0) {
+      const beText = breakEvenYear > 0 ? `stay for at least <strong>${breakEvenYear} to ${breakEvenYear + 2} years</strong>` : 'plan to stay for 8+ years';
+      buyList.innerHTML = `
+        <li>Only purchase if you are confident you will ${beText} so property equity surpasses rent savings.</li>
+        <li>Keep at least a 6-month liquid emergency fund AFTER paying your 20% down payment and closing costs.</li>
+        <li>Budget an extra 1% to 1.5% of the property value annually for repairs, maintenance, and insurance.</li>
+      `;
+    } else {
+      buyList.innerHTML = `
+        <li><strong>Strongly pursue buying:</strong> Your monthly EMI is cheaper than rent, allowing you to build personal wealth immediately.</li>
+        <li>Get pre-approved for a fixed-rate home loan to permanently lock in your housing payment against inflation.</li>
+        <li>Build personal equity with every payment instead of funding your landlord's retirement nest egg.</li>
+      `;
+    }
+  }
+}
+
+function calcRentBuy() {
+  const rent = parseFloat(document.getElementById('rentbuy-rent')?.value) || 0;
+  const mortgage = parseFloat(document.getElementById('rentbuy-mortgage')?.value) || 0;
+  const rentGrowthPct = parseFloat(document.getElementById('rentbuy-rent-growth')?.value) || 5.0;
+  const homeApprPct = parseFloat(document.getElementById('rentbuy-home-appreciation')?.value) || 4.0;
+  const investReturnPct = parseFloat(document.getElementById('rentbuy-invest-return')?.value) || 8.0;
+
+  const horizon = rentbuyHorizonYears || 5;
+  const monthlyVariance = mortgage - rent; // Positive means rent is cheaper
   const annualVariance = monthlyVariance * 12;
   const fiveYearVariance = annualVariance * 5;
+  const horizonVariance = annualVariance * horizon;
 
+  // 1. Backward-compatible DOM updates
   const annEl = document.getElementById('rentbuy-annual-variance');
   if (annEl) annEl.textContent = `${formatCurrency(annualVariance)} / Annum`;
 
@@ -603,15 +731,135 @@ function calcRentBuy() {
 
   const verdictEl = document.getElementById('rentbuy-verdict');
   if (verdictEl) {
-    if (annualVariance > 0) {
+    if (monthlyVariance > 0) {
       verdictEl.textContent = `Renting retains ${formatCurrency(monthlyVariance)}/mo positive operational cash flow over purchasing.`;
-    } else if (annualVariance < 0) {
+    } else if (monthlyVariance < 0) {
       verdictEl.textContent = `Mortgage is ${formatCurrency(Math.abs(monthlyVariance))}/mo cheaper than contractual leasing!`;
     } else {
       verdictEl.textContent = `Lease and purchase outlays are currently at cash-flow parity.`;
     }
   }
 
+  // 2. Realistic multi-year compounding and wealth modeling
+  const rGrowth = rentGrowthPct / 100;
+  let totalRentPaid = 0;
+  let currentYearRent = rent;
+  for (let y = 1; y <= horizon; y++) {
+    totalRentPaid += currentYearRent * 12;
+    currentYearRent *= (1 + rGrowth);
+  }
+  const totalMortPaid = mortgage * 12 * horizon;
+
+  // Invested Monthly Savings (Future Value of SIP if Rent < Mortgage)
+  const monthlyInvestRate = (investReturnPct / 100) / 12;
+  let investedSavingsWealth = 0;
+  if (monthlyVariance > 0 && monthlyInvestRate > 0) {
+    const totalMonths = horizon * 12;
+    investedSavingsWealth = monthlyVariance * ((Math.pow(1 + monthlyInvestRate, totalMonths) - 1) / monthlyInvestRate);
+  }
+
+  // Home equity estimate: Property value estimated as ~140x monthly mortgage payment
+  const estimatedPropertyVal = mortgage * 140;
+  const futurePropertyValue = estimatedPropertyVal * Math.pow(1 + (homeApprPct / 100), horizon);
+  const principalAmortizedPct = Math.min(1.0, (horizon / 25) * 0.7);
+  const estimatedDownPayment = estimatedPropertyVal * 0.20;
+  const homeEquity = estimatedDownPayment + (estimatedPropertyVal * 0.80 * principalAmortizedPct) + (futurePropertyValue - estimatedPropertyVal);
+
+  // 3. Break-even horizon calculation (Year where buyer net position beats renter)
+  let breakEvenYear = 0;
+  for (let y = 1; y <= 25; y++) {
+    const yMonths = y * 12;
+    const yInvested = monthlyVariance > 0 && monthlyInvestRate > 0
+      ? monthlyVariance * ((Math.pow(1 + monthlyInvestRate, yMonths) - 1) / monthlyInvestRate)
+      : 0;
+    const yHomeVal = estimatedPropertyVal * Math.pow(1 + (homeApprPct / 100), y);
+    // Home equity minus 6% sale friction fees
+    const yEquity = estimatedDownPayment + (estimatedPropertyVal * 0.80 * Math.min(1.0, (y / 25) * 0.7)) + (yHomeVal - estimatedPropertyVal) - (yHomeVal * 0.06);
+
+    if (yEquity > yInvested && breakEvenYear === 0) {
+      breakEvenYear = y;
+    }
+  }
+
+  // 4. Executive Decision & Solution Rationale
+  const decisionCard = document.getElementById('rentbuy-decision-card');
+  const decisionIcon = document.getElementById('rentbuy-decision-icon');
+  const decisionHeadline = document.getElementById('rentbuy-decision-headline');
+  const decisionBadge = document.getElementById('rentbuy-decision-badge');
+  const decisionSummary = document.getElementById('rentbuy-decision-summary');
+  const summarySavings = document.getElementById('rentbuy-summary-savings');
+  const summaryBreakeven = document.getElementById('rentbuy-summary-breakeven');
+  const summary5Yr = document.getElementById('rentbuy-summary-5yr');
+
+  let winner = 'rent';
+  let headlineText = '';
+  let badgeText = '';
+  let summaryText = '';
+  let iconEmoji = '🏆';
+
+  if (monthlyVariance >= 50) {
+    // Renting is noticeably cheaper on monthly cash flow
+    if (horizon < (breakEvenYear || 8)) {
+      winner = 'rent';
+      iconEmoji = '🏆';
+      headlineText = 'RECOMMENDED DECISION: RENTING IS BETTER FOR YOU';
+      badgeText = `Renting Saves ${formatCurrency(monthlyVariance)} / mo`;
+      summaryText = `At your numbers, renting saves you <strong>${formatCurrency(monthlyVariance)} in cash every single month</strong> (${formatCurrency(annualVariance)}/year). Over your planned <strong>${horizon}-year stay</strong>, renting saves you <strong>${formatCurrency(horizonVariance)} in pure cash outflow</strong>. If you invest that monthly difference in index funds/SIP at ${investReturnPct}%, you will build <strong>${formatCurrency(investedSavingsWealth)} in liquid wealth</strong> without taking on mortgage debt, property taxes, or home repairs.`;
+    } else {
+      winner = 'buy';
+      iconEmoji = '🏡';
+      headlineText = 'RECOMMENDED DECISION: BUYING BUILDS GREATER LONG-TERM WEALTH';
+      badgeText = `Long-Term Equity Winner`;
+      summaryText = `Even though renting is cheaper month-to-month by ${formatCurrency(monthlyVariance)}, your extended stay of <strong>${horizon} years</strong> allows property price appreciation (${homeApprPct}%/yr) and loan principal paydown to overcome the early savings of renting. By Year ${horizon}, your estimated home equity reaches <strong>${formatCurrency(homeEquity)}</strong>, creating more net wealth than renting.`;
+    }
+  } else if (monthlyVariance <= -50) {
+    // Mortgage is cheaper than rent!
+    winner = 'buy';
+    iconEmoji = '🏡';
+    headlineText = 'RECOMMENDED DECISION: BUYING IS CLEARLY SUPERIOR';
+    badgeText = `Buying Saves ${formatCurrency(Math.abs(monthlyVariance))} / mo`;
+    summaryText = `Buying is a clear financial victory here! Your monthly mortgage payment of <strong>${formatCurrency(mortgage)}/mo</strong> is actually cheaper than rent (<strong>${formatCurrency(rent)}/mo</strong>). You keep <strong>${formatCurrency(Math.abs(monthlyVariance))}/mo</strong> in positive cash flow while simultaneously building property equity instead of paying off your landlord's mortgage.`;
+  } else {
+    // Close parity
+    winner = 'tie';
+    iconEmoji = '⚖️';
+    headlineText = 'RECOMMENDED DECISION: IT\'S A TIE — DECIDE BY YOUR STAY HORIZON';
+    badgeText = `Cash-Flow Parity (~${formatCurrency(Math.abs(monthlyVariance))}/mo)`;
+    summaryText = `Monthly rent and mortgage are almost identical. <strong>The deciding factor is how long you plan to live here:</strong> If you will move within 4–5 years, <strong>Rent</strong> to avoid transaction and selling costs (6-8%). If you plan to stay 6+ years, <strong>Buy</strong> to lock in your housing costs against rising rent inflation.`;
+  }
+
+  if (decisionHeadline) decisionHeadline.textContent = headlineText;
+  if (decisionIcon) decisionIcon.textContent = iconEmoji;
+  if (decisionBadge) decisionBadge.textContent = badgeText;
+  if (decisionSummary) decisionSummary.innerHTML = summaryText;
+
+  if (summarySavings) {
+    summarySavings.textContent = monthlyVariance > 0 
+      ? `Save ${formatCurrency(monthlyVariance)}/mo` 
+      : (monthlyVariance < 0 ? `Buy saves ${formatCurrency(Math.abs(monthlyVariance))}/mo` : `Parity`);
+  }
+  if (summaryBreakeven) {
+    summaryBreakeven.textContent = breakEvenYear > 0 ? `~Year ${breakEvenYear}` : (monthlyVariance < 0 ? `Year 1 (Immediate)` : `10+ Years`);
+  }
+  if (summary5Yr) {
+    summary5Yr.textContent = formatCurrency(Math.abs(fiveYearVariance));
+  }
+
+  // Update Decision Card Style classes
+  if (decisionCard) {
+    decisionCard.classList.remove('rentbuy-verdict-rent', 'rentbuy-verdict-buy', 'rentbuy-verdict-tie');
+    if (winner === 'rent') decisionCard.classList.add('rentbuy-verdict-rent');
+    else if (winner === 'buy') decisionCard.classList.add('rentbuy-verdict-buy');
+    else decisionCard.classList.add('rentbuy-verdict-tie');
+  }
+
+  // 5. Update Scorecard Table Rows
+  updateRentBuyScorecard(rent, mortgage, horizon, monthlyVariance, totalRentPaid, totalMortPaid, investedSavingsWealth, homeEquity, breakEvenYear);
+
+  // 6. Update Action Checklist Tips
+  updateRentBuyActionTips(monthlyVariance, horizon, breakEvenYear, investReturnPct);
+
+  // 7. Render comparison chart
   renderRentBuyChart(rent, mortgage);
   flashElement('rentbuy-annual-variance');
 }
@@ -6785,6 +7033,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   syncDualInput('rentbuy-rent', 'rentbuy-rent-range', calcRentBuy);
   syncDualInput('rentbuy-mortgage', 'rentbuy-mortgage-range', calcRentBuy);
+  ['rentbuy-rent-growth', 'rentbuy-home-appreciation', 'rentbuy-invest-return'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', calcRentBuy);
+  });
 
   syncDualInput('margin-cost', 'margin-cost-range', calcMargin);
   syncDualInput('margin-price', 'margin-price-range', calcMargin);
@@ -7858,5 +8110,10 @@ if (typeof window !== 'undefined') {
   window.handleModalPeriodUnitChange = handleModalPeriodUnitChange;
   window.setModalAmortizationPeriod = setModalAmortizationPeriod;
   window.applyModalAmortizationMonths = applyModalAmortizationMonths;
+
+  // Rent vs Buy Decision Matrix Handlers
+  window.setRentBuyHorizon = setRentBuyHorizon;
+  window.toggleRentBuyAssumptions = toggleRentBuyAssumptions;
+  window.calcRentBuy = calcRentBuy;
 }
 
