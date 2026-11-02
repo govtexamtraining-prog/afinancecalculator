@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-cashoncash&landing=1" title="Cash on cash return calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Annual cash flow after the mortgage payment, divided by the cash you put in. Vacancy and repairs are only what you enter.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>Cash on cash return is the annual cash flow after the mortgage payment, divided by the cash you put in. Cash flow starts from rent, subtracts the operating costs you enter, then subtracts the mortgage payment the form calculates or accepts. The down payment and closing cash are the denominator.</p>
+        <h2>Worked example</h2>
+        <p>If the cash left after the mortgage is $6,000 a year and you invested $100,000, the cash-on-cash return is 6%. A higher mortgage payment lowers that return even when the cap rate stays the same.</p>
+        <h2>What this page leaves out</h2>
+        <p>Vacancy and repairs are only the amounts you enter. It is not a cap rate, and it does not forecast appreciation or tax loss.</p>
         <nav><a href="/cap-rate-calculator/">Cap rate calculator</a> · <a href="/rent-vs-buy-calculator/">Rent vs buy calculator</a></nav>
     </section>
 </body>

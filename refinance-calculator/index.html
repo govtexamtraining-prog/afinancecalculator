@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-refinance&landing=1" title="Mortgage refinance calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Compares the payment you have with a new rate and term. Closing costs are the amount you enter. It is not a lender quote.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>The current payment and the new payment are each a standard monthly principal-and-interest calculation on the balance, rate, and term you enter. The monthly savings are the old payment minus the new payment. Break-even months are the closing costs you enter divided by that monthly savings, when the new payment is lower.</p>
+        <h2>Worked example</h2>
+        <p>A lower rate on the same balance reduces the payment. If closing costs are $6,000 and the payment falls by $200 a month, the costs are covered in 30 months. After that, the lower payment is the gain. If the new payment is higher, there is no break-even from payment savings.</p>
+        <h2>What this page leaves out</h2>
+        <p>The result is not a lender quote. Cash-out, points bought with a higher fee, mortgage insurance, and prepayment penalties are only present if you have already put them into the balance or the closing-cost field.</p>
         <nav><a href="/mortgage-calculator/">Mortgage payment calculator</a> · <a href="/biweekly-mortgage-calculator/">Biweekly mortgage calculator</a></nav>
     </section>
 </body>

@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-salary&landing=1" title="Hourly to salary calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Hourly wage times the hours and weeks you enter. It is gross pay, before tax.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>Yearly gross pay is the hourly wage times hours per week times weeks per year. Monthly gross is that year divided by 12. Weekly gross is the wage times the weekly hours. The result is before tax.</p>
+        <h2>Worked example</h2>
+        <p>$30 an hour, 40 hours a week, 52 weeks a year, is $62,400 a year, $5,200 a month, and $1,200 a week, all before tax. Unpaid weeks should be removed from the weeks field rather than left at 52.</p>
+        <h2>What this page leaves out</h2>
+        <p>Income tax, FICA, CPP, and benefits are not deducted. Use the paycheck page for a US take-home estimate after you choose the federal and state percents.</p>
         <nav><a href="/paycheck-calculator/">US paycheck calculator</a> · <a href="/overtime-calculator/">Overtime pay calculator</a></nav>
     </section>
 </body>

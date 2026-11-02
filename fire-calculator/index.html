@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-fire&landing=1" title="FIRE calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Years until the portfolio covers annual spending at the growth rate you enter, using a 4% withdrawal target. It is not a retirement-income guarantee.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>The target portfolio is annual spending divided by the withdrawal rate. At 4%, the target is spending times 25. Each year the current savings grow by the growth rate you enter, and then the annual savings amount is added. The page counts years until the balance reaches the target, and it stops at 60 years.</p>
+        <h2>Worked example</h2>
+        <p>Spending of $60,000 a year at a 4% withdrawal rate sets a target of $1,500,000. If savings are already at that target, the years to get there are zero. If they are not, the years depend on the starting balance, the yearly contribution, and the growth rate, which defaults to 7% when that field is empty.</p>
+        <h2>What this page leaves out</h2>
+        <p>A 4% withdrawal is a planning target, not a guarantee that the portfolio survives. Social Security, CPP, a pension, and taxes are not subtracted from the spending figure unless you have already done that yourself.</p>
         <nav><a href="/401k-calculator/">401(k) calculator</a> · <a href="/compound-interest-calculator/">Compound interest calculator</a></nav>
     </section>
 </body>

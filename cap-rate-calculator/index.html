@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-caprate&landing=1" title="Cap rate calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Net operating income divided by price. It does not subtract the mortgage payment.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>Capitalization rate is net operating income divided by price. Net operating income on this page is the rent you enter minus the operating costs you enter. The mortgage payment is not subtracted. A cap rate answers what the building yields before financing.</p>
+        <h2>Worked example</h2>
+        <p>Rent of $36,000 a year and operating costs of $12,000 leave $24,000 of net operating income. On a $400,000 price the cap rate is 6%. The same income on a higher price is a lower cap rate.</p>
+        <h2>What this page leaves out</h2>
+        <p>Vacancy, repairs, and management are in the result only to the extent you typed them into operating costs. Debt service, income tax, and future rent growth are not in the cap rate.</p>
         <nav><a href="/cash-on-cash-calculator/">Cash on cash return calculator</a> · <a href="/airbnb-calculator/">Airbnb income calculator</a></nav>
     </section>
 </body>

@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-socialsecurity&landing=1" title="Social Security calculator"></iframe>
     <section>
         <p class="meta">United States.</p>
-        <p>Compares US claiming ages from the benefit amount you enter. It does not look up your Social Security statement, and it is not Canada Pension Plan or OAS.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>You enter the monthly benefit at one claiming age. The page scales that benefit to the other claiming ages using the early and delayed factors in the tool, so you can compare the monthly amounts. It does not contact the Social Security Administration and it does not read a statement.</p>
+        <h2>Worked example</h2>
+        <p>If the benefit you type at full retirement age is $2,000 a month, claiming earlier shows a smaller monthly amount and claiming later shows a larger one. The comparison is only as good as the benefit you entered.</p>
+        <h2>What this page leaves out</h2>
+        <p>This is United States Social Security. It is not the Canada Pension Plan or Old Age Security. Spousal benefits, the earnings test, and taxation of benefits are not calculated.</p>
         <nav><a href="/rmd-calculator/">Required minimum distribution calculator</a> · <a href="/fire-calculator/">FIRE calculator</a></nav>
     </section>
 </body>

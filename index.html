@@ -1274,6 +1274,7 @@
                             <h2 class="text-xl sm:text-2xl font-black text-white">Home Loan EMI &amp; Mortgage Calculator: What Will My Monthly Payment Be?</h2>
                         </div>
                         <p class="text-sm text-slate-400 mt-1">Principal and interest only. Taxes, insurance, and mortgage insurance are not included.</p>
+                        <p id="mortgage-market-note" class="text-sm text-slate-400 mt-1 hidden">Canada: the quoted rate compounds semi-annually. A CMHC premium is added only when the down payment is under 20% and the price is inside the published limit.</p>
                     </div>
                     <div class="engine-actions flex items-center gap-2 no-print">
                         <button onclick="openAmortizationModal('mortgage')" class="px-3 py-1.5 text-xs font-semibold text-teal-400 bg-teal-950/40 border border-teal-800/60 rounded-lg hover:bg-teal-900/60 transition-colors">Schedule & CSV</button>
@@ -1400,6 +1401,10 @@
                             <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800/80 output-item col-span-2 flex justify-between items-center">
                                 <span class="output-label text-[10px] font-bold text-slate-400">Loan-To-Value (LTV Ratio)</span>
                                 <div id="mortgage-ltv" class="output-value text-sm font-bold text-emerald-400 font-mono-num">80.0%</div>
+                            </div>
+                            <div id="mortgage-cmhc-row" class="bg-slate-900/90 rounded-xl p-3 border border-slate-800/80 output-item col-span-2 hidden flex justify-between items-center gap-3">
+                                <span class="output-label text-[10px] font-bold text-slate-400">CMHC premium</span>
+                                <div id="mortgage-cmhc" class="output-value text-sm font-bold text-slate-200 font-mono-num">Not added.</div>
                             </div>
                         </div>
                     </div>
@@ -7070,6 +7075,6 @@
     <script src="js/banking_data.js"></script>
     <script src="js/calculator-pages.js"></script>
     <!-- Core Computation Mechanics -->
-    <script src="js/mechanics.js?v=2.4.1"></script>
+    <script src="js/mechanics.js?v=2.4.2"></script>
 </body>
 </html>

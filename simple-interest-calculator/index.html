@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-interest&landing=1" title="Simple interest calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Interest = principal × rate × time. The rate is not compounded.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>Simple interest is principal times rate times time. The interest does not earn interest. A two-year loan at simple interest costs twice the interest of a one-year loan at the same rate. That is different from the compound-interest page, which applies the rate to the growing balance.</p>
+        <h2>Worked example</h2>
+        <p>$10,000 at 6% simple interest for 3 years earns $1,800 of interest. The amount owed at the end, if nothing was paid along the way, is $11,800.</p>
+        <h2>What this page leaves out</h2>
+        <p>It does not amortize a monthly payment, and it does not compound. Use the mortgage or personal-loan page when the balance should be paid down each month.</p>
         <nav><a href="/compound-interest-calculator/">Compound interest calculator</a></nav>
     </section>
 </body>

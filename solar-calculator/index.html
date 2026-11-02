@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-solar&landing=1" title="Solar payback calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Years until the system cost is covered by the electric bill share you enter. Incentives are only the amount you type. It is not a US tax-credit determination.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>Yearly savings are the share of the electric bill you say the system covers. Payback years are the system cost, minus the incentive amount you type, divided by that yearly savings. Incentives are only the dollar amount you enter. The page does not decide that a tax credit applies.</p>
+        <h2>Worked example</h2>
+        <p>A $20,000 system with a $0 incentive and $1,000 a year of bill savings pays back in 20 years. Type a $6,000 incentive and the net cost is $14,000, so the same savings pay back in 14 years. The incentive has to be a number you believe applies.</p>
+        <h2>What this page leaves out</h2>
+        <p>It is not a US federal tax-credit determination, and it does not know a utility’s net-metering rate. Panel degradation, a loan on the system, and rising electric rates are not projected unless you have already folded them into the savings figure.</p>
         <nav><a href="/ev-vs-gas-calculator/">EV vs gas cost calculator</a></nav>
     </section>
 </body>

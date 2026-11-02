@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-paycheck&landing=1" title="US paycheck calculator"></iframe>
     <section>
         <p class="meta">United States.</p>
-        <p>Social Security and Medicare use the 2026 employee rates and wage base in this tool. Federal and state income tax are the percentages you enter. This is not a Canadian payroll or provincial-tax calculator.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>Annual wages are the gross pay per period times the number of periods. Social Security is 6.2% of wages up to the 2026 wage base used here, $184,500. Medicare is 1.45% of all wages. Additional Medicare is 0.9% of wages above $200,000. Those three are calculated. Federal income tax and state or provincial income tax are the percents you type, applied to the period’s gross pay. Net pay is gross minus those amounts. A 401(k) deferral does not reduce these payroll taxes on this page.</p>
+        <h2>Worked example</h2>
+        <p>Gross pay of $3,500, 26 times a year, is $91,000 a year. That is under the Social Security wage base and under the additional Medicare threshold. FICA on one paycheck is $267.75. At 12.5% federal and 4.5% state, those income-tax amounts are $437.50 and $157.50. Net pay is $2,637.25.</p>
+        <h2>What this page leaves out</h2>
+        <p>The federal and state percents are not tax brackets. A California, Texas, or New York paycheck still needs you to type that state’s rate. Texas has no wage income tax, so the state field would be 0 there. Pre-tax health insurance, local tax, and the federal withholding tables are not applied. This is not Canadian payroll, CPP, or EI.</p>
         <nav><a href="/salary-calculator/">Hourly to salary calculator</a> · <a href="/bonus-tax-calculator/">US bonus withholding calculator</a></nav>
     </section>
 </body>

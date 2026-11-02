@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-severance&landing=1" title="US severance calculator"></iframe>
     <section>
         <p class="meta">United States.</p>
-        <p>Withholds US supplemental tax and employee FICA from the lump sum you enter. Unemployment benefits are not added to the runway.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>The lump sum you enter is treated as supplemental wages. US supplemental withholding and employee FICA are taken off using the same rates as the bonus page. The cash left is divided by the monthly spending you enter to show how many months it covers. Unemployment benefits are not added.</p>
+        <h2>Worked example</h2>
+        <p>A severance check uses the 22% supplemental rate when the amount is under $1,000,000, then Social Security and Medicare subject to the wage base. If $20,000 remains after those amounts and spending is $4,000 a month, the runway is 5 months from this check alone.</p>
+        <h2>What this page leaves out</h2>
+        <p>State unemployment is not added to the runway. A release agreement, a pension, and continued health insurance are not valued. This is not Canadian termination pay or employment-standards notice.</p>
         <nav><a href="/paycheck-calculator/">US paycheck calculator</a> · <a href="/budget-calculator/">50/30/20 budget calculator</a></nav>
     </section>
 </body>

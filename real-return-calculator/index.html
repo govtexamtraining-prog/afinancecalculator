@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-realreturns&landing=1" title="Real return calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Uses the Fisher effect on the nominal return and inflation rate you enter.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>The Fisher equation used here is 1 + real = (1 + nominal) / (1 + inflation). Real return is that result minus 1. A rough subtraction of inflation from the nominal rate is close when both rates are small, and it is not the figure this page uses.</p>
+        <h2>Worked example</h2>
+        <p>A 7% nominal return with 3% inflation is a real return of 3.88%, because 1.07 / 1.03 − 1 = 0.0388. Subtracting 3 from 7 would have said 4%, which is a bit high.</p>
+        <h2>What this page leaves out</h2>
+        <p>Taxes are not removed. The nominal return and the inflation rate are both numbers you enter, not forecasts.</p>
         <nav><a href="/inflation-calculator/">Inflation calculator</a> · <a href="/cagr-calculator/">CAGR calculator</a></nav>
     </section>
 </body>

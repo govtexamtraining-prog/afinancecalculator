@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-closingcosts&landing=1" title="Closing cost calculator"></iframe>
     <section>
         <p class="meta">United States.</p>
-        <p>Adds the fee amounts you enter for a US-style closing. It does not calculate Canadian land transfer tax or title insurance.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>The total is the sum of the fee amounts you type: lender charges, title, escrow, and any other lines on the form. Nothing is looked up from a county fee schedule. Percent fields, where the form has them, are that percent times the price or loan you entered.</p>
+        <h2>Worked example</h2>
+        <p>A 1% origination charge on a $360,000 loan is $3,600. Add the flat title and escrow amounts you type and the page shows the cash due at closing from those lines alone.</p>
+        <h2>What this page leaves out</h2>
+        <p>This is a US-style list of fees you enter. It does not calculate Canadian land transfer tax, title insurance, or a provincial welcome tax. Prepaid property tax and insurance are included only when you type them.</p>
         <nav><a href="/mortgage-calculator/">Mortgage payment calculator</a> · <a href="/home-affordability-calculator/">Home affordability calculator</a></nav>
     </section>
 </body>

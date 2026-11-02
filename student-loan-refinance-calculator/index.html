@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-studentrefi&landing=1" title="Student loan refinance vs PSLF calculator"></iframe>
     <section>
         <p class="meta">United States.</p>
-        <p>Compares a private refinance payment with income-driven payments you describe on the page. PSLF is a US program. This is not a Canada Student Loan calculator, and it does not decide forgiveness.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>One column is a private refinance payment: the balance amortized at the new rate and term. The other column is the income-driven payment described by the fields on the page. The page places those two payments next to each other. Public Service Loan Forgiveness is a US program. The page does not decide that a borrower qualifies.</p>
+        <h2>Worked example</h2>
+        <p>A lower refinance rate reduces the payment and removes the forgiveness path, because a private refinance is no longer a federal loan. The income-driven column keeps whatever payment you described. The difference is the comparison. It is not an approval.</p>
+        <h2>What this page leaves out</h2>
+        <p>It does not decide forgiveness, and it is not a Canada Student Loan calculator. Tax on forgiven balances, qualifying payment counts, and income recertification are not calculated.</p>
         <nav><a href="/student-loan-calculator/">Student loan payoff calculator</a></nav>
     </section>
 </body>

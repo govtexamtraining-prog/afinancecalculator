@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-cdladder&landing=1" title="CD ladder calculator"></iframe>
     <section>
         <p class="meta">United States.</p>
-        <p>US certificate-of-deposit rungs at the rates you enter. This is not a Canadian GIC ladder, and the rates are not live bank quotes.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>Each rung is a certificate of deposit with the deposit, the annual percentage yield, and the term you enter. Interest on a rung is deposit times yield times years, using the simple growth the form labels. The ladder total is the sum of the rungs. Rolling a matured rung is a new term you choose, not an automatic bank renewal.</p>
+        <h2>Worked example</h2>
+        <p>Four equal deposits at four different yields produce four different interest amounts. A higher yield on a longer rung does not change the interest on the shorter rungs. The page adds them. It does not quote a live bank rate.</p>
+        <h2>What this page leaves out</h2>
+        <p>This is a US certificate-of-deposit ladder, not a Canadian GIC ladder. Early-withdrawal penalties are not calculated. The yields are the ones you type, not a current offer from a bank.</p>
         <nav><a href="/compound-interest-calculator/">Compound interest calculator</a></nav>
     </section>
 </body>

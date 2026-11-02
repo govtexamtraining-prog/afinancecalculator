@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-capitalgains&landing=1" title="Capital gains calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Gain times the tax rate you enter. The field starts at 15%. It does not apply Canada’s capital-gains inclusion rate or US tax brackets on its own.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>The gain is the sale proceeds minus the purchase cost, and it cannot go below zero on this page. Tax is the gain times the rate you enter. The field starts at 15%. Net profit is the gain minus that tax. The rate is not chosen from US brackets or from Canada’s inclusion rate.</p>
+        <h2>Worked example</h2>
+        <p>A purchase at $20,000 and a sale at $40,000 is a $20,000 gain. At 15% the tax is $3,000 and the amount left is $17,000. At a 0% rate the tax is zero. Enter Canada’s inclusion math yourself if you want that result. This page will not apply it.</p>
+        <h2>What this page leaves out</h2>
+        <p>It does not apply Canada’s capital-gains inclusion rate. It does not apply US long-term brackets, the net investment income tax, or a wash sale. Losses on this form do not create a negative gain.</p>
         <nav><a href="/stock-average-calculator/">Stock average cost calculator</a> · <a href="/dividend-calculator/">Dividend yield calculator</a></nav>
     </section>
 </body>

@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-bonustax&landing=1" title="US bonus withholding calculator"></iframe>
     <section>
         <p class="meta">United States.</p>
-        <p>Uses US supplemental withholding rates, then Social Security and Medicare. A 401(k) deferral does not reduce those payroll taxes here. It is not Canadian bonus tax.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>US supplemental withholding on this page is 22% of the bonus up to $1,000,000, then 37% of the amount above that. Social Security and Medicare are then calculated with the same employee rates as the paycheck page, including the wage base. A 401(k) percent, if you enter one, reduces the bonus before income withholding on this form and does not reduce those payroll taxes.</p>
+        <h2>Worked example</h2>
+        <p>A $10,000 bonus under the wage base has $2,200 of supplemental withholding at 22%, plus employee Social Security and Medicare on the full $10,000. The amount deposited is the bonus minus those amounts. A bonus that pushes year-to-date wages over $184,500 stops additional Social Security.</p>
+        <h2>What this page leaves out</h2>
+        <p>This is US supplemental withholding, not the tax you ultimately owe, and not Canadian bonus tax. It is not a flat 22% of tax due on your return. The final tax depends on the rest of the year’s income.</p>
         <nav><a href="/paycheck-calculator/">US paycheck calculator</a></nav>
     </section>
 </body>

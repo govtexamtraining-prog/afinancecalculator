@@ -5,6 +5,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const pageCopy = require('./page-copy');
 
 const root = path.join(__dirname, '..');
 const origin = 'https://afinancecalculator.com';
@@ -26,7 +27,7 @@ const caMortgage = money(monthlyPayment(480000, 4.5, 25), 'C$');
 /** @type {{slug:string, engine:string, title:string, h1:string, region:'us'|'ca'|'shared', note:string, example?:string, related?:string[]}[]} */
 const pages = [
   { slug: 'mortgage-calculator', engine: 'tab-mortgage', title: 'Mortgage Payment Calculator', h1: 'Mortgage payment calculator', region: 'us', note: 'Principal and interest only, compounded monthly. Taxes, insurance, and mortgage insurance are not included.', example: `A $450,000 home with $90,000 down at 6.2% for 30 years is ${usMortgage} a month.`, related: ['biweekly-mortgage-calculator', 'refinance-calculator', 'canada-mortgage-calculator'] },
-  { slug: 'canada-mortgage-calculator', engine: 'tab-mortgage', title: 'Canada Mortgage Payment Calculator', h1: 'Canada mortgage payment calculator', region: 'ca', note: 'This is principal and interest, compounded monthly. Many Canadian mortgages compound semi-annually. CMHC or Sagen insurance and the federal stress test are not included.', example: `A C$600,000 home with C$120,000 down at 4.5% for 25 years is ${caMortgage} a month on this monthly schedule.`, related: ['mortgage-calculator', 'us-canada-banks'] },
+  { slug: 'canada-mortgage-calculator', engine: 'tab-mortgage', market: 'ca', title: 'Canada Mortgage Payment Calculator', h1: 'Canada mortgage payment calculator', region: 'ca', note: 'Principal and interest with the quoted rate compounded semi-annually. The CMHC premium uses the published homeowner schedule and is added only when the down payment is under 20%. Provincial sales tax and the federal stress test are not included.', example: 'A C$600,000 home with C$120,000 down at 4.5% for 25 years is C$2,656.67 a month. That down payment is 20%, so no CMHC premium is added.', related: ['mortgage-calculator', 'us-canada-banks'] },
   { slug: 'biweekly-mortgage-calculator', engine: 'tab-biweekly', title: 'Biweekly Mortgage Calculator', h1: 'Biweekly mortgage calculator', region: 'shared', note: 'Compares a monthly payment with 26 half-payments a year. It does not include taxes, insurance, or a lender’s biweekly fee.', related: ['mortgage-calculator', 'refinance-calculator'] },
   { slug: 'refinance-calculator', engine: 'tab-refinance', title: 'Mortgage Refinance Calculator', h1: 'Mortgage refinance calculator', region: 'shared', note: 'Compares the payment you have with a new rate and term. Closing costs are the amount you enter. It is not a lender quote.', related: ['mortgage-calculator', 'biweekly-mortgage-calculator'] },
   { slug: 'rent-vs-buy-calculator', engine: 'tab-rentbuy', title: 'Rent vs Buy Calculator', h1: 'Rent vs buy calculator', region: 'shared', note: 'Compares five years of rent with principal, interest, and a sale cost you can read on the page. It is not a full cost of owning, and it leaves out repairs, tax, and insurance unless you add them in the fields provided.', related: ['mortgage-calculator', 'home-affordability-calculator'] },
@@ -104,7 +105,6 @@ function pageHtml(page) {
     <link rel="alternate" hreflang="en-CA" href="${origin}/canada-mortgage-calculator/">
     <link rel="alternate" hreflang="x-default" href="${origin}/mortgage-calculator/">`
     : '';
-  const example = page.example ? `<p class="example">${escapeHtml(page.example)}</p>` : '';
   const regionLine = page.region === 'us'
     ? 'United States.'
     : page.region === 'ca'
@@ -135,7 +135,9 @@ function pageHtml(page) {
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -143,16 +145,29 @@ function pageHtml(page) {
         <h1>${escapeHtml(page.h1)}</h1>
         <a class="brand" href="/">All calculators</a>
     </header>
-    <iframe src="/index.html?engine=${encodeURIComponent(page.engine)}&landing=1" title="${escapeHtml(page.h1)}"></iframe>
+    <iframe src="/index.html?engine=${encodeURIComponent(page.engine)}&landing=1${page.market ? `&market=${encodeURIComponent(page.market)}` : ''}" title="${escapeHtml(page.h1)}"></iframe>
     <section>
         <p class="meta">${regionLine}</p>
-        <p>${escapeHtml(page.note)}</p>
-        ${example}
+        ${articleHtml(page)}
         <nav>${related}</nav>
     </section>
 </body>
 </html>
 `;
+}
+
+function articleHtml(page) {
+  const copy = pageCopy[page.slug];
+  if (!copy) {
+    const example = page.example ? `<p>${escapeHtml(page.example)}</p>` : '';
+    return `<p>${escapeHtml(page.note)}</p>${example}`;
+  }
+  return `<h2>How this figure is calculated</h2>
+        <p>${escapeHtml(copy.how)}</p>
+        <h2>Worked example</h2>
+        <p>${escapeHtml(copy.example)}</p>
+        <h2>What this page leaves out</h2>
+        <p>${escapeHtml(copy.leaves)}</p>`;
 }
 
 function writePages() {

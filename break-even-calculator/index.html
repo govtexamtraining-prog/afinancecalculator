@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-breakeven&landing=1" title="Break-even calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Fixed costs divided by the margin on each unit. It breaks even in units and in sales dollars.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>Break-even units are fixed costs divided by the margin on each unit. The margin is the price minus the variable cost. Break-even sales dollars are the break-even units times the price. If the margin is zero or negative, there is no break-even, because each sale loses money or makes none.</p>
+        <h2>Worked example</h2>
+        <p>Fixed costs of $12,000, a $40 price, and a $25 variable cost leave $15 of margin. Break-even is 800 units, or $32,000 of sales. The 801st unit is the first one that contributes only to profit.</p>
+        <h2>What this page leaves out</h2>
+        <p>A changing price, a step-up in rent at some volume, and taxes on profit are not included. The fixed cost is the single number you enter.</p>
         <nav><a href="/profit-margin-calculator/">Profit margin calculator</a> · <a href="/invoice-calculator/">Invoice calculator</a></nav>
     </section>
 </body>

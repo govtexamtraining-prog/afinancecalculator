@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-sip&landing=1" title="Monthly investment calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>A fixed contribution each month at the annual rate you enter, compounded on the schedule labeled in the tool.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>A fixed amount is added every month. The annual rate is divided by 12, and each month the balance grows by that monthly rate. The ending value is the ordinary annuity formula used in the tool: payment times ((1+i)^n − 1) / i, times (1+i), which treats each deposit as earning one month of interest in the month it is made. At a 0% rate the balance equals the contributions.</p>
+        <h2>Worked example</h2>
+        <p>$500 a month for 20 years is $120,000 of contributions before any growth. At a positive rate the ending balance is higher than $120,000 by the growth on each deposit. At a 0% rate the balance equals the contributions.</p>
+        <h2>What this page leaves out</h2>
+        <p>It is not a paycheck deduction, an RRSP, or a TFSA. Taxes on the growth are not withheld. A market loss would require a lower or negative rate that you type yourself.</p>
         <nav><a href="/compound-interest-calculator/">Compound interest calculator</a> · <a href="/fire-calculator/">FIRE calculator</a></nav>
     </section>
 </body>

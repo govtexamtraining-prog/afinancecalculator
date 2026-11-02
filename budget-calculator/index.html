@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-budget&landing=1" title="50/30/20 budget calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Splits take-home pay into 50% needs, 30% wants, and 20% savings. It is a planning split, not a budget you must follow.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>Take-home pay is split 50% to needs, 30% to wants, and 20% to savings. Needs are half of the pay you enter. Wants are 30%. Savings are 20%. The split is a planning guide. The page also shows the amounts you type for actual spending so you can see the gap.</p>
+        <h2>Worked example</h2>
+        <p>Take-home pay of $5,000 a month assigns $2,500 to needs, $1,500 to wants, and $1,000 to savings. If rent alone is $2,200, most of the needs bucket is already used. The page does not move the rent. It shows the bucket.</p>
+        <h2>What this page leaves out</h2>
+        <p>It is not a budget you must follow. Taxes are already out if the pay you typed is take-home. Gross pay should go through the paycheck page first.</p>
         <nav><a href="/paycheck-calculator/">US paycheck calculator</a> · <a href="/debt-snowball-calculator/">Debt snowball and avalanche calculator</a></nav>
     </section>
 </body>

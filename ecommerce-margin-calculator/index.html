@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-dropship&landing=1" title="Ecommerce margin calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Sale price minus product cost, advertising, and the platform percent you enter.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>The margin starts at the sale price minus the product cost. Advertising and the platform percent you enter are then subtracted. What remains is the contribution on that order. Divide by the sale price for the margin percent.</p>
+        <h2>Worked example</h2>
+        <p>A $40 sale with a $15 product cost, $8 of advertising, and a 15% platform fee of $6 leaves $11. The margin on the sale price is 27.5%. Raise the advertising and the $11 falls by the same amount.</p>
+        <h2>What this page leaves out</h2>
+        <p>Returns, payment-processing fees, and shipping are included only when you put them in the cost or advertising fields. It is not a forecast of how many orders will sell.</p>
         <nav><a href="/profit-margin-calculator/">Profit margin calculator</a> · <a href="/roi-calculator/">ROI calculator</a></nav>
     </section>
 </body>

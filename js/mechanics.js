@@ -11,6 +11,7 @@ let currentCurrency = '$';
 let currentCurrencyCode = 'USD';
 let activeEngineId = 'tab-mortgage';
 let mortgageTermYears = 30;
+let mortgageMarket = 'us';
 let cryptoStrategy = 'long';
 let isFocusMode = true;
 let currentAmortizationData = [];
@@ -86,6 +87,57 @@ function fixedMonthlyPayment(principal, annualRatePct, months) {
   if (r === 0) return principal / months;
   const growth = Math.pow(1 + r, months);
   return (principal * r * growth) / (growth - 1);
+}
+
+/** Monthly rate. US mortgages use annual/12. Canadian quotes compound semi-annually. */
+function mortgageMonthlyRate(annualRatePct) {
+  const annual = (annualRatePct || 0) / 100;
+  if (mortgageMarket === 'ca') return Math.pow(1 + annual / 2, 1 / 6) - 1;
+  return annual / 12;
+}
+
+function mortgagePayment(principal, annualRatePct, months) {
+  if (principal <= 0 || months <= 0) return 0;
+  const r = mortgageMonthlyRate(annualRatePct);
+  if (r === 0) return principal / months;
+  const growth = Math.pow(1 + r, months);
+  return (principal * r * growth) / (growth - 1);
+}
+
+function amortizeMortgage(principal, annualRatePct, payment, maxMonths) {
+  const r = mortgageMonthlyRate(annualRatePct);
+  if (principal <= 0) return { months: 0, interest: 0, balance: 0, shortfall: false };
+  if (r > 0 && payment <= principal * r + 1e-8) {
+    return { months: 0, interest: 0, balance: principal, shortfall: true };
+  }
+  let balance = principal;
+  let interest = 0;
+  let months = 0;
+  const cap = Math.max(1, maxMonths);
+  while (balance > 0.01 && months < cap) {
+    const interestCharge = balance * r;
+    months += 1;
+    interest += interestCharge;
+    balance -= Math.min(balance, payment - interestCharge);
+  }
+  return { months, interest, balance: Math.max(0, balance), shortfall: false };
+}
+
+/**
+ * CMHC homeowner premium, from the published schedule:
+ * 80.01–85% 2.80%, 85.01–90% 3.10%, 90.01–95% 4.00%,
+ * plus 0.20 points when amortization is longer than 25 years.
+ * Insurance is not added at 20% down or more. Homes over $1,500,000 are outside that table.
+ */
+function cmhcHomeownerPremium(price, loan, years) {
+  if (price <= 0 || loan <= 0) return { rate: 0, premium: 0, status: 'none', ltv: 0 };
+  const ltv = (loan / price) * 100;
+  if (ltv <= 80) return { rate: 0, premium: 0, status: 'not-required', ltv };
+  if (price > 1500000) return { rate: 0, premium: 0, status: 'ineligible-price', ltv };
+  if (ltv > 95) return { rate: 0, premium: 0, status: 'above-95', ltv };
+  let rate = ltv <= 85 ? 0.028 : ltv <= 90 ? 0.031 : 0.04;
+  if (years > 25) rate += 0.002;
+  return { rate, premium: loan * rate, status: 'insured', ltv };
 }
 
 /**
@@ -317,14 +369,18 @@ function calcMortgage() {
 
   const n = mortgageTermYears * 12;
 
-  const principal = Math.max(0, asset - down);
-  const monthlyPayment = fixedMonthlyPayment(principal, rate, n);
+  const basePrincipal = Math.max(0, asset - down);
+  const cmhc = mortgageMarket === 'ca'
+    ? cmhcHomeownerPremium(asset, basePrincipal, mortgageTermYears)
+    : { rate: 0, premium: 0, status: 'none', ltv: 0 };
+  const principal = basePrincipal + (cmhc.status === 'insured' ? cmhc.premium : 0);
+  const monthlyPayment = mortgagePayment(principal, rate, n);
   const contractualInterest = Math.max(0, monthlyPayment * n - principal);
   let totalInterest = contractualInterest;
   let payoffNote = '';
 
   if (extraPay > 0 && principal > 0) {
-    const accelerated = amortizeWithPayment(principal, rate, monthlyPayment + extraPay, n + 600);
+    const accelerated = amortizeMortgage(principal, rate, monthlyPayment + extraPay, n + 600);
     if (accelerated.shortfall) {
       payoffNote = ' That extra payment does not cover the interest, so the balance would keep growing.';
     } else if (accelerated.balance > 1) {
@@ -335,7 +391,7 @@ function calcMortgage() {
       payoffNote = ` With the extra payment, the loan is paid off in ${(accelerated.months / 12).toFixed(1)} years.`;
     }
   }
-  const ltv = asset > 0 ? (principal / asset) * 100 : 0;
+  const ltv = asset > 0 ? (basePrincipal / asset) * 100 : 0;
 
   const targetEl = document.getElementById('mortgage-payment');
   if (targetEl) targetEl.textContent = formatCurrency(monthlyPayment);
@@ -355,18 +411,42 @@ function calcMortgage() {
   // Calculate What-If Scenarios (30yr vs 15yr comparison & Extra payment)
   calcMortgageWhatIf(principal, rate, monthlyPayment, contractualInterest, extraPay);
 
+  const cmhcRow = document.getElementById('mortgage-cmhc-row');
+  const cmhcEl = document.getElementById('mortgage-cmhc');
+  if (cmhcRow && cmhcEl) {
+    if (mortgageMarket === 'ca') {
+      cmhcRow.classList.remove('hidden');
+      if (cmhc.status === 'insured') {
+        cmhcEl.textContent = `${formatCurrency(cmhc.premium)} added to the loan (${(cmhc.rate * 100).toFixed(2)}%)`;
+      } else if (cmhc.status === 'not-required') {
+        cmhcEl.textContent = 'Not added. Down payment is 20% or more.';
+      } else if (cmhc.status === 'ineligible-price') {
+        cmhcEl.textContent = 'Not added. Price is above the published $1,500,000 limit.';
+      } else if (cmhc.status === 'above-95') {
+        cmhcEl.textContent = 'Not added. Loan-to-value is above the published 95% band.';
+      } else {
+        cmhcEl.textContent = 'Not added.';
+      }
+    } else {
+      cmhcRow.classList.add('hidden');
+    }
+  }
+
   // Update Plain English Solution Card
   const solTextEl = document.getElementById('mortgage-solution-text');
   if (solTextEl) {
-    solTextEl.innerHTML = `To buy a home priced at <strong>${formatCurrency(asset)}</strong> with <strong>${formatCurrency(down)}</strong> down, principal and interest is <strong class="text-emerald-400 font-bold">${formatCurrency(monthlyPayment)}/mo</strong>. Interest on this schedule is <strong class="text-rose-400 font-bold">${formatCurrency(totalInterest)}</strong>. Taxes, insurance, and mortgage insurance are not included.${payoffNote}`;
+    const insuranceLine = mortgageMarket === 'ca'
+      ? 'The rate is compounded semi-annually. Property tax and provincial sales tax on a CMHC premium are not included.'
+      : 'Taxes, insurance, and mortgage insurance are not included.';
+    solTextEl.innerHTML = `To buy a home priced at <strong>${formatCurrency(asset)}</strong> with <strong>${formatCurrency(down)}</strong> down, principal and interest is <strong class="text-emerald-400 font-bold">${formatCurrency(monthlyPayment)}/mo</strong>. Interest on this schedule is <strong class="text-rose-400 font-bold">${formatCurrency(totalInterest)}</strong>. ${insuranceLine}${payoffNote}`;
   }
 
   flashElement('mortgage-payment');
 }
 
 function calcMortgageWhatIf(principal, rate, currentPayment, currentInterest, extraPay) {
-  const p30 = fixedMonthlyPayment(principal, rate, 360);
-  const p15 = fixedMonthlyPayment(principal, rate, 180);
+  const p30 = mortgagePayment(principal, rate, 360);
+  const p15 = mortgagePayment(principal, rate, 180);
   const int30 = Math.max(0, p30 * 360 - principal);
   const int15 = Math.max(0, p15 * 180 - principal);
   const intSaved15 = Math.max(0, int30 - int15);
@@ -379,7 +459,7 @@ function calcMortgageWhatIf(principal, rate, currentPayment, currentInterest, ex
   const solTipEl = document.getElementById('mortgage-solution-tip');
 
   if (extraPay > 0 && principal > 0) {
-    const accelerated = amortizeWithPayment(principal, rate, currentPayment + extraPay, 720);
+    const accelerated = amortizeMortgage(principal, rate, currentPayment + extraPay, 720);
     if (accelerated.shortfall || accelerated.balance > 1) {
       if (extraMonthsEl) extraMonthsEl.textContent = accelerated.shortfall ? 'Payment too low' : 'Not paid off';
       if (extraIntEl) extraIntEl.textContent = formatCurrency(0);
@@ -7664,6 +7744,10 @@ function openEngineFromQuery() {
     allBtn.classList.remove('active');
   }
   switchEngine(tabId, false);
+  if (params.get('landing') === '1' && (tabId === 'tab-mortgage' || panelId === 'engine-mortgage')) {
+    if (params.get('market') === 'ca') applyCanadaMortgageLanding();
+    else applyUsMortgageLanding();
+  }
   const panel = document.getElementById(panelId);
   if (panel) {
     requestAnimationFrame(() => {
@@ -7671,6 +7755,36 @@ function openEngineFromQuery() {
     });
   }
   return true;
+}
+
+function setMortgageSample(asset, down, rate, years) {
+  const write = (id, value) => {
+    const field = document.getElementById(id);
+    const range = document.getElementById(id + '-range');
+    if (field) field.value = value;
+    if (range) range.value = value;
+  };
+  write('mortgage-asset', asset);
+  write('mortgage-down', down);
+  write('mortgage-rate', rate);
+  write('mortgage-extra', 0);
+  setMortgageTerm(years);
+}
+
+function applyUsMortgageLanding() {
+  mortgageMarket = 'us';
+  const note = document.getElementById('mortgage-market-note');
+  if (note) note.classList.add('hidden');
+  setGlobalCurrency('USD');
+  setMortgageSample(450000, 90000, 6.2, 30);
+}
+
+function applyCanadaMortgageLanding() {
+  mortgageMarket = 'ca';
+  const note = document.getElementById('mortgage-market-note');
+  if (note) note.classList.remove('hidden');
+  setGlobalCurrency('CAD');
+  setMortgageSample(600000, 120000, 4.5, 25);
 }
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canada Mortgage Payment Calculator | aFinanceCalculator</title>
-    <meta name="description" content="This is principal and interest, compounded monthly. Many Canadian mortgages compound semi-annually. CMHC or Sagen insurance and the federal stress test are not included.">
+    <meta name="description" content="Principal and interest with the quoted rate compounded semi-annually. The CMHC premium uses the published homeowner schedule and is added only when the down payment is under 20%. Provincial sales tax and the federal stress test are not included.">
     <link rel="canonical" href="https://afinancecalculator.com/canada-mortgage-calculator/">
     <link rel="alternate" hreflang="en-US" href="https://afinancecalculator.com/mortgage-calculator/">
     <link rel="alternate" hreflang="en-CA" href="https://afinancecalculator.com/canada-mortgage-calculator/">
@@ -25,7 +25,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -33,11 +35,15 @@
         <h1>Canada mortgage payment calculator</h1>
         <a class="brand" href="/">All calculators</a>
     </header>
-    <iframe src="/index.html?engine=tab-mortgage&landing=1" title="Canada mortgage payment calculator"></iframe>
+    <iframe src="/index.html?engine=tab-mortgage&landing=1&market=ca" title="Canada mortgage payment calculator"></iframe>
     <section>
         <p class="meta">Canada.</p>
-        <p>This is principal and interest, compounded monthly. Many Canadian mortgages compound semi-annually. CMHC or Sagen insurance and the federal stress test are not included.</p>
-        <p class="example">A C$600,000 home with C$120,000 down at 4.5% for 25 years is C$2,668.00 a month on this monthly schedule.</p>
+        <h2>How this figure is calculated</h2>
+        <p>Canadian mortgage rates are quoted as a rate compounded twice a year. This page converts that quote to a monthly rate with i = (1 + annual rate / 2)^(1/6) − 1, then uses the standard payment formula for the number of months. When the down payment is under 20% and the price is $1,500,000 or less, the CMHC homeowner premium is added to the loan before the payment is calculated. The published bands used here are 2.80% from just over 80% loan-to-value through 85%, 3.10% through 90%, and 4.00% through 95%. An amortization longer than 25 years adds the published 0.20 point surcharge. The premium table is CMHC’s homeowner schedule for the total loan amount.</p>
+        <h2>Worked example</h2>
+        <p>A C$600,000 home with C$120,000 down is an 80% loan of C$480,000. At 4.5% compounded semi-annually for 25 years, principal and interest is C$2,656.67 a month. Interest over 300 payments is C$317,001.05. No CMHC premium is added, because the down payment is 20%. The same home with C$60,000 down is a 90% loan. The 3.10% premium is C$16,740, the insured loan is C$556,740, and the payment is C$3,081.41 a month.</p>
+        <h2>What this page leaves out</h2>
+        <p>Provincial sales tax on the premium in Ontario, Quebec, and Saskatchewan is not added, and that tax cannot be rolled into the loan. Sagen and other insurers are not priced here. The federal stress test, the minimum qualifying rate, and a lender’s approval are not decided. A non-traditional down payment, which CMHC prices at 4.50% in the top band, is not assumed. This is not an RRSP, TFSA, or land-transfer-tax calculator.</p>
         <nav><a href="/mortgage-calculator/">Mortgage payment calculator</a> · <a href="/us-canada-banks/">US and Canada bank directory</a></nav>
     </section>
 </body>

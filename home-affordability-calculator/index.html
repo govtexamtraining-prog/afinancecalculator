@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-affordability&landing=1" title="Home affordability calculator"></iframe>
     <section>
         <p class="meta">United States.</p>
-        <p>Estimates a purchase price from income, debts, and the housing share you set. It is not a Canadian mortgage stress test and it is not a lender pre-approval.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>The payment the form allows is the housing share you set, times gross monthly income, minus the monthly debts you enter. That payment is turned back into a loan amount with the standard mortgage formula at the rate and term you enter. Adding the down payment gives a purchase price.</p>
+        <h2>Worked example</h2>
+        <p>A household that can put $2,200 a month toward principal and interest, at 6.2% for 30 years, supports a loan near $360,000. With $90,000 down, the price is near $450,000. Change the rate or the term and both numbers move.</p>
+        <h2>What this page leaves out</h2>
+        <p>This is not a lender pre-approval. It is not the Canadian mortgage stress test. Taxes, insurance, and mortgage insurance are outside the payment unless you have already reduced the housing budget to leave room for them.</p>
         <nav><a href="/mortgage-calculator/">Mortgage payment calculator</a> · <a href="/closing-costs-calculator/">Closing cost calculator</a></nav>
     </section>
 </body>

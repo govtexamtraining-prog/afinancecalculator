@@ -25,7 +25,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -36,8 +38,12 @@
     <iframe src="/index.html?engine=tab-mortgage&landing=1" title="Mortgage payment calculator"></iframe>
     <section>
         <p class="meta">United States.</p>
-        <p>Principal and interest only, compounded monthly. Taxes, insurance, and mortgage insurance are not included.</p>
-        <p class="example">A $450,000 home with $90,000 down at 6.2% for 30 years is $2,204.89 a month.</p>
+        <h2>How this figure is calculated</h2>
+        <p>The monthly principal and interest payment is M = P × [i(1+i)^n] / [(1+i)^n − 1]. P is the price minus the down payment. For a United States fixed mortgage, i is the annual rate divided by 12, and n is the number of months. A 30-year loan uses 360 months. The payment stays the same each month. Early payments are mostly interest. Later payments retire more principal.</p>
+        <h2>Worked example</h2>
+        <p>A $450,000 home with $90,000 down leaves a $360,000 loan. At 6.2% for 30 years the payment is $2,204.89 a month. Interest over the full 360 payments is $433,759.79. The same loan at 15 years is $3,076.92 a month.</p>
+        <h2>What this page leaves out</h2>
+        <p>Property tax, homeowners insurance, mortgage insurance, and HOA dues are not in the payment. The rate is compounded monthly, which is the US fixed-rate convention. This is not a lender approval and it does not apply Canadian semi-annual compounding. Use the Canada mortgage page for that schedule.</p>
         <nav><a href="/biweekly-mortgage-calculator/">Biweekly mortgage calculator</a> · <a href="/refinance-calculator/">Mortgage refinance calculator</a> · <a href="/canada-mortgage-calculator/">Canada mortgage payment calculator</a></nav>
     </section>
 </body>

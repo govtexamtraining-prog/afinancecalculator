@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-snowball&landing=1" title="Debt snowball and avalanche calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Two debts, a 36-month minimum, and the extra payment you enter. Snowball pays the smaller balance first. Avalanche pays the higher rate first.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>Two debts share one extra payment. Each debt’s minimum is spread as a flat amount over 36 months plus interest, using the balance and rate you enter. Snowball sends the extra dollar to the smaller balance first. Avalanche sends it to the higher rate first. The page walks both orders month by month and shows the interest difference.</p>
+        <h2>Worked example</h2>
+        <p>An $8,000 balance at 24.5% and a $2,500 balance at 11.5%, with $300 extra, do not finish on the same month or at the same interest cost. Avalanche puts the extra onto the 24.5% balance first. Snowball puts it onto the $2,500 balance first. The form shows both.</p>
+        <h2>What this page leaves out</h2>
+        <p>A third debt is not included. Minimum payments in real contracts are often a percent of the balance, not a 36-month flat amount. The comparison uses the two balances on the form.</p>
         <nav><a href="/credit-card-payoff-calculator/">Credit card payoff calculator</a> · <a href="/personal-loan-calculator/">Personal loan calculator</a></nav>
     </section>
 </body>

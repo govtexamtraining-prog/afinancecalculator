@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-student&landing=1" title="Student loan payoff calculator"></iframe>
     <section>
         <p class="meta">United States.</p>
-        <p>Payment and interest for the balance, rate, and term you enter. It is not a Canada Student Loan or RAP calculator.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>The payment amortizes the balance at the rate and term you enter, compounded monthly. Interest over the term is the sum of the payments minus the starting balance. Extra payments, when the form has that field, shorten the term the same way an extra mortgage payment does.</p>
+        <h2>Worked example</h2>
+        <p>A $30,000 balance at 6% for 10 years has 120 payments. The payment is higher than $30,000 divided by 120 because of interest. A longer term lowers the payment and raises the interest.</p>
+        <h2>What this page leaves out</h2>
+        <p>This is not a Canada Student Loan or Repayment Assistance Plan calculator. Income-driven payments, subsidies, and forgiveness are not applied. The rate stays fixed at the rate you type.</p>
         <nav><a href="/student-loan-refinance-calculator/">Student loan refinance vs PSLF calculator</a></nav>
     </section>
 </body>

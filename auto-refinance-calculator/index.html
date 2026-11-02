@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-autorefi&landing=1" title="Auto refinance calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Compares the current payment with a new rate and term. It is not a lender offer.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>The current payment and the refinanced payment are two amortizing loans: the remaining balance at the old rate and remaining term, and the same balance at the new rate and new term. Monthly savings are the difference. It is not an offer from a lender.</p>
+        <h2>Worked example</h2>
+        <p>A shorter new term can raise the payment even when the rate falls. A longer new term can lower the payment and raise total interest. The page shows the payment change from the terms you type, not a bank’s approval.</p>
+        <h2>What this page leaves out</h2>
+        <p>A prepayment penalty, a new title fee, and negative equity added to the loan are included only when you put them in the balance or fee field.</p>
         <nav><a href="/auto-loan-calculator/">Auto loan calculator</a></nav>
     </section>
 </body>

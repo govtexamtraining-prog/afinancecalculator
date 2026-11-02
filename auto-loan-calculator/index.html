@@ -23,7 +23,9 @@
         .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
         h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
         iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 28px 16px 48px; max-width: 720px; }
+        section { padding: 36px 16px 64px; max-width: 720px; }
+        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
+        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
     </style>
 </head>
 <body>
@@ -34,8 +36,12 @@
     <iframe src="/index.html?engine=tab-autoloan&landing=1" title="Auto loan calculator"></iframe>
     <section>
         <p class="meta">United States and Canada.</p>
-        <p>Monthly principal and interest for the amount, rate, and term you enter. Tax, title, and dealer fees are not added unless they are already in the amount.</p>
-        
+        <h2>How this figure is calculated</h2>
+        <p>The monthly payment uses the standard amortizing formula. The amount is the number you enter. The rate is divided by 12. The term is the number of months on the form. Total interest is the payment times the number of months, minus the amount borrowed.</p>
+        <h2>Worked example</h2>
+        <p>A $30,000 loan at 7% for 60 months has a fixed monthly principal-and-interest payment. Sales tax is not added on top. If the amount you typed already includes tax and fees, those costs are inside the payment. If it does not, they are missing.</p>
+        <h2>What this page leaves out</h2>
+        <p>Tax, title, and dealer fees are not added unless they are already in the amount. A down payment should be subtracted before you type the amount, or entered in the down-payment field when the form has one.</p>
         <nav><a href="/auto-refinance-calculator/">Auto refinance calculator</a> · <a href="/car-lease-calculator/">Car lease vs buy calculator</a></nav>
     </section>
 </body>
