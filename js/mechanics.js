@@ -7562,14 +7562,115 @@ function triggerPwaInstall() {
 }
 
 
+const SEARCH_ENGINE_ALIASES = {
+  mortgage: 'tab-mortgage',
+  emi: 'tab-mortgage',
+  'home-loan': 'tab-mortgage',
+  'canada-mortgage': 'tab-mortgage',
+  biweekly: 'tab-biweekly',
+  refinance: 'tab-refinance',
+  'rent-vs-buy': 'tab-rentbuy',
+  rent: 'tab-rentbuy',
+  affordability: 'tab-affordability',
+  heloc: 'tab-heloc',
+  closing: 'tab-closingcosts',
+  'cap-rate': 'tab-caprate',
+  caprate: 'tab-caprate',
+  'cash-on-cash': 'tab-cashoncash',
+  airbnb: 'tab-airbnb',
+  compound: 'tab-compound',
+  'compound-interest': 'tab-compound',
+  cagr: 'tab-cagr',
+  interest: 'tab-interest',
+  dividend: 'tab-dividend',
+  'stock-average': 'tab-stockavg',
+  sip: 'tab-sip',
+  investment: 'tab-sip',
+  inflation: 'tab-inflation',
+  'real-return': 'tab-realreturns',
+  cd: 'tab-cdladder',
+  'cd-ladder': 'tab-cdladder',
+  fire: 'tab-fire',
+  retirement: 'tab-fire',
+  '401k': 'tab-four01k',
+  '401(k)': 'tab-four01k',
+  four01k: 'tab-four01k',
+  rmd: 'tab-rmd',
+  'social-security': 'tab-socialsecurity',
+  socialsecurity: 'tab-socialsecurity',
+  hsa: 'tab-hsa',
+  paycheck: 'tab-paycheck',
+  'take-home': 'tab-paycheck',
+  'capital-gains': 'tab-capitalgains',
+  'self-employment': 'tab-quarterlytax',
+  quarterly: 'tab-quarterlytax',
+  overtime: 'tab-overtime',
+  bonus: 'tab-bonustax',
+  severance: 'tab-severance',
+  snowball: 'tab-snowball',
+  avalanche: 'tab-snowball',
+  debt: 'tab-snowball',
+  'credit-card': 'tab-creditcard',
+  'auto-loan': 'tab-autoloan',
+  'car-loan': 'tab-autoloan',
+  'auto-refinance': 'tab-autorefi',
+  lease: 'tab-carlease',
+  'personal-loan': 'tab-personalloan',
+  'student-loan': 'tab-student',
+  'student-refinance': 'tab-studentrefi',
+  pslf: 'tab-studentrefi',
+  budget: 'tab-budget',
+  utilization: 'tab-creditscore',
+  'credit-score': 'tab-creditscore',
+  invoice: 'tab-invoice',
+  roi: 'tab-roi',
+  'break-even': 'tab-breakeven',
+  breakeven: 'tab-breakeven',
+  margin: 'tab-margin',
+  salary: 'tab-salary',
+  hourly: 'tab-salary',
+  crypto: 'tab-crypto',
+  leverage: 'tab-crypto',
+  staking: 'tab-staking',
+  solar: 'tab-solar',
+  ev: 'tab-evgas',
+  ecommerce: 'tab-dropship',
+  banks: 'tab-banking-hub',
+  banking: 'tab-banking-hub'
+};
+
+function engineIdFromSearch(raw) {
+  if (!raw) return '';
+  const value = String(raw).trim().toLowerCase().replace(/\s+/g, '-');
+  if (value === 'tab-banking-hub' || value === 'engine-banking' || value === 'banking-hub') return 'tab-banking-hub';
+  if (SEARCH_ENGINE_ALIASES[value]) return SEARCH_ENGINE_ALIASES[value];
+  if (value.startsWith('engine-')) return 'tab-' + value.slice('engine-'.length);
+  if (value.startsWith('tab-')) return value;
+  return 'tab-' + value;
+}
+
 function openEngineFromQuery() {
   const params = new URLSearchParams(window.location.search);
-  const raw = params.get('engine');
-  if (!raw) return;
-  const tabId = raw.startsWith('tab-') || raw.startsWith('engine-') ? raw : 'tab-' + raw;
-  if (document.getElementById(tabId) || document.getElementById(tabId.replace('tab-', 'engine-'))) {
-    switchEngine(tabId, false);
+  const tabId = engineIdFromSearch(params.get('engine') || params.get('q') || params.get('calculator'));
+  if (!tabId) return false;
+  const panelId = tabId === 'tab-banking-hub' ? 'engine-banking' : tabId.replace('tab-', 'engine-');
+  if (!document.getElementById(tabId) && !document.getElementById(panelId)) return false;
+  document.documentElement.classList.add('calculator-landing');
+  isFocusMode = true;
+  const focusBtn = document.getElementById('view-mode-focus');
+  const allBtn = document.getElementById('view-mode-all');
+  if (focusBtn && allBtn) {
+    focusBtn.classList.add('active');
+    allBtn.classList.remove('active');
   }
+  switchEngine(tabId, false);
+  const panel = document.getElementById(panelId);
+  if (panel) {
+    requestAnimationFrame(() => {
+      panel.scrollIntoView({ block: 'start', behavior: 'auto' });
+    });
+  }
+  return true;
 }
 
 document.addEventListener('DOMContentLoaded', () => {

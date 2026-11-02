@@ -43,7 +43,7 @@
     <!-- PWA & Mobile Optimization -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#171719">
+    <meta name="theme-color" content="#07080a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="aFinance">
@@ -276,7 +276,7 @@
               "h1",
               "#knowledge-base h2",
               ".veo-direct-answer",
-              "#faq-section h4",
+              "#faq-section summary",
               "#engine-banking h2"
             ]
           }
@@ -286,24 +286,30 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css?v=2.3.0">
     <link rel="stylesheet" href="css/terminal.css?v=2.3.4">
+    <link rel="stylesheet" href="css/noir.css?v=1.0.3">
+    <script>try{if(window.top!==window.self)document.documentElement.classList.add("in-frame")}catch(e){}</script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-slate-950">
+<body class="bg-[#07080a] text-white min-h-screen font-sans antialiased">
 
-    <!-- Global High-Speed Header Control Console -->
-    <header class="bg-slate-900/90 border-b border-slate-800 py-3.5 px-6 sticky top-0 z-40 transition-colors">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="brand-mark" aria-hidden="true">A</div>
-                <div>
-                    <h1>Financial calculators</h1>
-                    <p class="text-xs text-slate-400 hidden sm:block">United States and Canada. Mortgage, debt, tax, and retirement figures. Entries stay in this browser.</p>
-                </div>
+    <header class="noir-header">
+        <nav class="noir-pill" aria-label="Primary">
+            <a class="noir-brand" href="/">
+                <span class="brand-mark" aria-hidden="true">A</span>
+                <span>aFinanceCalculator</span>
+            </a>
+            <div class="noir-links">
+                <a href="#calculators">Calculators</a>
+                <a href="#knowledge-base">Analytics</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Support</a>
             </div>
-            
-            <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
+            <a class="noir-cta" href="#calculators" onclick="switchEngine('tab-mortgage')">Calculate now</a>
+        </nav>
+    </header>
+    <div class="noir-tools">
                 <!-- Theme Toggle Button -->
                 <button id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode (Alt+T)" class="p-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition-all cursor-pointer">
                     <span id="theme-toggle-icon" class="text-sm">Dark</span>
@@ -402,12 +408,22 @@
                         <option value="ILS" data-symbol="₪">🇮🇱 ILS - Israel (₪)</option>
                     </select>
                 </div>
-            </div>
+    </div>
+
+    <section class="noir-hero">
+        <h1><span>See the payment</span> <span>before you sign.</span></h1>
+        <p>Mortgage, paycheck, debt, and retirement figures for the United States and Canada. US tax tools stay on the US pages. The Canada mortgage page is monthly principal and interest, without CMHC insurance. Entries stay in this browser.</p>
+        <div class="noir-pills">
+            <button type="button" onclick="switchEngine('tab-mortgage')">Mortgage</button>
+            <button type="button" onclick="switchEngine('tab-paycheck')">Paycheck</button>
+            <button type="button" onclick="switchEngine('tab-snowball')">Debt</button>
+            <button type="button" onclick="switchEngine('tab-fire')">Retirement</button>
+            <button type="button" onclick="location.href='/canada-mortgage-calculator/'">Canada mortgage</button>
         </div>
-    </header>
+    </section>
 
     <!-- Persona Workspaces Cockpit (Intent-Based Commercial Experience) -->
-    <section class="max-w-7xl mx-auto px-4 pt-5 pb-1">
+    <section id="workspace-intro" class="max-w-7xl mx-auto px-4 pt-5 pb-1">
         <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 sm:p-4 transition-colors">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
                 <div class="flex flex-wrap items-center gap-2">
@@ -479,7 +495,7 @@
     </section>
 
     <!-- Main Workspace Matrix Core -->
-    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <main id="calculators" class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
         
         <!-- Interactive Sidebar Selector Rail -->
         <aside class="lg:col-span-1 space-y-4">
@@ -603,7 +619,7 @@
         </aside>
 
         <!-- Dynamic Engines Central Display Stage -->
-        <div class="lg:col-span-3 space-y-6 pb-10">
+        <div id="engine-stage" class="lg:col-span-3 space-y-6 pb-10">
 
             <!-- Mobile Quick Engine Switcher (Visible on mobile/tablet, Hidden on desktop) -->
             <div class="lg:hidden bg-slate-900 border border-slate-800 rounded-2xl p-4 mb-4">
@@ -5869,61 +5885,30 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                        
-                        <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 space-y-2">
-                            <h4 class="font-bold text-white text-sm flex items-center gap-2">
-                                <span class="text-emerald-400">Q:</span> What is the monthly payment on a $400,000 mortgage at 6.5% interest?
-                            </h4>
-                            <p class="veo-direct-answer text-slate-300 leading-relaxed">
-                                On a 30-year fixed loan with 20% down ($80,000 down payment, $320,000 loan balance), your monthly principal and interest payment is <strong>$2,022.62</strong>. Over 30 years, total payments equal $728,144, representing $408,144 in lifetime interest outlay.
-                            </p>
-                        </div>
-
-                        <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 space-y-2">
-                            <h4 class="font-bold text-white text-sm flex items-center gap-2">
-                                <span class="text-emerald-400">Q:</span> How much do I need to retire under the FIRE 4% rule?
-                            </h4>
-                            <p class="veo-direct-answer text-slate-300 leading-relaxed">
-                                Under the 4% rule, your target retirement corpus equals your expected annual living expenditures multiplied by 25. For example, if your household spends $60,000 annually, your baseline financial independence number is <strong>$1,500,000</strong> invested across diversified assets.
-                            </p>
-                        </div>
-
-                        <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 space-y-2">
-                            <h4 class="font-bold text-white text-sm flex items-center gap-2">
-                                <span class="text-emerald-400">Q:</span> Which is better: Debt Snowball or Debt Avalanche?
-                            </h4>
-                            <p class="veo-direct-answer text-slate-300 leading-relaxed">
-                                The <strong>Debt Avalanche</strong> method mathematically saves the most money by eliminating highest-APR balances first (e.g., 24% credit cards before 5% student debt). The <strong>Debt Snowball</strong> method pays smallest balances first, creating psychological momentum that helps individuals stick to repayment budgets.
-                            </p>
-                        </div>
-
-                        <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 space-y-2">
-                            <h4 class="font-bold text-white text-sm flex items-center gap-2">
-                                <span class="text-emerald-400">Q:</span> Is it better to rent or buy a home in 2026?
-                            </h4>
-                            <p class="veo-direct-answer text-slate-300 leading-relaxed">
-                                Renting is generally more cost-effective if contractual rent is significantly lower than mortgage principal, interest, taxes, and insurance (PITI), provided you invest the down payment difference into index funds. Buying builds equity over 7+ year horizons and hedges against long-term rental inflation.
-                            </p>
-                        </div>
-
-                        <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 space-y-2">
-                            <h4 class="font-bold text-white text-sm flex items-center gap-2">
-                                <span class="text-emerald-400">Q:</span> How is commercial property Cap Rate computed?
-                            </h4>
-                            <p class="veo-direct-answer text-slate-300 leading-relaxed">
-                                Capitalization Rate equals Net Operating Income (Gross Rents minus operating expenses and vacancy reserve) divided by the property asset acquisition valuation: <strong>Cap Rate = NOI / Property Value</strong>. A higher cap rate reflects higher cash flow yield, typically accompanied by higher operational risk.
-                            </p>
-                        </div>
-
-                        <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 space-y-2">
-                            <h4 class="font-bold text-white text-sm flex items-center gap-2">
-                                <span class="text-emerald-400">Q:</span> Does aFinanceCalculator store my private financial numbers?
-                            </h4>
-                            <p class="veo-direct-answer text-slate-300 leading-relaxed">
-                                <strong>No.</strong> aFinanceCalculator executes 100% inside your local web browser runtime. No income, debt, mortgage, or investment amounts are ever transmitted to or logged on remote servers. Calculation history is stored strictly in your local browser storage and can be cleared at any time.
-                            </p>
-                        </div>
-
+                        <details>
+                            <summary>What is the monthly payment on a $400,000 mortgage at 6.5% interest?</summary>
+                            <p class="veo-direct-answer">On a 30-year fixed loan with 20% down ($80,000 down payment, $320,000 loan balance), your monthly principal and interest payment is <strong>$2,022.62</strong>. Over 30 years, total payments equal $728,144, representing $408,144 in lifetime interest outlay.</p>
+                        </details>
+                        <details>
+                            <summary>How much do I need to retire under the FIRE 4% rule?</summary>
+                            <p class="veo-direct-answer">Under the 4% rule, your target retirement corpus equals your expected annual living expenditures multiplied by 25. For example, if your household spends $60,000 annually, your baseline financial independence number is <strong>$1,500,000</strong> invested across diversified assets.</p>
+                        </details>
+                        <details>
+                            <summary>Which is better: Debt Snowball or Debt Avalanche?</summary>
+                            <p class="veo-direct-answer">The <strong>Debt Avalanche</strong> method mathematically saves the most money by eliminating highest-APR balances first (e.g., 24% credit cards before 5% student debt). The <strong>Debt Snowball</strong> method pays smallest balances first, creating psychological momentum that helps individuals stick to repayment budgets.</p>
+                        </details>
+                        <details>
+                            <summary>Is it better to rent or buy a home in 2026?</summary>
+                            <p class="veo-direct-answer">Renting is generally more cost-effective if contractual rent is significantly lower than mortgage principal, interest, taxes, and insurance (PITI), provided you invest the down payment difference into index funds. Buying builds equity over 7+ year horizons and hedges against long-term rental inflation.</p>
+                        </details>
+                        <details>
+                            <summary>How is commercial property Cap Rate computed?</summary>
+                            <p class="veo-direct-answer">Capitalization Rate equals Net Operating Income (Gross Rents minus operating expenses and vacancy reserve) divided by the property asset acquisition valuation: <strong>Cap Rate = NOI / Property Value</strong>. A higher cap rate reflects higher cash flow yield, typically accompanied by higher operational risk.</p>
+                        </details>
+                        <details>
+                            <summary>Does aFinanceCalculator store my private financial numbers?</summary>
+                            <p class="veo-direct-answer"><strong>No.</strong> The figures you type stay in this browser. Google ads and analytics load with the page. Calculation history is stored in this browser and can be cleared at any time.</p>
+                        </details>
                     </div>
                 </div>
             </section>
@@ -6209,6 +6194,7 @@
                 </div>
                 
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-500 font-mono">
+                    <p class="noir-status"><i aria-hidden="true"></i> Calculators ready</p>
                     <p>&copy; 2026 aFinanceCalculator. Universal 50-in-1 Financial Workspace. All rights reserved.</p>
                     <div class="flex items-center gap-3">
                         <a href="privacy.html" class="hover:text-slate-300 transition-colors">Privacy</a>
@@ -7084,6 +7070,6 @@
     <script src="js/banking_data.js"></script>
     <script src="js/calculator-pages.js"></script>
     <!-- Core Computation Mechanics -->
-    <script src="js/mechanics.js?v=2.4.0"></script>
+    <script src="js/mechanics.js?v=2.4.1"></script>
 </body>
 </html>
