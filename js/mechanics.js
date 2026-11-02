@@ -5113,6 +5113,43 @@ function setupCurrencySelector() {
 let isProgrammaticScrolling = false;
 let scrollLockTimer = null;
 
+function canonicalTabId(tabOrEngineId) {
+  if (!tabOrEngineId) return '';
+  if (tabOrEngineId === 'tab-banking-hub' || tabOrEngineId === 'engine-banking' || tabOrEngineId === 'banking') return 'tab-banking-hub';
+  if (tabOrEngineId.startsWith('engine-')) return 'tab-' + tabOrEngineId.slice('engine-'.length);
+  if (tabOrEngineId.startsWith('tab-')) return tabOrEngineId;
+  return 'tab-' + tabOrEngineId;
+}
+
+function calculatorPathFor(tabOrEngineId) {
+  const tabId = canonicalTabId(tabOrEngineId);
+  const slug = window.CALCULATOR_BY_ENGINE && window.CALCULATOR_BY_ENGINE[tabId];
+  return slug ? '/' + slug + '/' : '';
+}
+
+/** Open the calculator's own address. The engine list used to stay on one URL. */
+function goToCalculatorPage(tabOrEngineId) {
+  const path = calculatorPathFor(tabOrEngineId);
+  if (!path) {
+    switchEngine(tabOrEngineId);
+    return;
+  }
+  let topWindow = window;
+  try {
+    if (window.top) topWindow = window.top;
+  } catch (error) {
+    topWindow = window;
+  }
+  let current = topWindow.location.pathname || '/';
+  current = current.replace(/\/index\.html$/i, '/');
+  if (!current.endsWith('/')) current += '/';
+  if (current === path) {
+    switchEngine(tabOrEngineId);
+    return;
+  }
+  topWindow.location.assign(path);
+}
+
 function switchEngine(tabOrEngineId, shouldScroll = true) {
   if (!tabOrEngineId) return;
 
@@ -7999,7 +8036,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', (event) => {
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
       if (btn.tagName === 'A') event.preventDefault();
-      switchEngine(btn.id);
+      goToCalculatorPage(btn.id);
     });
   });
 
