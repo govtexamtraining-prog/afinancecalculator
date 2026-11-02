@@ -1,0 +1,2204 @@
+{
+ "url": "http://127.0.0.1:8765/index.html",
+ "at": "2026-11-02T09:29:29.029Z",
+ "allow": [],
+ "viewports": [
+  {
+   "width": 1440,
+   "height": 900,
+   "load": "load",
+   "screens": 8,
+   "filled": [
+    0.35,
+    0.26,
+    0.23,
+    0.28,
+    0.2,
+    0.29,
+    0.19,
+    0.29
+   ],
+   "motion": {
+    "elements": 6,
+    "css": 1,
+    "transitions": 5,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "page": {
+     "height": 6382,
+     "screens": 7.1,
+     "words": 2658,
+     "img": 0,
+     "video": 0,
+     "canvas": 0,
+     "svg": 8,
+     "sections": 54,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "aFinanceCalculator",
+     "words": 1,
+     "chars": 18,
+     "lines": 1,
+     "size": 26,
+     "vw": 1.8,
+     "font": "Public Sans",
+     "weight": 600,
+     "tracking": 0,
+     "leading": 1.2,
+     "top": 25,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "aFinanceCalculator",
+     "words": 1,
+     "lines": 1,
+     "size": 26,
+     "font": "Public Sans"
+    },
+    "headings": [
+     {
+      "text": "₹ 29,398.51",
+      "words": 2,
+      "chars": 11,
+      "lines": 1,
+      "size": 36,
+      "vw": 2.5,
+      "font": "JetBrains Mono",
+      "weight": 900,
+      "tracking": 0,
+      "leading": 1.11,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "center",
+      "position": "right",
+      "widthRatio": 0.26,
+      "top": 747,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "Universal Financial Calculators Index",
+      "words": 4,
+      "chars": 37,
+      "lines": 1,
+      "size": 30,
+      "vw": 2.1,
+      "font": "Public Sans",
+      "weight": 900,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.53,
+      "top": 4911,
+      "tag": "h3",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 2,
+     "maxLines": 1,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 2,
+     "medianWords": 4,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Public Sans",
+       "share": 0.84,
+       "mono": false
+      },
+      {
+       "family": "JetBrains Mono",
+       "share": 0.16,
+       "mono": true
+      },
+      {
+       "family": "ui-sans-serif",
+       "share": 0,
+       "mono": false
+      }
+     ],
+     "familyCount": 3,
+     "sizes": [
+      9,
+      12,
+      13,
+      14,
+      16,
+      18,
+      20,
+      24,
+      26,
+      30,
+      36
+     ],
+     "sizeCount": 11,
+     "notLoaded": [],
+     "body": {
+      "font": "Public Sans",
+      "size": 12,
+      "leading": 1.33,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 5.5
+     },
+     "measureChars": 205,
+     "max": {
+      "size": 36,
+      "vw": 2.5,
+      "font": "JetBrains Mono",
+      "text": "₹ 29,398.51"
+     },
+     "monoShare": 0.16,
+     "monoProseShare": 0.16,
+     "monoFamilies": [
+      "JetBrains Mono"
+     ],
+     "monoSamples": [
+      "0",
+      "90+",
+      "⌨",
+      "Workspace:",
+      "OFF",
+      "Workflow:"
+     ],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.09,
+     "smallText": 303
+    },
+    "eyebrows": [
+     {
+      "text": "Target Monthly EMI Outflow",
+      "above": "₹ 29,398.51",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 727
+     },
+     {
+      "text": "Comprehensive Keyword Directory",
+      "above": "Universal Financial Calculators Index",
+      "upper": false,
+      "tracked": false,
+      "mono": true,
+      "pill": false,
+      "size": 12,
+      "top": 4889
+     }
+    ],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#131217",
+     "bodyBgHsl": {
+      "h": 252,
+      "s": 0.12,
+      "l": 0.08
+     },
+     "dark": true,
+     "sectionBgs": [
+      {
+       "color": "#131217",
+       "top": 489,
+       "hsl": {
+        "h": 252,
+        "s": 0.12,
+        "l": 0.08
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#ffffff",
+       "share": 0.59
+      },
+      {
+       "color": "#8a8c92",
+       "share": 0.39
+      },
+      {
+       "color": "#fbbf24",
+       "share": 0.01
+      },
+      {
+       "color": "#fb7185",
+       "share": 0
+      },
+      {
+       "color": "#f87171",
+       "share": 0
+      }
+     ],
+     "button": {
+      "bg": "#212023",
+      "hsl": {
+       "h": 260,
+       "s": 0.04,
+       "l": 0.13
+      },
+      "fg": "#8a8c92"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 85,
+     "inHero": 40,
+     "radius": 0,
+     "height": 38,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "History 0",
+      "Scenario Studio",
+      "US & Canada Banking 90+",
+      "Share",
+      "Dossier"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 17,
+     "hairlineSamples": [
+      "header.bg-slate-900/90.border-b 1440px",
+      "div#workspace-strategy-banner.mt-3.pt-3 1214px",
+      "div#session-sheet.session-sheet 1214px",
+      "button#tab-mortgage.tab-btn.active 250px",
+      "div.mt-2.5.pt-2 254px"
+     ],
+     "outlinedBoxes": 33,
+     "dashed": 1,
+     "blurred": 0,
+     "roundedBoxes": 35,
+     "boxRadius": 6,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 3,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 489
+      },
+      {
+       "count": 4,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 2159
+      },
+      {
+       "count": 6,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 3632
+      },
+      {
+       "count": 6,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 5027
+      }
+     ]
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 0,
+     "fixed": false,
+     "height": 114,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "jetbrains mono",
+     "public sans"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "pageH": 6382,
+    "margins": {
+     "left": 113,
+     "right": 131
+    },
+    "sections": [
+     {
+      "sel": "section.max-w-7xl.mx-auto",
+      "tag": "section",
+      "top": 114,
+      "height": 251,
+      "words": 69,
+      "media": 0,
+      "middle": 8,
+      "heading": null,
+      "left": 113,
+      "right": 113,
+      "textLeft": 113,
+      "textRight": 113,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "main.max-w-7xl.mx-auto",
+      "tag": "main",
+      "top": 364,
+      "height": 3904,
+      "words": 1511,
+      "media": 0,
+      "middle": 50,
+      "heading": {
+       "text": "₹ 29,398.51",
+       "size": 36,
+       "tag": "div"
+      },
+      "left": 113,
+      "right": 97,
+      "textLeft": 113,
+      "textRight": 121,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "div.luxury-glass.bg-slate-900/90",
+      "tag": "div",
+      "top": 4365,
+      "height": 475,
+      "words": 131,
+      "media": 0,
+      "middle": 41,
+      "heading": {
+       "text": "Why Choose aFinanceCalculator over Competitors?",
+       "size": 24,
+       "tag": "h2"
+      },
+      "left": 137,
+      "right": 150,
+      "textLeft": 137,
+      "textRight": 150,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.space-y-8",
+      "tag": "div",
+      "top": 4887,
+      "height": 876,
+      "words": 567,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Universal Financial Calculators Index",
+       "size": 30,
+       "tag": "h3"
+      },
+      "left": 126,
+      "right": 177,
+      "textLeft": 126,
+      "textRight": 177,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "footer.w-full.bg-slate-950",
+      "tag": "footer",
+      "top": 5859,
+      "height": 523,
+      "words": 207,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Legal & Compliance",
+       "size": 12,
+       "tag": "h3"
+      },
+      "left": 104,
+      "right": 105,
+      "textLeft": 104,
+      "textRight": 105,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "aFinanceCalculator",
+      "size": 26,
+      "top": 25,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 437,
+      "n": 3
+     },
+     {
+      "x": 449,
+      "n": 3
+     },
+     {
+      "x": 911,
+      "n": 2
+     },
+     {
+      "x": 112,
+      "n": 1
+     },
+     {
+      "x": 137,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 10,
+    "bodySize": 12,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0.08,
+    "voidBox": {
+     "x": 420,
+     "y": 300,
+     "w": 840,
+     "h": 120
+    }
+   },
+   "app": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "dark": true,
+    "ground": "#131217",
+    "sidebar": null,
+    "topbar": null,
+    "canvas": {
+     "left": 113,
+     "right": 131
+    },
+    "hero": {
+     "text": "aFinanceCalculator",
+     "words": 1,
+     "chars": 18,
+     "lines": 1,
+     "size": 26,
+     "vw": 1.8,
+     "font": "Public Sans",
+     "weight": 600,
+     "tracking": 0,
+     "leading": 1.2,
+     "top": 25,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 9,
+     "firstScreen": 3,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 46,
+     "radii": [
+      [
+       6,
+       36
+      ],
+      [
+       0,
+       9
+      ],
+      [
+       24,
+       1
+      ]
+     ],
+     "heavyBorders": 0,
+     "borderSamples": [],
+     "heavyShadows": 0,
+     "softShadows": 0,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 0,
+     "hues": 0,
+     "samples": []
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 9,
+     "tabularShare": 0.22,
+     "kpiMax": 14
+    },
+    "rows": {
+     "count": 9,
+     "median": 57
+    },
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.87,
+     "tiny": 2,
+     "tinySamples": [
+      "real 9px",
+      "nominal 9px"
+     ],
+     "sizes": [
+      9,
+      12,
+      13,
+      14,
+      16,
+      18,
+      20,
+      24,
+      26,
+      30,
+      36
+     ]
+    },
+    "title": {
+     "text": "aFinanceCalculator",
+     "size": 26,
+     "top": 25
+    },
+    "colourShare": 0
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 768,
+   "height": 1024,
+   "load": "load",
+   "screens": 9,
+   "filled": [
+    0.39,
+    0.56,
+    0.39,
+    0.34,
+    0.46,
+    0.37,
+    0.45,
+    0.51,
+    0.33
+   ],
+   "motion": {
+    "elements": 6,
+    "css": 1,
+    "transitions": 5,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "page": {
+     "height": 8978,
+     "screens": 8.8,
+     "words": 2839,
+     "img": 0,
+     "video": 0,
+     "canvas": 0,
+     "svg": 8,
+     "sections": 54,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "aFinanceCalculator",
+     "words": 1,
+     "chars": 18,
+     "lines": 1,
+     "size": 26,
+     "vw": 3.4,
+     "font": "Public Sans",
+     "weight": 600,
+     "tracking": 0,
+     "leading": 1.2,
+     "top": 69,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "aFinanceCalculator",
+     "words": 1,
+     "lines": 1,
+     "size": 26,
+     "font": "Public Sans"
+    },
+    "headings": [
+     {
+      "text": "aFinanceCalculator",
+      "words": 1,
+      "chars": 18,
+      "lines": 1,
+      "size": 26,
+      "vw": 3.4,
+      "font": "Public Sans",
+      "weight": 600,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.32,
+      "top": 69,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "₹ 29,398.51",
+      "words": 2,
+      "chars": 11,
+      "lines": 1,
+      "size": 36,
+      "vw": 4.7,
+      "font": "JetBrains Mono",
+      "weight": 900,
+      "tracking": 0,
+      "leading": 1.11,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "center",
+      "position": "right",
+      "widthRatio": 0.37,
+      "top": 2060,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "Universal Financial Calculators Index",
+      "words": 4,
+      "chars": 37,
+      "lines": 1,
+      "size": 30,
+      "vw": 3.9,
+      "font": "Public Sans",
+      "weight": 900,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.94,
+      "top": 6888,
+      "tag": "h3",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 3,
+     "maxLines": 1,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 2,
+     "medianWords": 4,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Public Sans",
+       "share": 0.84,
+       "mono": false
+      },
+      {
+       "family": "JetBrains Mono",
+       "share": 0.16,
+       "mono": true
+      },
+      {
+       "family": "ui-sans-serif",
+       "share": 0,
+       "mono": false
+      }
+     ],
+     "familyCount": 3,
+     "sizes": [
+      9,
+      12,
+      13,
+      14,
+      16,
+      18,
+      20,
+      24,
+      26,
+      30,
+      36
+     ],
+     "sizeCount": 11,
+     "notLoaded": [],
+     "body": {
+      "font": "Public Sans",
+      "size": 12,
+      "leading": 1.33,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 5.5
+     },
+     "measureChars": 120,
+     "max": {
+      "size": 36,
+      "vw": 4.7,
+      "font": "JetBrains Mono",
+      "text": "₹ 29,398.51"
+     },
+     "monoShare": 0.16,
+     "monoProseShare": 0.16,
+     "monoFamilies": [
+      "JetBrains Mono"
+     ],
+     "monoSamples": [
+      "0",
+      "90+",
+      "⌨",
+      "Workspace:",
+      "OFF",
+      "Workflow:"
+     ],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.09,
+     "smallText": 305
+    },
+    "eyebrows": [
+     {
+      "text": "Target Monthly EMI Outflow",
+      "above": "₹ 29,398.51",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 2039
+     },
+     {
+      "text": "Comprehensive Keyword Directory",
+      "above": "Universal Financial Calculators Index",
+      "upper": false,
+      "tracked": false,
+      "mono": true,
+      "pill": false,
+      "size": 12,
+      "top": 6867
+     }
+    ],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#131217",
+     "bodyBgHsl": {
+      "h": 252,
+      "s": 0.12,
+      "l": 0.08
+     },
+     "dark": true,
+     "sectionBgs": [
+      {
+       "color": "#131217",
+       "top": 574,
+       "hsl": {
+        "h": 252,
+        "s": 0.12,
+        "l": 0.08
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#ffffff",
+       "share": 0.59
+      },
+      {
+       "color": "#8a8c92",
+       "share": 0.39
+      },
+      {
+       "color": "#fbbf24",
+       "share": 0.01
+      },
+      {
+       "color": "#fb7185",
+       "share": 0
+      },
+      {
+       "color": "#f87171",
+       "share": 0
+      }
+     ],
+     "button": {
+      "bg": "#212023",
+      "hsl": {
+       "h": 260,
+       "s": 0.04,
+       "l": 0.13
+      },
+      "fg": "#8a8c92"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 90,
+     "inHero": 38,
+     "radius": 0,
+     "height": 38,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "History 0",
+      "Scenario Studio",
+      "US & Canada Banking 90+",
+      "Share",
+      "Dossier"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 16,
+     "hairlineSamples": [
+      "header.bg-slate-900/90.border-b 768px",
+      "div#workspace-strategy-banner.mt-3.pt-3 702px",
+      "div#session-sheet.session-sheet 702px",
+      "button#tab-mortgage.tab-btn.active 698px",
+      "div.mt-2.5.pt-2 702px"
+     ],
+     "outlinedBoxes": 36,
+     "dashed": 1,
+     "blurred": 0,
+     "roundedBoxes": 38,
+     "boxRadius": 6,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 4,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 3571
+      },
+      {
+       "count": 6,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 5316
+      },
+      {
+       "count": 6,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 7004
+      }
+     ]
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 0,
+     "fixed": false,
+     "height": 203,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "jetbrains mono",
+     "public sans"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "pageH": 8978,
+    "margins": {
+     "left": 33,
+     "right": 33
+    },
+    "sections": [
+     {
+      "sel": "header.bg-slate-900/90.border-b",
+      "tag": "header",
+      "top": 0,
+      "height": 203,
+      "words": 30,
+      "media": 0,
+      "middle": 22,
+      "heading": {
+       "text": "aFinanceCalculator",
+       "size": 26,
+       "tag": "h1"
+      },
+      "left": 54,
+      "right": 26,
+      "textLeft": 54,
+      "textRight": 37,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.max-w-7xl.mx-auto",
+      "tag": "section",
+      "top": 203,
+      "height": 339,
+      "words": 69,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 33,
+      "right": 33,
+      "textLeft": 33,
+      "textRight": 33,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "aside.lg:col-span-1.space-y-4",
+      "tag": "aside",
+      "top": 574,
+      "height": 999,
+      "words": 136,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Active Engines",
+       "size": 12,
+       "tag": "h2"
+      },
+      "left": 33,
+      "right": 33,
+      "textLeft": 33,
+      "textRight": 33,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "section#engine-mortgage.engine-panel.glass-panel",
+      "tag": "section",
+      "top": 1801,
+      "height": 1347,
+      "words": 270,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "₹ 29,398.51",
+       "size": 36,
+       "tag": "div"
+      },
+      "left": 49,
+      "right": 49,
+      "textLeft": 49,
+      "textRight": 62,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.ad-slot-container.bg-slate-900",
+      "tag": "div",
+      "top": 3172,
+      "height": 200,
+      "words": 24,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 55,
+      "right": 41,
+      "textLeft": 55,
+      "textRight": 41,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "section#knowledge-base.mt-12.space-y-8",
+      "tag": "section",
+      "top": 3396,
+      "height": 2601,
+      "words": 1070,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Standard Fixed-Rate Amortization Formula",
+       "size": 16,
+       "tag": "h3"
+      },
+      "left": 23,
+      "right": 23,
+      "textLeft": 23,
+      "textRight": 23,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.luxury-glass.bg-slate-900/90",
+      "tag": "div",
+      "top": 6166,
+      "height": 651,
+      "words": 131,
+      "media": 0,
+      "middle": 25,
+      "heading": {
+       "text": "Why Choose aFinanceCalculator over Competitors?",
+       "size": 24,
+       "tag": "h2"
+      },
+      "left": 57,
+      "right": 70,
+      "textLeft": 57,
+      "textRight": 70,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.space-y-8",
+      "tag": "div",
+      "top": 6865,
+      "height": 1264,
+      "words": 567,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Universal Financial Calculators Index",
+       "size": 30,
+       "tag": "h3"
+      },
+      "left": 39,
+      "right": 39,
+      "textLeft": 39,
+      "textRight": 39,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "footer.w-full.bg-slate-950",
+      "tag": "footer",
+      "top": 8224,
+      "height": 754,
+      "words": 207,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Legal & Compliance",
+       "size": 12,
+       "tag": "h3"
+      },
+      "left": 24,
+      "right": 25,
+      "textLeft": 24,
+      "textRight": 25,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "aFinanceCalculator",
+      "size": 26,
+      "top": 69,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 49,
+      "n": 5
+     },
+     {
+      "x": 37,
+      "n": 3
+     },
+     {
+      "x": 415,
+      "n": 2
+     }
+    ],
+    "leftBlocks": 10,
+    "bodySize": 12,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "dark": true,
+    "ground": "#131217",
+    "sidebar": null,
+    "topbar": null,
+    "canvas": {
+     "left": 33,
+     "right": 33
+    },
+    "hero": {
+     "text": "aFinanceCalculator",
+     "words": 1,
+     "chars": 18,
+     "lines": 1,
+     "size": 26,
+     "vw": 3.4,
+     "font": "Public Sans",
+     "weight": 600,
+     "tracking": 0,
+     "leading": 1.2,
+     "top": 69,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 16,
+     "firstScreen": 2,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 50,
+     "radii": [
+      [
+       6,
+       37
+      ],
+      [
+       0,
+       12
+      ],
+      [
+       24,
+       1
+      ]
+     ],
+     "heavyBorders": 0,
+     "borderSamples": [],
+     "heavyShadows": 0,
+     "softShadows": 0,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 0,
+     "hues": 0,
+     "samples": []
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 9,
+     "tabularShare": 0.22,
+     "kpiMax": 14
+    },
+    "rows": {
+     "count": 9,
+     "median": 89
+    },
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.87,
+     "tiny": 2,
+     "tinySamples": [
+      "real 9px",
+      "nominal 9px"
+     ],
+     "sizes": [
+      9,
+      12,
+      13,
+      14,
+      16,
+      18,
+      20,
+      24,
+      26,
+      30,
+      36
+     ]
+    },
+    "title": {
+     "text": "aFinanceCalculator",
+     "size": 26,
+     "top": 69
+    },
+    "colourShare": 0.001
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 390,
+   "height": 844,
+   "load": "load",
+   "screens": 12,
+   "filled": [
+    0.23,
+    0.65,
+    0.4,
+    0.54,
+    0.33,
+    0.27,
+    0.47,
+    0.52,
+    0.41,
+    0.44,
+    0.53,
+    0.23
+   ],
+   "motion": {
+    "elements": 6,
+    "css": 1,
+    "transitions": 5,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "page": {
+     "height": 13978,
+     "screens": 16.6,
+     "words": 2815,
+     "img": 0,
+     "video": 0,
+     "canvas": 0,
+     "svg": 8,
+     "sections": 54,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 2,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "aFinanceCalculator",
+     "words": 1,
+     "chars": 18,
+     "lines": 1,
+     "size": 26,
+     "vw": 6.7,
+     "font": "Public Sans",
+     "weight": 600,
+     "tracking": 0,
+     "leading": 1.2,
+     "top": 14,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "aFinanceCalculator",
+     "words": 1,
+     "lines": 1,
+     "size": 26,
+     "font": "Public Sans"
+    },
+    "headings": [
+     {
+      "text": "aFinanceCalculator",
+      "words": 1,
+      "chars": 18,
+      "lines": 1,
+      "size": 26,
+      "vw": 6.7,
+      "font": "Public Sans",
+      "weight": 600,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.61,
+      "top": 14,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "₹ 29,398.51",
+      "words": 2,
+      "chars": 11,
+      "lines": 1,
+      "size": 30,
+      "vw": 7.7,
+      "font": "JetBrains Mono",
+      "weight": 900,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.68,
+      "top": 2815,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "₹ 31,98,854.59 (31.99 L)",
+      "words": 4,
+      "chars": 24,
+      "lines": 2,
+      "size": 24,
+      "vw": 6.2,
+      "font": "JetBrains Mono",
+      "weight": 900,
+      "tracking": 0,
+      "leading": 1.33,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.59,
+      "top": 3731,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "Universal Financial Calculators Index",
+      "words": 4,
+      "chars": 37,
+      "lines": 2,
+      "size": 24,
+      "vw": 6.2,
+      "font": "Public Sans",
+      "weight": 900,
+      "tracking": 0,
+      "leading": 1.33,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 10371,
+      "tag": "h3",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 4,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 2,
+     "medianWords": 4,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Public Sans",
+       "share": 0.84,
+       "mono": false
+      },
+      {
+       "family": "JetBrains Mono",
+       "share": 0.16,
+       "mono": true
+      },
+      {
+       "family": "ui-sans-serif",
+       "share": 0,
+       "mono": false
+      }
+     ],
+     "familyCount": 3,
+     "sizes": [
+      9,
+      12,
+      13,
+      14,
+      16,
+      18,
+      20,
+      24,
+      26,
+      30
+     ],
+     "sizeCount": 10,
+     "notLoaded": [],
+     "body": {
+      "font": "Public Sans",
+      "size": 12,
+      "leading": 1.33,
+      "weight": 500,
+      "tracking": 0,
+      "contrast": 18.6
+     },
+     "measureChars": 60,
+     "max": {
+      "size": 30,
+      "vw": 7.7,
+      "font": "JetBrains Mono",
+      "text": "₹ 29,398.51"
+     },
+     "monoShare": 0.16,
+     "monoProseShare": 0.16,
+     "monoFamilies": [
+      "JetBrains Mono"
+     ],
+     "monoSamples": [
+      "0",
+      "90+",
+      "⌨",
+      "Workspace:",
+      "OFF",
+      "Workflow:"
+     ],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.09,
+     "smallText": 301
+    },
+    "eyebrows": [
+     {
+      "text": "Target Monthly EMI Outflow",
+      "above": "₹ 29,398.51",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 2795
+     },
+     {
+      "text": "Switching to 15-Year Term Saves:",
+      "above": "₹ 31,98,854.59 (31.99 L)",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 3709
+     },
+     {
+      "text": "Comprehensive Keyword Directory",
+      "above": "Universal Financial Calculators Index",
+      "upper": false,
+      "tracked": false,
+      "mono": true,
+      "pill": false,
+      "size": 12,
+      "top": 10349
+     }
+    ],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#131217",
+     "bodyBgHsl": {
+      "h": 252,
+      "s": 0.12,
+      "l": 0.08
+     },
+     "dark": true,
+     "sectionBgs": [
+      {
+       "color": "#131217",
+       "top": 224,
+       "hsl": {
+        "h": 252,
+        "s": 0.12,
+        "l": 0.08
+       }
+      },
+      {
+       "color": "#212023",
+       "top": 2771,
+       "hsl": {
+        "h": 260,
+        "s": 0.04,
+        "l": 0.13
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#ffffff",
+       "share": 0.6
+      },
+      {
+       "color": "#8a8c92",
+       "share": 0.39
+      },
+      {
+       "color": "#fbbf24",
+       "share": 0.01
+      },
+      {
+       "color": "#fb7185",
+       "share": 0
+      },
+      {
+       "color": "#f87171",
+       "share": 0
+      }
+     ],
+     "button": {
+      "bg": "#212023",
+      "hsl": {
+       "h": 260,
+       "s": 0.04,
+       "l": 0.13
+      },
+      "fg": "#8a8c92"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 87,
+     "inHero": 25,
+     "radius": 0,
+     "height": 38,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "90+",
+      "Real Estate & Mortgage",
+      "Wealth & Retirement",
+      "Small Business & Tax",
+      "Debt & Budgeting"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 14,
+     "hairlineSamples": [
+      "header.bg-slate-900/90.border-b 390px",
+      "div#workspace-strategy-banner.mt-3.pt-3 332px",
+      "div#session-sheet.session-sheet 332px",
+      "button#tab-mortgage.tab-btn.active 320px",
+      "div.mt-2.5.pt-2 324px"
+     ],
+     "outlinedBoxes": 34,
+     "dashed": 1,
+     "blurred": 0,
+     "roundedBoxes": 36,
+     "boxRadius": 6,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 3,
+       "iconTopped": false,
+       "rounded": false,
+       "top": 7101
+      },
+      {
+       "count": 6,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 7972
+      }
+     ]
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 0,
+     "fixed": false,
+     "height": 204,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "jetbrains mono",
+     "public sans"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "pageH": 13978,
+    "margins": {
+     "left": 18,
+     "right": 33
+    },
+    "sections": [
+     {
+      "sel": "header.bg-slate-900/90.border-b",
+      "tag": "header",
+      "top": 0,
+      "height": 204,
+      "words": 8,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "aFinanceCalculator",
+       "size": 26,
+       "tag": "h1"
+      },
+      "left": 24,
+      "right": 56,
+      "textLeft": 33,
+      "textRight": 56,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.max-w-7xl.mx-auto",
+      "tag": "section",
+      "top": 204,
+      "height": 425,
+      "words": 67,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 29,
+      "right": 29,
+      "textLeft": 29,
+      "textRight": 29,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "aside.lg:col-span-1.space-y-4",
+      "tag": "aside",
+      "top": 661,
+      "height": 1044,
+      "words": 136,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Active Engines",
+       "size": 12,
+       "tag": "h2"
+      },
+      "left": 33,
+      "right": 33,
+      "textLeft": 33,
+      "textRight": 33,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "section#engine-mortgage.engine-panel.glass-panel",
+      "tag": "section",
+      "top": 1951,
+      "height": 2323,
+      "words": 270,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "₹ 29,398.51",
+       "size": 30,
+       "tag": "div"
+      },
+      "left": 41,
+      "right": 41,
+      "textLeft": 41,
+      "textRight": 41,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.ad-slot-container.bg-slate-900",
+      "tag": "div",
+      "top": 4298,
+      "height": 202,
+      "words": 24,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 59,
+      "right": 63,
+      "textLeft": 59,
+      "textRight": 63,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "section#knowledge-base.mt-12.space-y-8",
+      "tag": "section",
+      "top": 4524,
+      "height": 4826,
+      "words": 1070,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Standard Fixed-Rate Amortization Formula",
+       "size": 16,
+       "tag": "h3"
+      },
+      "left": 22,
+      "right": 22,
+      "textLeft": 22,
+      "textRight": 22,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.luxury-glass.bg-slate-900/90",
+      "tag": "div",
+      "top": 9519,
+      "height": 781,
+      "words": 93,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Why Choose aFinanceCalculator over Competitors?",
+       "size": 20,
+       "tag": "h2"
+      },
+      "left": 41,
+      "right": 41,
+      "textLeft": 41,
+      "textRight": 41,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.text-center.max-w-3xl",
+      "tag": "div",
+      "top": 10347,
+      "height": 144,
+      "words": 32,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Universal Financial Calculators Index",
+       "size": 24,
+       "tag": "h3"
+      },
+      "left": 17,
+      "right": 17,
+      "textLeft": 17,
+      "textRight": 17,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.grid.grid-cols-1",
+      "tag": "div",
+      "top": 10523,
+      "height": 2160,
+      "words": 535,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Mortgages & Real Estate",
+       "size": 14,
+       "tag": "h4"
+      },
+      "left": 38,
+      "right": 38,
+      "textLeft": 38,
+      "textRight": 38,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "footer.w-full.bg-slate-950",
+      "tag": "footer",
+      "top": 12779,
+      "height": 1200,
+      "words": 207,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Legal & Compliance",
+       "size": 12,
+       "tag": "h3"
+      },
+      "left": 16,
+      "right": 17,
+      "textLeft": 16,
+      "textRight": 17,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "aFinanceCalculator",
+      "size": 26,
+      "top": 14,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 37,
+      "n": 8
+     },
+     {
+      "x": 49,
+      "n": 1
+     },
+     {
+      "x": 96,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 10,
+    "bodySize": 12,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "dark": true,
+    "ground": "#131217",
+    "sidebar": null,
+    "topbar": null,
+    "canvas": {
+     "left": 16,
+     "right": -69
+    },
+    "hero": {
+     "text": "aFinanceCalculator",
+     "words": 1,
+     "chars": 18,
+     "lines": 1,
+     "size": 26,
+     "vw": 6.7,
+     "font": "Public Sans",
+     "weight": 600,
+     "tracking": 0,
+     "leading": 1.2,
+     "top": 14,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 16,
+     "firstScreen": 2,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 46,
+     "radii": [
+      [
+       6,
+       37
+      ],
+      [
+       0,
+       8
+      ],
+      [
+       24,
+       1
+      ]
+     ],
+     "heavyBorders": 0,
+     "borderSamples": [],
+     "heavyShadows": 0,
+     "softShadows": 0,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 0,
+     "hues": 0,
+     "samples": []
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 9,
+     "tabularShare": 0.22,
+     "kpiMax": 14
+    },
+    "rows": {
+     "count": 9,
+     "median": 105
+    },
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.87,
+     "tiny": 2,
+     "tinySamples": [
+      "real 9px",
+      "nominal 9px"
+     ],
+     "sizes": [
+      9,
+      12,
+      13,
+      14,
+      16,
+      18,
+      20,
+      24,
+      26,
+      30,
+      36
+     ]
+    },
+    "title": {
+     "text": "aFinanceCalculator",
+     "size": 26,
+     "top": 14
+    },
+    "colourShare": 0.001
+   },
+   "consoleErrors": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "WARN",
+   "id": "tabular",
+   "width": 1440,
+   "message": "Only 22% of the figures use tabular numerals.",
+   "fix": "Set font-variant-numeric: tabular-nums on tables, KPIs and anything that updates, so digits keep their width.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "tiny-text",
+   "width": 1440,
+   "message": "87% of the text is under 13px.",
+   "fix": "Data and labels read at 13–14px; keep 11–12px for sublines and axis ticks.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "below-fold",
+   "width": 1440,
+   "message": "Only 3 of 9 blocks start on the first 1440px screen.",
+   "fix": "Every block the brief names shows its header and first rows on the first desktop screen: size the headline block to its question, cap long lists with \"View all\", and put time-sensitive blocks before long tables."
+  }
+ ],
+ "images": [
+  {
+   "viewport": "desktop",
+   "width": 1440,
+   "fold": "D:\\Hari_files\\FirstMoneyGold\\software_apps\\afinancecalculator\\afinancecalculator\\scratch\\inspect-terminal\\desktop-fold.jpg",
+   "pages": [
+    "D:\\Hari_files\\FirstMoneyGold\\software_apps\\afinancecalculator\\afinancecalculator\\scratch\\inspect-terminal\\desktop-page-01.jpg",
+    "D:\\Hari_files\\FirstMoneyGold\\software_apps\\afinancecalculator\\afinancecalculator\\scratch\\inspect-terminal\\desktop-page-02.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "tablet",
+   "width": 768,
+   "fold": "D:\\Hari_files\\FirstMoneyGold\\software_apps\\afinancecalculator\\afinancecalculator\\scratch\\inspect-terminal\\tablet-fold.jpg",
+   "pages": [
+    "D:\\Hari_files\\FirstMoneyGold\\software_apps\\afinancecalculator\\afinancecalculator\\scratch\\inspect-terminal\\tablet-page-01.jpg",
+    "D:\\Hari_files\\FirstMoneyGold\\software_apps\\afinancecalculator\\afinancecalculator\\scratch\\inspect-terminal\\tablet-page-02.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "mobile",
+   "width": 390,
+   "fold": "D:\\Hari_files\\FirstMoneyGold\\software_apps\\afinancecalculator\\afinancecalculator\\scratch\\inspect-terminal\\mobile-fold.jpg",
+   "pages": [
+    "D:\\Hari_files\\FirstMoneyGold\\software_apps\\afinancecalculator\\afinancecalculator\\scratch\\inspect-terminal\\mobile-page-01.jpg",
+    "D:\\Hari_files\\FirstMoneyGold\\software_apps\\afinancecalculator\\afinancecalculator\\scratch\\inspect-terminal\\mobile-page-02.jpg"
+   ],
+   "film": []
+  }
+ ]
+}

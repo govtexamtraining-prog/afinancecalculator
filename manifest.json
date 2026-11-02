@@ -5,8 +5,8 @@
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#020617",
-  "theme_color": "#020617",
+  "background_color": "#171719",
+  "theme_color": "#171719",
   "categories": ["finance", "productivity", "utilities"],
   "icons": [
     {

@@ -213,7 +213,7 @@ const BANKING_INSTITUTIONS = [
     hysaApy: "Up to 4.00% APY via TD Signature Savings",
     checkingFeature: "TD Beyond Checking: 7-day banking with extended weekend hours, fee-free transactions at TD Canada Trust and TD Bank US.",
     topCreditCard: "TD Double Up (2% cash back) & TD First Class Visa Signature.",
-    crossBorderPerks: "★ PREMIER CROSS-BORDER SPECIALIST: Seamless single-sign-on linking TD Canada Trust (CAD) and TD Bank USA (USD). Instant free cross-border transfers. Canadian credit history used to approve US credit cards and mortgages!",
+    crossBorderPerks: "PREMIER CROSS-BORDER SPECIALIST: Seamless single-sign-on linking TD Canada Trust (CAD) and TD Bank USA (USD). Instant free cross-border transfers. Canadian credit history used to approve US credit cards and mortgages!",
     websiteUrl: "https://www.td.com/us"
   },
   {
@@ -245,7 +245,7 @@ const BANKING_INSTITUTIONS = [
     hysaApy: "4.25% - 4.35% APY via American Express High Yield Savings Account (No minimum, fee-free)",
     checkingFeature: "American Express Rewards Checking: Earns Membership Rewards® points on debit card spend, fee-free digital interface.",
     topCreditCard: "Platinum Card® (80k pts, airport lounges, hotel status) & Gold Card (4x restaurants & supermarkets).",
-    crossBorderPerks: "★ AMEX GLOBAL TRANSFER: Allows any Canadian moving to or banking in the U.S. to obtain a U.S. American Express credit card using their Canadian credit history without needing an established U.S. credit score!",
+    crossBorderPerks: "AMEX GLOBAL TRANSFER: Allows any Canadian moving to or banking in the U.S. to obtain a U.S. American Express credit card using their Canadian credit history without needing an established U.S. credit score!",
     websiteUrl: "https://www.americanexpress.com"
   },
   {
@@ -277,7 +277,7 @@ const BANKING_INSTITUTIONS = [
     hysaApy: "Up to 4.50% - 4.75% APY via BMO Alto High-Yield Savings (100% digital platform)",
     checkingFeature: "BMO Smart Advantage: Zero fee checking with $0 monthly maintenance, expanded footprint across California and West Coast via Bank of the West acquisition.",
     topCreditCard: "BMO Cash Back & BMO Platinum Rewards.",
-    crossBorderPerks: "★ TOP-TIER CROSS-BORDER BANK: Integrated with BMO Bank of Montreal in Canada. Fee-free cross-border wire transfers, cross-border mortgage financing for Canadian snowbirds buying Florida or Arizona real estate!",
+    crossBorderPerks: "TOP-TIER CROSS-BORDER BANK: Integrated with BMO Bank of Montreal in Canada. Fee-free cross-border wire transfers, cross-border mortgage financing for Canadian snowbirds buying Florida or Arizona real estate!",
     websiteUrl: "https://www.bmo.com/main/personal"
   },
   {
@@ -421,7 +421,7 @@ const BANKING_INSTITUTIONS = [
     hysaApy: "Competitive private client money market yields up to 4.60%",
     checkingFeature: "Premier Personal Checking: Known as the 'Bank to the Stars' in Los Angeles and New York; entertainment industry banking.",
     topCreditCard: "City National Crystal Visa Infinite® Card (premium dining, air travel credits).",
-    crossBorderPerks: "★ BACKED BY RBC CANADA: Seamless integration with Royal Bank of Canada (RBC) for high-net-worth cross-border transactions and Hollywood/Toronto film co-productions.",
+    crossBorderPerks: "BACKED BY RBC CANADA: Seamless integration with Royal Bank of Canada (RBC) for high-net-worth cross-border transactions and Hollywood/Toronto film co-productions.",
     websiteUrl: "https://www.cnb.com"
   },
   {
@@ -561,11 +561,11 @@ const BANKING_INSTITUTIONS = [
     assetRank: "Rank #35 U.S. ($70B Assets / U.S. subsidiary of CIBC Canada)",
     crossBorder: "specialist",
     fdicCdic: "FDIC Insured ($250,000)",
-    openReqs: "★ OPEN ONLINE FROM CANADA: Canadian citizens can open CIBC Bank USA accounts directly via Canadian CIBC online banking!",
+    openReqs: "OPEN ONLINE FROM CANADA: Canadian citizens can open CIBC Bank USA accounts directly via Canadian CIBC online banking!",
     hysaApy: "Up to 4.52% APY via CIBC Agility High-Yield Savings (100% digital nationwide)",
     checkingFeature: "CIBC US Smart Checking: $0 monthly fees, seamless linking with CIBC Canada Trust accounts.",
     topCreditCard: "CIBC Bank USA Credit Card with no foreign exchange markups and zero annual fee.",
-    crossBorderPerks: "★ TOP-TIER CROSS-BORDER BANK: Free instant real-time transfers between CIBC Canada and CIBC US accounts. Allows Canadians to finance U.S. mortgages using their Canadian credit history!",
+    crossBorderPerks: "TOP-TIER CROSS-BORDER BANK: Free instant real-time transfers between CIBC Canada and CIBC US accounts. Allows Canadians to finance U.S. mortgages using their Canadian credit history!",
     websiteUrl: "https://us.cibc.com"
   },
 
@@ -1383,7 +1383,7 @@ const BANKING_INSTITUTIONS = [
     hysaApy: "Up to 4.35% APY on Special Promotional CDs",
     checkingFeature: "Seacoast Classic Checking: Full Florida footprint, customized residential mortgage team.",
     topCreditCard: "Seacoast Cash Rewards Visa.",
-    crossBorderPerks: "★ FAVORITE SNOWBIRD BANK: Extensive expertise in handling Canadian snowbird deposits, seasonal winter checking, and Florida vacation home mortgages.",
+    crossBorderPerks: "FAVORITE SNOWBIRD BANK: Extensive expertise in handling Canadian snowbird deposits, seasonal winter checking, and Florida vacation home mortgages.",
     websiteUrl: "https://www.seacoastbank.com"
   },
   {
@@ -1465,7 +1465,7 @@ const BANKING_INSTITUTIONS = [
     hysaApy: "Up to 4.50% - 5.00% promotional APY on RBC High Interest eSavings",
     checkingFeature: "RBC Day to Day Banking & RBC Signature No Limit: Free Interac e-Transfers, linked Petro-Canada fuel savings.",
     topCreditCard: "RBC Avion Visa Infinite® (premier Canadian travel points) & WestJet RBC World Elite Mastercard (annual companion voucher).",
-    crossBorderPerks: "★ UNDISPUTED CROSS-BORDER LEADER: Operates RBC Bank US (Georgia, USA). Canadians can open a true U.S.-domiciled bank account, get a U.S. Visa Signature card using Canadian credit, and obtain a U.S. mortgage for Florida/Arizona/California properties with zero U.S. credit history!",
+    crossBorderPerks: "UNDISPUTED CROSS-BORDER LEADER: Operates RBC Bank US (Georgia, USA). Canadians can open a true U.S.-domiciled bank account, get a U.S. Visa Signature card using Canadian credit, and obtain a U.S. mortgage for Florida/Arizona/California properties with zero U.S. credit history!",
     websiteUrl: "https://www.rbcroyalbank.com"
   },
   {
@@ -1481,7 +1481,7 @@ const BANKING_INSTITUTIONS = [
     hysaApy: "Up to 4.25% promotional APY via TD High Interest Savings Account (HISA)",
     checkingFeature: "TD All-Inclusive Banking Plan: Monthly fee waived with $5,000 balance; includes free safe deposit box and premium credit card fee waiver.",
     topCreditCard: "TD Aeroplan Visa Infinite® (top Air Canada rewards card) & TD First Class Travel Visa Infinite®.",
-    crossBorderPerks: "★ PREMIER U.S.–CANADA BRIDGE: Direct integration between TD Canada Trust and TD Bank N.A. (USA). Instant, fee-free cross-border transfers via TD Cross-Border Banking portal, single online banking dashboard for both countries.",
+    crossBorderPerks: "PREMIER U.S.–CANADA BRIDGE: Direct integration between TD Canada Trust and TD Bank N.A. (USA). Instant, fee-free cross-border transfers via TD Cross-Border Banking portal, single online banking dashboard for both countries.",
     websiteUrl: "https://www.td.com/ca/en/personal-banking"
   },
   {
@@ -1513,7 +1513,7 @@ const BANKING_INSTITUTIONS = [
     hysaApy: "Up to 4.50% promotional APY on BMO Savings Amplifier Account",
     checkingFeature: "BMO Performance Package: Fee waived with $4,000 balance, unlimited Interac e-Transfers, family bundle options.",
     topCreditCard: "BMO eclipse Visa Infinite® (5x points dining, groceries, gas) & BMO AIR MILES® World Elite Mastercard.",
-    crossBorderPerks: "★ SEAMLESS U.S. NETWORK: Directly owns BMO USA (formerly BMO Harris). Snowbird banking packages, free cross-border transfers, U.S. dollar checking, and U.S. mortgage financing for Canadian property buyers.",
+    crossBorderPerks: "SEAMLESS U.S. NETWORK: Directly owns BMO USA (formerly BMO Harris). Snowbird banking packages, free cross-border transfers, U.S. dollar checking, and U.S. mortgage financing for Canadian property buyers.",
     websiteUrl: "https://www.bmo.com"
   },
   {
@@ -1529,7 +1529,7 @@ const BANKING_INSTITUTIONS = [
     hysaApy: "Up to 4.75% promotional APY on CIBC eAdvantage Savings Account",
     checkingFeature: "CIBC Smart Account: Dynamic monthly fee based on activity ($4.95 to $16.95, waived with $4,000 balance).",
     topCreditCard: "CIBC Dividend® Visa Infinite® (4% cash back on gas and groceries) & CIBC Costco Mastercard®.",
-    crossBorderPerks: "★ ELITE CROSS-BORDER SUITE: Seamlessly links with CIBC Bank USA. Free real-time transfers between Canadian and U.S. accounts, U.S. Dollar Smart Accounts, and CIBC Global Money Transfer (fee-free wires to 120+ countries with competitive FX rates).",
+    crossBorderPerks: "ELITE CROSS-BORDER SUITE: Seamlessly links with CIBC Bank USA. Free real-time transfers between Canadian and U.S. accounts, U.S. Dollar Smart Accounts, and CIBC Global Money Transfer (fee-free wires to 120+ countries with competitive FX rates).",
     websiteUrl: "https://www.cibc.com"
   },
   {
@@ -1579,7 +1579,7 @@ const BANKING_INSTITUTIONS = [
     hysaApy: "Up to 4.00% APY on Personal Account with qualifying direct deposit / 2.50% base rate",
     checkingFeature: "EQ Bank Personal Account: Hybrid checking + high-yield savings in ONE account! Unlimited free Interac e-Transfers, free ATM withdrawals at any Canadian ATM.",
     topCreditCard: "EQ Bank Mastercard® (cash back on all purchases, zero foreign transaction fees, earn high interest on loaded balance).",
-    crossBorderPerks: "★ REVOLUTIONARY FX PARTNERSHIP: Integrated with Wise (formerly TransferWise) directly inside the EQ Bank app for the lowest cross-border currency conversion fees in Canada!",
+    crossBorderPerks: "REVOLUTIONARY FX PARTNERSHIP: Integrated with Wise (formerly TransferWise) directly inside the EQ Bank app for the lowest cross-border currency conversion fees in Canada!",
     websiteUrl: "https://www.eqbank.ca"
   },
   {
@@ -1752,13 +1752,13 @@ function renderBankingDirectory() {
   });
 
   if (countBadge) {
-    countBadge.textContent = `${filtered.length} Insured Institutions`;
+    countBadge.textContent = `${filtered.length} institutions listed`;
   }
 
   if (filtered.length === 0) {
     container.innerHTML = `
       <div class="col-span-1 md:col-span-2 lg:col-span-3 p-8 text-center bg-slate-900/60 rounded-xl border border-slate-800">
-        <span class="text-3xl">🔍</span>
+        <span class="text-3xl"></span>
         <h4 class="text-sm font-bold text-white mt-2">No Banking Institutions Found</h4>
         <p class="text-xs text-slate-400 mt-1">Try clearing your search term or selecting "All Institutions".</p>
         <button onclick="setBankingCategoryFilter('all'); document.getElementById('banking-search-input').value = ''; handleBankingSearch('');" class="mt-3 px-3 py-1.5 text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800/80 rounded-lg hover:bg-emerald-900 transition-all cursor-pointer">
@@ -1782,12 +1782,12 @@ function renderBankingDirectory() {
               <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${badgeColor}">
                 ${flag} ${bank.country === 'US' ? 'United States' : 'Canada'}
               </span>
-              ${isSpecialist ? `<span class="ml-1 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">★ Cross-Border</span>` : ''}
+              ${isSpecialist ? `<span class="ml-1 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Cross-Border</span>` : ''}
               <h4 class="text-sm font-black text-white group-hover:text-emerald-400 transition-colors mt-1.5">
                 ${bank.name}
               </h4>
               <p class="text-[11px] text-slate-400 flex items-center gap-1">
-                <span>📍 ${bank.hq}</span> &bull; <span class="text-slate-500">${bank.assetRank}</span>
+                <span>${bank.hq}</span> &bull; <span class="text-slate-500">${bank.assetRank}</span>
               </p>
             </div>
             <span class="text-[10px] font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded border border-slate-800/80 whitespace-nowrap">
@@ -1797,12 +1797,12 @@ function renderBankingDirectory() {
 
           <div class="space-y-2 my-3 text-xs">
             <div class="p-2 rounded-lg bg-slate-950/60 border border-slate-800/60">
-              <span class="text-[10px] uppercase font-bold text-emerald-400 block mb-0.5">High-Yield Savings / CD APY:</span>
+              <span class="text-[10px] font-bold text-emerald-400 block mb-0.5">Editorial yield snapshot, not a live quote:</span>
               <p class="text-slate-200 font-semibold font-mono text-[11px]">${bank.hysaApy}</p>
             </div>
 
             <div class="p-2 rounded-lg bg-slate-950/60 border border-slate-800/60">
-              <span class="text-[10px] uppercase font-bold text-teal-400 block mb-0.5">Premier Card / Rewards:</span>
+              <span class="text-[10px] font-bold text-teal-400 block mb-0.5">Premier Card / Rewards:</span>
               <p class="text-slate-300 text-[11px] line-clamp-2">${bank.topCreditCard}</p>
             </div>
 
@@ -1850,8 +1850,8 @@ function openBankDetailsModal(bankId) {
       <div class="space-y-4">
         <!-- Key Service 1: Opening an Account -->
         <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-          <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider mb-1.5">
-            <span>📝</span> <span>1. Opening an Account &amp; Eligibility Protocol</span>
+          <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs mb-1.5">
+            <span></span> <span>1. Opening an Account &amp; Eligibility Protocol</span>
           </div>
           <p class="text-xs text-slate-300 leading-relaxed">${bank.openReqs}</p>
           <div class="mt-2 text-[11px] text-slate-400 bg-slate-900/80 p-2.5 rounded-lg border border-slate-800/80">
@@ -1861,29 +1861,29 @@ function openBankDetailsModal(bankId) {
 
         <!-- Key Service 2: Compare Credit Card & Savings Yields -->
         <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-          <div class="flex items-center gap-2 text-teal-400 font-bold text-xs uppercase tracking-wider mb-1.5">
-            <span>💳</span> <span>2. High-Yield Savings (APY) &amp; Credit Card Rewards</span>
+          <div class="flex items-center gap-2 text-teal-400 font-bold text-xs mb-1.5">
+            <span></span> <span>2. High-Yield Savings (APY) &amp; Credit Card Rewards</span>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs mt-2">
             <div class="p-3 bg-slate-900/80 rounded-lg border border-slate-800/80">
-              <span class="text-[10px] text-slate-400 uppercase font-bold block mb-1">Savings / CD APY Yield:</span>
+              <span class="text-[10px] text-slate-400 font-bold block mb-1">Editorial snapshot, not a live quote:</span>
               <span class="text-emerald-400 font-mono font-bold text-sm">${bank.hysaApy}</span>
             </div>
             <div class="p-3 bg-slate-900/80 rounded-lg border border-slate-800/80">
-              <span class="text-[10px] text-slate-400 uppercase font-bold block mb-1">Checking / Liquidity Feature:</span>
+              <span class="text-[10px] text-slate-400 font-bold block mb-1">Checking / Liquidity Feature:</span>
               <span class="text-slate-200 font-medium">${bank.checkingFeature}</span>
             </div>
           </div>
           <div class="mt-3 p-3 bg-slate-900/80 rounded-lg border border-slate-800/80 text-xs">
-            <span class="text-[10px] text-slate-400 uppercase font-bold block mb-1">Flagship Credit Card:</span>
+            <span class="text-[10px] text-slate-400 font-bold block mb-1">Flagship Credit Card:</span>
             <p class="text-slate-200">${bank.topCreditCard}</p>
           </div>
         </div>
 
         <!-- Key Service 3: Cross-Border Banking between U.S. and Canada -->
         <div class="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/30">
-          <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider mb-1.5">
-            <span>🌐</span> <span>3. Cross-Border Banking (U.S. ⇄ Canada Capabilities)</span>
+          <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs mb-1.5">
+            <span></span> <span>3. Cross-Border Banking (U.S. ⇄ Canada Capabilities)</span>
           </div>
           <p class="text-xs text-slate-200 leading-relaxed">${bank.crossBorderPerks}</p>
           <div class="mt-2.5 flex flex-wrap gap-2 text-[10px] font-mono">
@@ -1949,7 +1949,7 @@ function calcCrossBorderTransfer() {
 
   if (resultAmountEl) resultAmountEl.textContent = `${targetSymbol} ${grossConverted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   if (resultRateEl) resultRateEl.textContent = `1 ${isCadToUsd ? 'CAD' : 'USD'} = ${effectiveRate.toFixed(4)} ${isCadToUsd ? 'USD' : 'CAD'} (Spread: ${(config.spread * 100).toFixed(2)}%)`;
-  if (resultFeeEl) resultFeeEl.textContent = config.fee === 0 ? '✓ $0 Free Cross-Border Transfer' : `$${config.fee.toFixed(2)} Platform Fee`;
+  if (resultFeeEl) resultFeeEl.textContent = config.fee === 0 ? '$0 Free Cross-Border Transfer' : `$${config.fee.toFixed(2)} Platform Fee`;
   if (resultSpeedEl) resultSpeedEl.textContent = config.time;
 
   // Traditional cost comparison

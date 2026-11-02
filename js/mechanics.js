@@ -26,6 +26,159 @@ let currentScenarioModel = 'mortgage-terms';
 let scenarioExtraPayment = 250;
 let scenario15YrRate = 5.6;
 
+// Published 2026 statutory figures used by the tax and retirement engines.
+const TAX_YEAR = 2026;
+const TAX_LIMITS = {
+  ssWageBase: 184500,
+  ssRate: 0.062,
+  medicareRate: 0.0145,
+  additionalMedicareRate: 0.009,
+  additionalMedicareThreshold: 200000,
+  supplementalRate: 0.22,
+  supplementalHighRate: 0.37,
+  supplementalHighThreshold: 1000000,
+  employee401k: 24500,
+  hsaSelf: 4400,
+  hsaFamily: 8750,
+  conformingLoan: 832750
+};
+
+// IRS Uniform Lifetime Table (Publication 590-B), ages 72 through 120.
+const RMD_FACTORS = {
+  72: 27.4, 73: 26.5, 74: 25.5, 75: 24.6, 76: 23.7, 77: 22.9, 78: 22.0, 79: 21.1, 80: 20.2,
+  81: 19.4, 82: 18.5, 83: 17.7, 84: 16.8, 85: 16.0, 86: 15.2, 87: 14.4, 88: 13.7, 89: 12.9,
+  90: 12.2, 91: 11.5, 92: 10.8, 93: 10.1, 94: 9.5, 95: 8.9, 96: 8.4, 97: 7.8, 98: 7.3, 99: 6.8,
+  100: 6.4, 101: 6.0, 102: 5.6, 103: 5.2, 104: 4.9, 105: 4.6, 106: 4.3, 107: 4.1, 108: 3.9,
+  109: 3.7, 110: 3.5, 111: 3.4, 112: 3.3, 113: 3.1, 114: 3.0, 115: 2.9, 116: 2.8, 117: 2.7,
+  118: 2.5, 119: 2.3, 120: 2.0
+};
+
+/** IRS Uniform Lifetime divisor for ages 72 through 120. */
+function getRmdFactor(age) {
+  const boundedAge = Math.max(72, Math.min(120, Math.round(age)));
+  return RMD_FACTORS[boundedAge];
+}
+
+/**
+ * Employee Social Security, Medicare, and Additional Medicare tax on annual wages.
+ * Social Security stops at the wage base. 401(k) deferrals do not reduce FICA.
+ */
+function employeeFica(annualWages) {
+  const wages = Math.max(0, annualWages);
+  const ss = Math.min(wages, TAX_LIMITS.ssWageBase) * TAX_LIMITS.ssRate;
+  const medicare = wages * TAX_LIMITS.medicareRate;
+  const extra = Math.max(0, wages - TAX_LIMITS.additionalMedicareThreshold) * TAX_LIMITS.additionalMedicareRate;
+  return ss + medicare + extra;
+}
+
+/** IRS supplemental wage withholding: 22% up to $1,000,000, then 37%. */
+function supplementalWithholding(taxableWages) {
+  const wages = Math.max(0, taxableWages);
+  const threshold = TAX_LIMITS.supplementalHighThreshold;
+  if (wages <= threshold) return wages * TAX_LIMITS.supplementalRate;
+  return threshold * TAX_LIMITS.supplementalRate + (wages - threshold) * TAX_LIMITS.supplementalHighRate;
+}
+
+/** Standard fixed-rate monthly principal-and-interest payment. */
+function fixedMonthlyPayment(principal, annualRatePct, months) {
+  if (principal <= 0 || months <= 0) return 0;
+  const r = (annualRatePct / 100) / 12;
+  if (r === 0) return principal / months;
+  const growth = Math.pow(1 + r, months);
+  return (principal * r * growth) / (growth - 1);
+}
+
+/**
+ * Apply a constant payment until the balance is gone or maxMonths is reached.
+ * Returns shortfall when the payment does not cover interest.
+ */
+function amortizeWithPayment(principal, annualRatePct, payment, maxMonths) {
+  const r = (annualRatePct / 100) / 12;
+  if (principal <= 0) return { months: 0, interest: 0, balance: 0, shortfall: false };
+  if (r > 0 && payment <= principal * r + 1e-8) {
+    return { months: 0, interest: 0, balance: principal, shortfall: true };
+  }
+  let balance = principal;
+  let interest = 0;
+  let months = 0;
+  const cap = Math.max(1, maxMonths);
+  while (balance > 0.01 && months < cap) {
+    const interestCharge = balance * r;
+    months += 1;
+    interest += interestCharge;
+    balance -= Math.min(balance, payment - interestCharge);
+  }
+  return { months, interest, balance: Math.max(0, balance), shortfall: false };
+}
+
+/** Remaining balance after elapsedMonths of a full-term amortizing payment. */
+function loanBalanceAfter(principal, annualRatePct, fullTermMonths, elapsedMonths) {
+  const payment = fixedMonthlyPayment(principal, annualRatePct, fullTermMonths);
+  const stepped = amortizeWithPayment(principal, annualRatePct, payment, Math.max(0, elapsedMonths));
+  return { payment, ...stepped };
+}
+
+/** Bi-weekly schedule: 26 half-payments a year, interest compounded each period. */
+function amortizeBiweekly(principal, annualRatePct, halfPayment, maxPeriods) {
+  const r = (annualRatePct / 100) / 26;
+  if (principal <= 0) return { periods: 0, interest: 0, balance: 0, shortfall: false };
+  if (r > 0 && halfPayment <= principal * r + 1e-8) {
+    return { periods: 0, interest: 0, balance: principal, shortfall: true };
+  }
+  let balance = principal;
+  let interest = 0;
+  let periods = 0;
+  const cap = Math.max(1, maxPeriods);
+  while (balance > 0.01 && periods < cap) {
+    const interestCharge = balance * r;
+    periods += 1;
+    interest += interestCharge;
+    balance -= Math.min(balance, halfPayment - interestCharge);
+  }
+  return { periods, interest, balance: Math.max(0, balance), shortfall: balance > 0.01 };
+}
+
+/**
+ * Pay two debts with a flat minimum (the 36-month amortizing payment) plus extra
+ * aimed at the smallest balance (snowball) or the highest APR (avalanche).
+ */
+function simulateTwoDebts(debts, extra, mode) {
+  const state = debts.map((debt) => ({
+    bal: Math.max(0, debt.bal),
+    apr: Math.max(0, debt.apr),
+    min: Math.max(0, debt.min)
+  }));
+  let months = 0;
+  let interest = 0;
+  while (state.some((debt) => debt.bal > 0.01) && months < 600) {
+    const due = state.reduce((sum, debt) => sum + (debt.bal > 0.01 ? debt.bal * (debt.apr / 100) / 12 : 0), 0);
+    const minimums = state.reduce((sum, debt) => sum + (debt.bal > 0.01 ? Math.min(debt.bal, debt.min) : 0), 0);
+    if (minimums + extra <= due + 0.01) {
+      return { months, interest, paidOff: false, shortfall: true };
+    }
+    months += 1;
+    state.forEach((debt) => {
+      if (debt.bal <= 0.01) return;
+      const charge = debt.bal * (debt.apr / 100) / 12;
+      debt.bal += charge;
+      interest += charge;
+      debt.bal -= Math.min(debt.bal, debt.min);
+    });
+    let pool = Math.max(0, extra);
+    const order = state.filter((debt) => debt.bal > 0.01).sort((a, b) => {
+      if (mode === 'avalanche') return b.apr - a.apr || a.bal - b.bal;
+      return a.bal - b.bal || b.apr - a.apr;
+    });
+    order.forEach((debt) => {
+      if (pool <= 0) return;
+      const pay = Math.min(debt.bal, pool);
+      debt.bal -= pay;
+      pool -= pay;
+    });
+  }
+  return { months, interest, paidOff: state.every((debt) => debt.bal <= 0.01), shortfall: false };
+}
+
 // Utility Formatters
 function formatCurrency(amount, withIndianDenomination = true) {
   if (isNaN(amount) || !isFinite(amount)) return `${currentCurrency} 0.00`;
@@ -165,19 +318,23 @@ function calcMortgage() {
   const n = mortgageTermYears * 12;
 
   const principal = Math.max(0, asset - down);
-  let monthlyPayment = 0;
+  const monthlyPayment = fixedMonthlyPayment(principal, rate, n);
+  const contractualInterest = Math.max(0, monthlyPayment * n - principal);
+  let totalInterest = contractualInterest;
+  let payoffNote = '';
 
-  if (principal > 0 && n > 0) {
-    if (rate === 0) {
-      monthlyPayment = principal / n;
+  if (extraPay > 0 && principal > 0) {
+    const accelerated = amortizeWithPayment(principal, rate, monthlyPayment + extraPay, n + 600);
+    if (accelerated.shortfall) {
+      payoffNote = ' That extra payment does not cover the interest, so the balance would keep growing.';
+    } else if (accelerated.balance > 1) {
+      payoffNote = ` After ${(accelerated.months / 12).toFixed(1)} years the remaining balance is still ${formatCurrency(accelerated.balance)}.`;
+      totalInterest = accelerated.interest;
     } else {
-      const monthlyRate = (rate / 100) / 12;
-      monthlyPayment = (principal * monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1);
+      totalInterest = accelerated.interest;
+      payoffNote = ` With the extra payment, the loan is paid off in ${(accelerated.months / 12).toFixed(1)} years.`;
     }
   }
-
-  const totalPayment = monthlyPayment * n;
-  const totalInterest = Math.max(0, totalPayment - principal);
   const ltv = asset > 0 ? (principal / asset) * 100 : 0;
 
   const targetEl = document.getElementById('mortgage-payment');
@@ -187,7 +344,7 @@ function calcMortgage() {
   if (interestEl) interestEl.textContent = formatCurrency(totalInterest);
 
   const totalEl = document.getElementById('mortgage-total-payment');
-  if (totalEl) totalEl.textContent = formatCurrency(totalPayment);
+  if (totalEl) totalEl.textContent = formatCurrency(principal + totalInterest);
 
   const ltvEl = document.getElementById('mortgage-ltv');
   if (ltvEl) ltvEl.textContent = formatPercent(ltv, 1);
@@ -196,74 +353,52 @@ function calcMortgage() {
   renderMortgageChart(principal, totalInterest);
 
   // Calculate What-If Scenarios (30yr vs 15yr comparison & Extra payment)
-  calcMortgageWhatIf(principal, rate, monthlyPayment, totalInterest, extraPay);
+  calcMortgageWhatIf(principal, rate, monthlyPayment, contractualInterest, extraPay);
 
   // Update Plain English Solution Card
   const solTextEl = document.getElementById('mortgage-solution-text');
   if (solTextEl) {
-    solTextEl.innerHTML = `To buy a home priced at <strong>${formatCurrency(asset)}</strong> with <strong>${formatCurrency(down)}</strong> down, your exact monthly payment is <strong class="text-emerald-400 font-bold">${formatCurrency(monthlyPayment)}/mo</strong>. Over ${mortgageTermYears} years, you will pay <strong class="text-rose-400 font-bold">${formatCurrency(totalInterest)}</strong> in interest to the bank.`;
+    solTextEl.innerHTML = `To buy a home priced at <strong>${formatCurrency(asset)}</strong> with <strong>${formatCurrency(down)}</strong> down, principal and interest is <strong class="text-emerald-400 font-bold">${formatCurrency(monthlyPayment)}/mo</strong>. Interest on this schedule is <strong class="text-rose-400 font-bold">${formatCurrency(totalInterest)}</strong>. Taxes, insurance, and mortgage insurance are not included.${payoffNote}`;
   }
 
   flashElement('mortgage-payment');
 }
 
 function calcMortgageWhatIf(principal, rate, currentPayment, currentInterest, extraPay) {
-  // Compare 30yr vs 15yr
-  const r = (rate / 100) / 12;
-  const n30 = 360;
-  const n15 = 180;
-  
-  let p30 = 0, p15 = 0;
-  if (principal > 0 && r > 0) {
-    p30 = (principal * r * Math.pow(1 + r, n30)) / (Math.pow(1 + r, n30) - 1);
-    p15 = (principal * r * Math.pow(1 + r, n15)) / (Math.pow(1 + r, n15) - 1);
-  }
-  const int30 = (p30 * n30) - principal;
-  const int15 = (p15 * n15) - principal;
+  const p30 = fixedMonthlyPayment(principal, rate, 360);
+  const p15 = fixedMonthlyPayment(principal, rate, 180);
+  const int30 = Math.max(0, p30 * 360 - principal);
+  const int15 = Math.max(0, p15 * 180 - principal);
   const intSaved15 = Math.max(0, int30 - int15);
 
   const compSavingsEl = document.getElementById('mortgage-15yr-savings');
   if (compSavingsEl) compSavingsEl.textContent = formatCurrency(intSaved15);
 
-  // Extra Principal Payment Simulation
-  if (extraPay > 0 && principal > 0 && r > 0) {
-    let balance = principal;
-    const totalMonthly = currentPayment + extraPay;
-    let acceleratedMonths = 0;
-    let acceleratedInterest = 0;
+  const extraMonthsEl = document.getElementById('mortgage-extra-months-saved');
+  const extraIntEl = document.getElementById('mortgage-extra-int-saved');
+  const solTipEl = document.getElementById('mortgage-solution-tip');
 
-    while (balance > 0 && acceleratedMonths < 600) {
-      acceleratedMonths++;
-      const intCharge = balance * r;
-      acceleratedInterest += intCharge;
-      const principalPortion = Math.min(balance, totalMonthly - intCharge);
-      balance -= principalPortion;
-    }
-
-    const monthsSaved = Math.max(0, (mortgageTermYears * 12) - acceleratedMonths);
-    const extraInterestSaved = Math.max(0, currentInterest - acceleratedInterest);
-
-    const extraMonthsEl = document.getElementById('mortgage-extra-months-saved');
-    if (extraMonthsEl) extraMonthsEl.textContent = `${monthsSaved} Mo (${(monthsSaved / 12).toFixed(1)} Yrs)`;
-
-    const extraIntEl = document.getElementById('mortgage-extra-int-saved');
-    if (extraIntEl) extraIntEl.textContent = formatCurrency(extraInterestSaved);
-
-    const solTipEl = document.getElementById('mortgage-solution-tip');
-    if (solTipEl) {
-      solTipEl.innerHTML = `<strong>Action Plan:</strong> Paying an extra <strong>${formatCurrency(extraPay)}/month</strong> pays off your loan <strong>${(monthsSaved / 12).toFixed(1)} years earlier</strong> and keeps <strong>${formatCurrency(extraInterestSaved)} in your pocket</strong>!`;
+  if (extraPay > 0 && principal > 0) {
+    const accelerated = amortizeWithPayment(principal, rate, currentPayment + extraPay, 720);
+    if (accelerated.shortfall || accelerated.balance > 1) {
+      if (extraMonthsEl) extraMonthsEl.textContent = accelerated.shortfall ? 'Payment too low' : 'Not paid off';
+      if (extraIntEl) extraIntEl.textContent = formatCurrency(0);
+      if (solTipEl) solTipEl.textContent = accelerated.shortfall
+        ? 'This extra payment still does not cover monthly interest, so the balance would grow.'
+        : 'The extra payment is not enough to pay the loan off inside the modeled horizon.';
+    } else {
+      const monthsSaved = Math.max(0, (mortgageTermYears * 12) - accelerated.months);
+      const extraInterestSaved = Math.max(0, currentInterest - accelerated.interest);
+      if (extraMonthsEl) extraMonthsEl.textContent = `${monthsSaved} Mo (${(monthsSaved / 12).toFixed(1)} Yrs)`;
+      if (extraIntEl) extraIntEl.textContent = formatCurrency(extraInterestSaved);
+      if (solTipEl) {
+        solTipEl.innerHTML = `<strong>Action Plan:</strong> Paying an extra <strong>${formatCurrency(extraPay)}/month</strong> pays off this loan <strong>${(monthsSaved / 12).toFixed(1)} years earlier</strong> and reduces interest by <strong>${formatCurrency(extraInterestSaved)}</strong>. The 15-year comparison above uses the same rate.`;
+      }
     }
   } else {
-    const extraMonthsEl = document.getElementById('mortgage-extra-months-saved');
-    if (extraMonthsEl) extraMonthsEl.textContent = `0 Months`;
-
-    const extraIntEl = document.getElementById('mortgage-extra-int-saved');
+    if (extraMonthsEl) extraMonthsEl.textContent = '0 Months';
     if (extraIntEl) extraIntEl.textContent = formatCurrency(0);
-
-    const solTipEl = document.getElementById('mortgage-solution-tip');
-    if (solTipEl) {
-      solTipEl.innerHTML = `<strong>Action Plan:</strong> Adding just <strong>$100 extra each month</strong> directly towards your principal can shave up to <strong>4.5 years</strong> off your loan and save tens of thousands in interest!`;
-    }
+    if (solTipEl) solTipEl.textContent = 'Add an extra principal payment to see the payoff date and interest from a month-by-month schedule. The 15-year comparison uses the same interest rate.';
   }
 }
 
@@ -599,7 +734,7 @@ function calcCreditCard() {
       const yrs = (months / 12).toFixed(1);
       solCardEl.innerHTML = `At your current payment of <strong>${formatCurrency(payment)}/month</strong>, you will be completely debt-free in <strong class="text-emerald-400 font-bold">${months} months (${yrs} years)</strong>. The card company will take <strong class="text-rose-400 font-bold">${formatCurrency(totalInterest)} in pure interest fees</strong>. Total payback: <strong>${formatCurrency(totalPaid)}</strong>.`;
     } else {
-      solCardEl.innerHTML = `<span class="text-rose-400 font-bold">⚠️ Warning:</span> Your monthly payment is too low to beat interest charges. Increase your monthly payment to start paying off the principal!`;
+      solCardEl.innerHTML = `<span class="text-rose-400 font-bold">Warning:</span> Your monthly payment is too low to beat interest charges. Increase your monthly payment to start paying off the principal!`;
     }
   }
 
@@ -676,36 +811,36 @@ function updateRentBuyScorecard(rent, mortgage, horizon, monthlyDiff, totalRentP
       renting: `${formatCurrency(rent)}`,
       buying: `${formatCurrency(mortgage)}`,
       winner: rentWinsMonthly 
-        ? `<span class="text-emerald-400 font-bold">🟢 Rent saves ${formatCurrency(monthlyDiff)}/mo</span>`
-        : (buyWinsMonthly ? `<span class="text-sky-400 font-bold">🟢 Buy saves ${formatCurrency(Math.abs(monthlyDiff))}/mo</span>` : `<span class="text-slate-400">⚖️ Equal Parity</span>`)
+        ? `<span class="text-emerald-400 font-bold">Rent saves ${formatCurrency(monthlyDiff)}/mo</span>`
+        : (buyWinsMonthly ? `<span class="text-sky-400 font-bold">Buy saves ${formatCurrency(Math.abs(monthlyDiff))}/mo</span>` : `<span class="text-slate-400">Equal Parity</span>`)
     },
     {
       criteria: `${horizon}-Year Total Outflow`,
       renting: `${formatCurrency(totalRentPaid)} <span class="text-[10px] text-slate-500 block">(w/ 5% annual rent hikes)</span>`,
       buying: `${formatCurrency(totalMortPaid)} <span class="text-[10px] text-slate-500 block">(Fixed loan payments)</span>`,
       winner: totalMortPaid > totalRentPaid
-        ? `<span class="text-emerald-400 font-bold">🟢 Rent saves ${formatCurrency(totalMortPaid - totalRentPaid)}</span>`
-        : `<span class="text-sky-400 font-bold">🟢 Buy saves ${formatCurrency(totalRentPaid - totalMortPaid)}</span>`
+        ? `<span class="text-emerald-400 font-bold">Rent saves ${formatCurrency(totalMortPaid - totalRentPaid)}</span>`
+        : `<span class="text-sky-400 font-bold">Buy saves ${formatCurrency(totalRentPaid - totalMortPaid)}</span>`
     },
     {
       criteria: `${horizon}-Year Net Wealth Outlook`,
       renting: `${formatCurrency(investedWealth)} <span class="text-[10px] text-slate-500 block">(If monthly savings invested @ 8%)</span>`,
       buying: `${formatCurrency(homeEquity)} <span class="text-[10px] text-slate-500 block">(Home equity + 4% growth)</span>`,
       winner: investedWealth > homeEquity
-        ? `<span class="text-emerald-400 font-bold">🟢 Renting creates more liquid wealth</span>`
-        : `<span class="text-sky-400 font-bold">🟢 Buying creates more property wealth</span>`
+        ? `<span class="text-emerald-400 font-bold">Renting creates more liquid wealth</span>`
+        : `<span class="text-sky-400 font-bold">Buying creates more property wealth</span>`
     },
     {
       criteria: 'Maintenance, Repairs & Taxes',
       renting: `<span class="text-emerald-400 font-semibold">${formatCurrency(0)}</span> (Landlord obligation)`,
       buying: `~${formatCurrency(mortgage * 0.10)}/mo <span class="text-slate-500 text-[10px] block">(Repairs, society dues, tax)</span>`,
-      winner: `<span class="text-emerald-400 font-bold">🟢 Renting (Zero maintenance liability)</span>`
+      winner: `<span class="text-emerald-400 font-bold">Renting (Zero maintenance liability)</span>`
     },
     {
       criteria: 'Relocation & Job Flexibility',
       renting: `<span class="text-emerald-400 font-semibold">High</span> (30-day notice to move)`,
       buying: `<span class="text-rose-400 font-semibold">Low</span> (Takes 3-6 mos to sell, 6-8% fees)`,
-      winner: `<span class="text-emerald-400 font-bold">🟢 Renting (Maximum freedom)</span>`
+      winner: `<span class="text-emerald-400 font-bold">Renting (Maximum freedom)</span>`
     }
   ];
 
@@ -763,11 +898,25 @@ function calcRentBuy() {
   const homeApprPct = parseFloat(document.getElementById('rentbuy-home-appreciation')?.value) || 4.0;
   const investReturnPct = parseFloat(document.getElementById('rentbuy-invest-return')?.value) || 8.0;
 
+  const homePrice = parseFloat(document.getElementById('rentbuy-price')?.value) || 0;
+  const downPayment = Math.min(homePrice, parseFloat(document.getElementById('rentbuy-down')?.value) || 0);
+  const mortgageRate = parseFloat(document.getElementById('rentbuy-rate')?.value) || 0;
+
   const horizon = rentbuyHorizonYears || 5;
-  const monthlyVariance = mortgage - rent; // Positive means rent is cheaper
+  const monthlyVariance = mortgage - rent;
   const annualVariance = monthlyVariance * 12;
-  const fiveYearVariance = annualVariance * 5;
-  const horizonVariance = annualVariance * horizon;
+  const rentGrowth = rentGrowthPct / 100;
+  const rentOverYears = (years) => {
+    let total = 0;
+    let yearRent = rent;
+    for (let y = 1; y <= years; y++) {
+      total += yearRent * 12;
+      yearRent *= (1 + rentGrowth);
+    }
+    return total;
+  };
+  const fiveYearVariance = (mortgage * 12 * 5) - rentOverYears(5);
+  const horizonVariance = (mortgage * 12 * horizon) - rentOverYears(horizon);
 
   // 1. Backward-compatible DOM updates
   const annEl = document.getElementById('rentbuy-annual-variance');
@@ -790,44 +939,33 @@ function calcRentBuy() {
     }
   }
 
-  // 2. Realistic multi-year compounding and wealth modeling
-  const rGrowth = rentGrowthPct / 100;
-  let totalRentPaid = 0;
-  let currentYearRent = rent;
-  for (let y = 1; y <= horizon; y++) {
-    totalRentPaid += currentYearRent * 12;
-    currentYearRent *= (1 + rGrowth);
-  }
+  const totalRentPaid = rentOverYears(horizon);
   const totalMortPaid = mortgage * 12 * horizon;
 
-  // Invested Monthly Savings (Future Value of SIP if Rent < Mortgage)
   const monthlyInvestRate = (investReturnPct / 100) / 12;
-  let investedSavingsWealth = 0;
-  if (monthlyVariance > 0 && monthlyInvestRate > 0) {
-    const totalMonths = horizon * 12;
-    investedSavingsWealth = monthlyVariance * ((Math.pow(1 + monthlyInvestRate, totalMonths) - 1) / monthlyInvestRate);
-  }
+  const investedAt = (years) => {
+    if (monthlyVariance <= 0 || monthlyInvestRate <= 0) return 0;
+    const totalMonths = years * 12;
+    return monthlyVariance * ((Math.pow(1 + monthlyInvestRate, totalMonths) - 1) / monthlyInvestRate);
+  };
+  const investedSavingsWealth = investedAt(horizon);
 
-  // Home equity estimate: Property value estimated as ~140x monthly mortgage payment
-  const estimatedPropertyVal = mortgage * 140;
-  const futurePropertyValue = estimatedPropertyVal * Math.pow(1 + (homeApprPct / 100), horizon);
-  const principalAmortizedPct = Math.min(1.0, (horizon / 25) * 0.7);
-  const estimatedDownPayment = estimatedPropertyVal * 0.20;
-  const homeEquity = estimatedDownPayment + (estimatedPropertyVal * 0.80 * principalAmortizedPct) + (futurePropertyValue - estimatedPropertyVal);
+  const netSaleEquity = (years) => {
+    if (homePrice <= 0) return 0;
+    const loan = Math.max(0, homePrice - downPayment);
+    const remaining = loanBalanceAfter(loan, mortgageRate, 360, years * 12);
+    const futureValue = homePrice * Math.pow(1 + (homeApprPct / 100), years);
+    return Math.max(0, futureValue * 0.94 - remaining.balance);
+  };
+  const homeEquity = netSaleEquity(horizon);
 
-  // 3. Break-even horizon calculation (Year where buyer net position beats renter)
   let breakEvenYear = 0;
-  for (let y = 1; y <= 25; y++) {
-    const yMonths = y * 12;
-    const yInvested = monthlyVariance > 0 && monthlyInvestRate > 0
-      ? monthlyVariance * ((Math.pow(1 + monthlyInvestRate, yMonths) - 1) / monthlyInvestRate)
-      : 0;
-    const yHomeVal = estimatedPropertyVal * Math.pow(1 + (homeApprPct / 100), y);
-    // Home equity minus 6% sale friction fees
-    const yEquity = estimatedDownPayment + (estimatedPropertyVal * 0.80 * Math.min(1.0, (y / 25) * 0.7)) + (yHomeVal - estimatedPropertyVal) - (yHomeVal * 0.06);
-
-    if (yEquity > yInvested && breakEvenYear === 0) {
-      breakEvenYear = y;
+  if (homePrice > 0) {
+    for (let y = 1; y <= 30; y++) {
+      if (netSaleEquity(y) > investedAt(y)) {
+        breakEvenYear = y;
+        break;
+      }
     }
   }
 
@@ -845,19 +983,19 @@ function calcRentBuy() {
   let headlineText = '';
   let badgeText = '';
   let summaryText = '';
-  let iconEmoji = '🏆';
+  let iconEmoji = '';
 
   if (monthlyVariance >= 50) {
     // Renting is noticeably cheaper on monthly cash flow
     if (horizon < (breakEvenYear || 8)) {
       winner = 'rent';
-      iconEmoji = '🏆';
+      iconEmoji = '';
       headlineText = 'RECOMMENDED DECISION: RENTING IS BETTER FOR YOU';
       badgeText = `Renting Saves ${formatCurrency(monthlyVariance)} / mo`;
       summaryText = `At your numbers, renting saves you <strong>${formatCurrency(monthlyVariance)} in cash every single month</strong> (${formatCurrency(annualVariance)}/year). Over your planned <strong>${horizon}-year stay</strong>, renting saves you <strong>${formatCurrency(horizonVariance)} in pure cash outflow</strong>. If you invest that monthly difference in index funds/SIP at ${investReturnPct}%, you will build <strong>${formatCurrency(investedSavingsWealth)} in liquid wealth</strong> without taking on mortgage debt, property taxes, or home repairs.`;
     } else {
       winner = 'buy';
-      iconEmoji = '🏡';
+      iconEmoji = '';
       headlineText = 'RECOMMENDED DECISION: BUYING BUILDS GREATER LONG-TERM WEALTH';
       badgeText = `Long-Term Equity Winner`;
       summaryText = `Even though renting is cheaper month-to-month by ${formatCurrency(monthlyVariance)}, your extended stay of <strong>${horizon} years</strong> allows property price appreciation (${homeApprPct}%/yr) and loan principal paydown to overcome the early savings of renting. By Year ${horizon}, your estimated home equity reaches <strong>${formatCurrency(homeEquity)}</strong>, creating more net wealth than renting.`;
@@ -865,14 +1003,14 @@ function calcRentBuy() {
   } else if (monthlyVariance <= -50) {
     // Mortgage is cheaper than rent!
     winner = 'buy';
-    iconEmoji = '🏡';
+    iconEmoji = '';
     headlineText = 'RECOMMENDED DECISION: BUYING IS CLEARLY SUPERIOR';
     badgeText = `Buying Saves ${formatCurrency(Math.abs(monthlyVariance))} / mo`;
     summaryText = `Buying is a clear financial victory here! Your monthly mortgage payment of <strong>${formatCurrency(mortgage)}/mo</strong> is actually cheaper than rent (<strong>${formatCurrency(rent)}/mo</strong>). You keep <strong>${formatCurrency(Math.abs(monthlyVariance))}/mo</strong> in positive cash flow while simultaneously building property equity instead of paying off your landlord's mortgage.`;
   } else {
     // Close parity
     winner = 'tie';
-    iconEmoji = '⚖️';
+    iconEmoji = '';
     headlineText = 'RECOMMENDED DECISION: IT\'S A TIE — DECIDE BY YOUR STAY HORIZON';
     badgeText = `Cash-Flow Parity (~${formatCurrency(Math.abs(monthlyVariance))}/mo)`;
     summaryText = `Monthly rent and mortgage are almost identical. <strong>The deciding factor is how long you plan to live here:</strong> If you will move within 4–5 years, <strong>Rent</strong> to avoid transaction and selling costs (6-8%). If you plan to stay 6+ years, <strong>Buy</strong> to lock in your housing costs against rising rent inflation.`;
@@ -1467,18 +1605,19 @@ function calcBiweekly() {
   }
 
   const biweeklyPayment = monthlyP / 2;
-  // Bi-weekly results in 26 half-payments = 13 monthly payments/year (1 extra monthly payment/yr)
-  const extraAnnual = monthlyP;
-  const approxYearsSaved = rate > 0 ? Math.min(termYears - 1, (extraAnnual / (monthlyP * 12)) * termYears * 1.8) : 0;
-  const approxInterestSaved = monthlyP * 12 * approxYearsSaved * 0.45;
+  const standardInterest = Math.max(0, monthlyP * n - balance);
+  const accelerated = amortizeBiweekly(balance, rate, biweeklyPayment, Math.ceil(termYears * 26) + 260);
+  const yearsToPayoff = accelerated.shortfall ? termYears : accelerated.periods / 26;
+  const yearsSaved = accelerated.shortfall ? 0 : Math.max(0, termYears - yearsToPayoff);
+  const interestSaved = accelerated.shortfall ? 0 : Math.max(0, standardInterest - accelerated.interest);
 
   const intEl = document.getElementById('biweekly-interest-saved');
   const payEl = document.getElementById('biweekly-payment');
   const yrsEl = document.getElementById('biweekly-years-saved');
 
-  if (intEl) intEl.textContent = formatCurrency(approxInterestSaved);
+  if (intEl) intEl.textContent = formatCurrency(interestSaved);
   if (payEl) payEl.textContent = formatCurrency(biweeklyPayment);
-  if (yrsEl) yrsEl.textContent = `${approxYearsSaved.toFixed(1)} Years`;
+  if (yrsEl) yrsEl.textContent = accelerated.shortfall ? 'Payment too low' : `${yearsSaved.toFixed(1)} Years`;
 
   flashElement('biweekly-interest-saved');
 }
@@ -1638,15 +1777,18 @@ function calcFire() {
   const swr = parseFloat(document.getElementById('fire-swr').value) || 4.0;
 
   const target = swr > 0 ? expenses / (swr / 100) : 0;
+  const growthPct = parseFloat(document.getElementById('fire-growth')?.value);
+  const realGrowth = (Number.isFinite(growthPct) ? growthPct : 7) / 100;
   let cur = savings;
   let years = 0;
-  const realGrowth = 0.07; // 7% standard real market return
+  let reached = cur >= target;
 
-  if (cur < target) {
+  if (!reached) {
     while (cur < target && years < 60) {
       cur = (cur * (1 + realGrowth)) + annualSave;
       years++;
     }
+    reached = cur >= target;
   }
 
   const safeMonthly = expenses / 12;
@@ -1656,7 +1798,7 @@ function calcFire() {
   const moEl = document.getElementById('fire-safe-monthly');
 
   if (targetEl) targetEl.textContent = formatCurrency(target);
-  if (yrsEl) yrsEl.textContent = `${years.toFixed(1)} Years`;
+  if (yrsEl) yrsEl.textContent = reached ? `${years} Years` : 'Not reached in 60 years';
   if (moEl) moEl.textContent = formatCurrency(safeMonthly);
 
   renderFireChart(expenses, savings, annualSave, target, years);
@@ -1673,9 +1815,16 @@ function calcFour01k() {
   const years = parseFloat(document.getElementById('four01k-years').value) || 0;
   const rate = parseFloat(document.getElementById('four01k-rate').value) || 0;
 
-  const annualEmployee = salary * (contribPct / 100);
-  const annualEmployer = salary * (matchPct / 100);
+  const requestedEmployee = salary * (contribPct / 100);
+  const annualEmployee = Math.min(TAX_LIMITS.employee401k, requestedEmployee);
+  const annualEmployer = Math.min(salary * (matchPct / 100), annualEmployee);
   const totalAnnual = annualEmployee + annualEmployer;
+  const limitNote = document.getElementById('four01k-limit-note');
+  if (limitNote) {
+    limitNote.textContent = requestedEmployee > annualEmployee
+      ? `Employee contribution is capped at the ${TAX_YEAR} deferral limit of ${formatCurrency(TAX_LIMITS.employee401k)} before any age-50 catch-up. Match is capped at the employee contribution.`
+      : `Employee deferral uses the ${TAX_YEAR} cap of ${formatCurrency(TAX_LIMITS.employee401k)}. Match cannot exceed what you contribute.`;
+  }
 
   let balance = 0;
   const r = rate / 100;
@@ -1704,14 +1853,8 @@ function calcRmd() {
   const balance = parseFloat(document.getElementById('rmd-balance').value) || 0;
   const age = parseInt(document.getElementById('rmd-age').value) || 74;
 
-  const factors = {
-    73: 26.5, 74: 25.5, 75: 24.6, 76: 23.7, 77: 22.9,
-    78: 22.0, 79: 21.1, 80: 20.2, 81: 19.4, 82: 18.5,
-    83: 17.7, 84: 16.8, 85: 16.0, 86: 15.2, 87: 14.4,
-    88: 13.7, 89: 12.9, 90: 12.2, 95: 8.9, 100: 6.4
-  };
-
-  const factor = factors[age] || Math.max(5.0, 26.5 - (age - 73) * 0.85);
+  const boundedAge = Math.max(72, Math.min(120, age));
+  const factor = getRmdFactor(boundedAge);
   const rmdAnnual = factor > 0 ? balance / factor : 0;
   const rmdMonthly = rmdAnnual / 12;
 
@@ -1767,10 +1910,15 @@ function calcCdLadder() {
   const apy = parseFloat(document.getElementById('cdladder-apy').value) || 0;
   const rungs = parseInt(document.getElementById('cdladder-rungs').value) || 4;
 
-  const capitalPerRung = rungs > 0 ? capital / rungs : 0;
-  const annualInterest = capital * (apy / 100);
-  const rungPayout = capitalPerRung * (1 + (apy / 100));
-  const totalMaturity = capital + annualInterest;
+  const safeRungs = Math.max(1, rungs);
+  const capitalPerRung = capital / safeRungs;
+  const rate = apy / 100;
+  let totalMaturity = 0;
+  for (let year = 1; year <= safeRungs; year++) {
+    totalMaturity += capitalPerRung * Math.pow(1 + rate, year);
+  }
+  const annualInterest = capital * rate;
+  const rungPayout = capitalPerRung * (1 + rate);
 
   const intEl = document.getElementById('cdladder-annual-interest');
   const rungEl = document.getElementById('cdladder-rung-payout');
@@ -1787,7 +1935,8 @@ function calcCdLadder() {
 // 32. HSA TRIPLE-TAX ADVANTAGE SUITE
 // -------------------------------------------------------------
 function calcHsa() {
-  const contrib = parseFloat(document.getElementById('hsa-annual-contrib').value) || 0;
+  const requestedContrib = parseFloat(document.getElementById('hsa-annual-contrib').value) || 0;
+  const contrib = Math.min(TAX_LIMITS.hsaFamily, Math.max(0, requestedContrib));
   const balance = parseFloat(document.getElementById('hsa-current-balance').value) || 0;
   const years = parseFloat(document.getElementById('hsa-years').value) || 0;
   const rate = parseFloat(document.getElementById('hsa-rate').value) || 0;
@@ -1801,6 +1950,16 @@ function calcHsa() {
 
   const annualTaxSaved = contrib * (taxBracket / 100);
   const lifetimeTaxSaved = (annualTaxSaved * years) + (Math.max(0, fv - balance - (contrib * years)) * (taxBracket / 100));
+  const hsaNote = document.getElementById('hsa-limit-note');
+  if (hsaNote) {
+    if (requestedContrib > TAX_LIMITS.hsaFamily) {
+      hsaNote.textContent = `Contribution capped at the ${TAX_YEAR} family limit of ${formatCurrency(TAX_LIMITS.hsaFamily)}.`;
+    } else if (requestedContrib > TAX_LIMITS.hsaSelf) {
+      hsaNote.textContent = `Above the ${TAX_YEAR} self-only limit of ${formatCurrency(TAX_LIMITS.hsaSelf)}. Allowed only with family coverage, up to ${formatCurrency(TAX_LIMITS.hsaFamily)}.`;
+    } else {
+      hsaNote.textContent = `${TAX_YEAR} HSA limits: ${formatCurrency(TAX_LIMITS.hsaSelf)} self-only, ${formatCurrency(TAX_LIMITS.hsaFamily)} family. Catch-up at age 55 is not included.`;
+    }
+  }
 
   const fvEl = document.getElementById('hsa-future-value');
   const annEl = document.getElementById('hsa-tax-saved-annual');
@@ -1822,7 +1981,8 @@ function calcPaycheck() {
   const stateTax = parseFloat(document.getElementById('paycheck-state-tax').value) || 0;
   const freq = parseFloat(document.getElementById('paycheck-freq').value) || 26;
 
-  const fica = gross * 0.0765; // 6.2% Social Security + 1.45% Medicare
+  const annualGross = gross * freq;
+  const fica = freq > 0 ? employeeFica(annualGross) / freq : 0;
   const fedDeduct = gross * (fedTax / 100);
   const stateDeduct = gross * (stateTax / 100);
   const totalDeductions = fica + fedDeduct + stateDeduct;
@@ -1926,8 +2086,8 @@ function calcBonusTax() {
   const defer401kPct = parseFloat(document.getElementById('bonustax-401k-pct').value) || 0;
 
   const deferral = bonus * (defer401kPct / 100);
-  const fedTax = (bonus - deferral) * 0.22; // 22% IRS statutory supplemental rate
-  const fica = bonus * 0.0765;
+  const fedTax = supplementalWithholding(bonus - deferral);
+  const fica = employeeFica(bonus);
   const stateTax = (bonus - deferral) * (statePct / 100);
   const totalDeducted = deferral + fedTax + fica + stateTax;
   const netPayout = Math.max(0, bonus - totalDeducted);
@@ -1955,9 +2115,16 @@ function calcSeverance() {
 
   const ptoPay = (weeklyPay / 40) * ptoHrs;
   const lumpSum = (weeks * weeklyPay) + ptoPay;
-  const uiTotal = uiWeekly * 26; // 26 standard unemployment weeks
-  const totalNetCash = (lumpSum * 0.78) + uiTotal; // after ~22% taxes
+  const withholding = supplementalWithholding(lumpSum) + employeeFica(lumpSum);
+  const totalNetCash = Math.max(0, lumpSum - withholding);
   const runwayMonths = monthlyBurn > 0 ? totalNetCash / monthlyBurn : 0;
+  const uiNote = document.getElementById('severance-ui-note');
+  if (uiNote) {
+    const uiWeeks = 26;
+    uiNote.textContent = uiWeekly > 0
+      ? `Unemployment is not added to this runway. A separate estimate of ${formatCurrency(uiWeekly)} for ${uiWeeks} weeks is ${formatCurrency(uiWeekly * uiWeeks)}, and many states delay those benefits while severance is paid.`
+      : 'Unemployment is excluded. Runway uses after-tax severance and PTO only.';
+  }
 
   const runEl = document.getElementById('severance-runway-months');
   const lumpEl = document.getElementById('severance-lump-sum');
@@ -1980,31 +2147,27 @@ function calcSnowball() {
   const d2Bal = parseFloat(document.getElementById('snowball-debt2-bal').value) || 0;
   const d2Apr = parseFloat(document.getElementById('snowball-debt2-apr').value) || 0;
 
-  const totalDebt = d1Bal + d2Bal;
-  const weightedApr = totalDebt > 0 ? ((d1Bal * d1Apr) + (d2Bal * d2Apr)) / totalDebt : 15;
-  const monthlyMin = Math.max(50, totalDebt * 0.025);
-  const totalMoPayment = monthlyMin + extra;
-
-  const mr = (weightedApr / 100) / 12;
-  let months = 0;
-  if (totalMoPayment > totalDebt * mr && mr > 0) {
-    months = Math.ceil(-Math.log(1 - (totalDebt * mr) / totalMoPayment) / Math.log(1 + mr));
-  } else {
-    months = 24;
-  }
-
-  const totalInterest = Math.max(0, (totalMoPayment * months) - totalDebt);
-  const avalancheSavings = Math.max(0, totalInterest * 0.18); // Avalanche saves ~15-20% interest
+  const debts = [
+    { bal: d1Bal, apr: d1Apr, min: fixedMonthlyPayment(d1Bal, d1Apr, 36) },
+    { bal: d2Bal, apr: d2Apr, min: fixedMonthlyPayment(d2Bal, d2Apr, 36) }
+  ];
+  const snowball = simulateTwoDebts(debts, extra, 'snowball');
+  const avalanche = simulateTwoDebts(debts, extra, 'avalanche');
+  const avalancheSavings = Math.max(0, snowball.interest - avalanche.interest);
 
   const saveEl = document.getElementById('snowball-avalanche-savings');
   const moEl = document.getElementById('snowball-months-debt-free');
   const intEl = document.getElementById('snowball-total-interest');
 
   if (saveEl) saveEl.textContent = formatCurrency(avalancheSavings);
-  if (moEl) moEl.textContent = `${months} Months`;
-  if (intEl) intEl.textContent = formatCurrency(totalInterest);
+  if (moEl) {
+    moEl.textContent = avalanche.shortfall
+      ? 'Payment too low'
+      : `${avalanche.months} mo avalanche / ${snowball.months} mo snowball`;
+  }
+  if (intEl) intEl.textContent = formatCurrency(avalanche.interest);
 
-  renderSnowballChart(d1Bal, d2Bal, extra, d1Apr, d2Apr);
+  renderSnowballChart(snowball.interest, avalanche.interest);
   flashElement('snowball-avalanche-savings');
 }
 
@@ -2018,9 +2181,11 @@ function calcCarLease() {
   const loanMonthly = parseFloat(document.getElementById('carlease-loan-monthly').value) || 0;
   const residual = parseFloat(document.getElementById('carlease-residual').value) || 0;
 
+  const loanRate = parseFloat(document.getElementById('carlease-loan-rate')?.value) || 0;
   const lease3YrCost = leaseDown + (leaseMonthly * 36);
   const buyPaid3Yr = loanMonthly * 36;
-  const loanBal3Yr = Math.max(0, msrp - (buyPaid3Yr * 0.7));
+  const buySchedule = amortizeWithPayment(msrp, loanRate, loanMonthly, 36);
+  const loanBal3Yr = buySchedule.shortfall ? msrp : buySchedule.balance;
   const equityKept = Math.max(0, residual - loanBal3Yr);
   const buy3YrNetCost = Math.max(0, buyPaid3Yr - equityKept);
 
@@ -2158,14 +2323,21 @@ function calcStudentRefi() {
   const privRate = parseFloat(document.getElementById('studentrefi-private-rate').value) || 4.5;
   const idrMonthly = parseFloat(document.getElementById('studentrefi-idr-monthly').value) || 0;
 
-  const pslfPaid = idrMonthly * 120; // 10 years = 120 payments
-  const pslfForgiven = Math.max(0, balance * 1.3 - pslfPaid); // including growth
+  const federalRate = parseFloat(document.getElementById('studentrefi-current-rate')?.value) || 0;
+  const federalMonthly = (federalRate / 100) / 12;
+  let remaining = balance;
+  let pslfPaid = 0;
+  for (let month = 0; month < 120; month++) {
+    remaining += remaining * federalMonthly;
+    const pay = Math.min(remaining, Math.max(0, idrMonthly));
+    remaining -= pay;
+    pslfPaid += pay;
+  }
+  const pslfForgiven = Math.max(0, remaining);
 
-  const mr = (privRate / 100) / 12;
-  const refiMonthly = (balance * mr * Math.pow(1 + mr, 120)) / (Math.pow(1 + mr, 120) - 1);
+  const refiMonthly = fixedMonthlyPayment(balance, privRate, 120);
   const refiPaid = refiMonthly * 120;
-
-  const rec = pslfPaid < refiPaid ? 'PSLF Program' : 'Private Refinance';
+  const rec = pslfPaid < refiPaid ? 'Lower cash: PSLF if you qualify' : 'Lower cash: private refinance';
 
   const forgEl = document.getElementById('studentrefi-pslf-forgiven');
   const refiEl = document.getElementById('studentrefi-refi-monthly');
@@ -2190,12 +2362,9 @@ function calcCreditScore() {
   const newUtil = limit > 0 ? (newBalance / limit) * 100 : 0;
   const oldUtil = limit > 0 ? (balance / limit) * 100 : 0;
 
-  let points = 0;
-  if (oldUtil >= 50 && newUtil < 30) points += 35;
-  else if (oldUtil >= 30 && newUtil < 10) points += 25;
-  else if (newUtil < oldUtil) points += Math.round((oldUtil - newUtil) * 0.6);
+  const utilizationChange = newUtil - oldUtil;
 
-  let rating = 'Exceptional (<10%)';
+  let rating = 'Under 10%';
   if (newUtil > 50) rating = 'High Risk (>50%)';
   else if (newUtil >= 30) rating = 'Fair (30-50%)';
   else if (newUtil >= 10) rating = 'Good (10-30%)';
@@ -2205,7 +2374,7 @@ function calcCreditScore() {
   const ratEl = document.getElementById('creditscore-rating');
 
   if (utilEl) utilEl.textContent = formatPercent(newUtil, 1);
-  if (ptsEl) ptsEl.textContent = `+${points} Points`;
+  if (ptsEl) ptsEl.textContent = `${utilizationChange >= 0 ? '+' : ''}${utilizationChange.toFixed(1)} pp`;
   if (ratEl) ratEl.textContent = rating;
 
   flashElement('creditscore-new-utilization');
@@ -2461,57 +2630,57 @@ const REGIONAL_DICTIONARIES = {
   // Universal Baseline (US / Default)
   US: {
     engines: {
-      mortgage: { title: 'Mortgage Liability Console', subtitle: 'Calculate real-time capital mortgage outlays.', tab: '🏠 Mortgage Liability Core' },
-      invoice: { title: 'Contractor Invoicing & Tax Matrix', subtitle: 'Simulate billable parameters to calculate real-time net metrics.', tab: '💼 Invoicing & Tax Matrix' },
-      roi: { title: 'Campaign Enterprise ROI Metrics', subtitle: 'Quantify marketing leverage and return on ad spend investment.', tab: '📈 Campaign Growth ROI' },
-      crypto: { title: 'Crypto Futures Leverage & Liquidation Matrix', subtitle: 'Simulate high-risk long/short positions against estimated liquidation triggers.', tab: '⚡ Crypto Futures Leverage' },
-      compound: { title: 'Compound Interest Wealth Multiplier Suite', subtitle: 'Compute multi-decade capital acceleration under continuous reinvestment dynamics.', tab: '💰 Compound Asset Wealth' },
-      caprate: { title: 'Commercial Asset Cap Rate Matrix', subtitle: 'Compute property net income performance and market capitalization yields.', tab: '🏢 Property Cap Rate Core' },
-      salary: { title: 'Wage Hourly to Salary Converter Engine', subtitle: 'Convert hourly contractor rates to annualized and monthly compensation equivalents.', tab: '⏱️ Wage Hourly to Salary' },
-      breakeven: { title: 'Startup Venture Break-Even Level', subtitle: 'Determine exact unit volume requirements to achieve operational profitability.', tab: '📊 Venture Break-Even Level' },
-      creditcard: { title: 'Credit Card Liability Elimination Engine', subtitle: 'Map repayment trajectory and visualize aggregate compounding interest saved.', tab: '💳 Credit Card Payoff Plan' },
-      stockavg: { title: 'Equity Asset Cost Averaging Suite', subtitle: 'Synthesize multi-tier asset acquisitions to deduce weighted average cost basis.', tab: '📉 Stock Cost Averaging' },
-      rentbuy: { title: 'Residential Housing Analysis Framework', subtitle: 'Quantify cost-of-capital differential across ownership versus tenancy horizons.', tab: '🏘️ Rent vs Buy Comparison' },
-      margin: { title: 'Retail Commerce Gross Profit Margin', subtitle: 'Deduce product markup coefficients and net gross operational spread.', tab: '🛒 Retail Profit Margin' },
-      autoloan: { title: 'Auto Capital Financing Estimator Matrix', subtitle: 'Forecast monthly vehicle financing obligations across flexible loan terms.', tab: '🚗 Auto Finance Estimator' },
-      student: { title: 'Student Loan Payoff Horizon Matrix', subtitle: 'Map education debt amortization and fixed monthly repayment schedules.', tab: '🎓 Student Loan Payoff' },
-      budget: { title: '50/30/20 Portfolio Allocation Strategy', subtitle: 'Partition net monthly post-tax revenue into standardized allocation channels.', tab: '💵 50/30/20 Budget Setup' },
-      interest: { title: 'Simple Interest Contract Ledger', subtitle: 'Calculate linear principal growth without reinvestment compounding factors.', tab: '🔢 Simple Interest Engine' },
-      dividend: { title: 'Stock Dividend Yield Console', subtitle: 'Estimate recurring passive cashflows generated by high-yield equity holdings.', tab: '🪙 Stock Dividend Yield' },
-      inflation: { title: 'Cash Inflation Eroder Suite', subtitle: 'Simulate purchasing power loss across multi-year inflation-adjusted horizons.', tab: '🎈 Cash Inflation Eroder' },
-      sip: { title: 'Systematic Monthly Investment (SIP) Engine', subtitle: 'Project cumulative wealth created via structured monthly dollar-cost averaging.', tab: '🗓️ Systematic SIP Planner' },
-      cagr: { title: 'Compound Annual Growth Rate (CAGR) Console', subtitle: 'Compute geometric progression growth rates over multiple fiscal horizons.', tab: '🔄 CAGR Growth Rate' },
+      mortgage: { title: 'Mortgage Liability Console', subtitle: 'Calculate real-time capital mortgage outlays.', tab: 'Mortgage Liability Core' },
+      invoice: { title: 'Contractor Invoicing & Tax Matrix', subtitle: 'Simulate billable parameters to calculate real-time net metrics.', tab: 'Invoicing & Tax Matrix' },
+      roi: { title: 'Campaign Enterprise ROI Metrics', subtitle: 'Quantify marketing leverage and return on ad spend investment.', tab: 'Campaign Growth ROI' },
+      crypto: { title: 'Crypto Futures Leverage & Liquidation Matrix', subtitle: 'Simulate high-risk long/short positions against estimated liquidation triggers.', tab: 'Crypto Futures Leverage' },
+      compound: { title: 'Compound Interest Wealth Multiplier Suite', subtitle: 'Compute multi-decade capital acceleration under continuous reinvestment dynamics.', tab: 'Compound Asset Wealth' },
+      caprate: { title: 'Commercial Asset Cap Rate Matrix', subtitle: 'Compute property net income performance and market capitalization yields.', tab: 'Property Cap Rate Core' },
+      salary: { title: 'Wage Hourly to Salary Converter Engine', subtitle: 'Convert hourly contractor rates to annualized and monthly compensation equivalents.', tab: ' Wage Hourly to Salary' },
+      breakeven: { title: 'Startup Venture Break-Even Level', subtitle: 'Determine exact unit volume requirements to achieve operational profitability.', tab: 'Venture Break-Even Level' },
+      creditcard: { title: 'Credit Card Liability Elimination Engine', subtitle: 'Map repayment trajectory and visualize aggregate compounding interest saved.', tab: 'Credit Card Payoff Plan' },
+      stockavg: { title: 'Equity Asset Cost Averaging Suite', subtitle: 'Synthesize multi-tier asset acquisitions to deduce weighted average cost basis.', tab: 'Stock Cost Averaging' },
+      rentbuy: { title: 'Residential Housing Analysis Framework', subtitle: 'Quantify cost-of-capital differential across ownership versus tenancy horizons.', tab: 'Rent vs Buy Comparison' },
+      margin: { title: 'Retail Commerce Gross Profit Margin', subtitle: 'Deduce product markup coefficients and net gross operational spread.', tab: 'Retail Profit Margin' },
+      autoloan: { title: 'Auto Capital Financing Estimator Matrix', subtitle: 'Forecast monthly vehicle financing obligations across flexible loan terms.', tab: 'Auto Finance Estimator' },
+      student: { title: 'Student Loan Payoff Horizon Matrix', subtitle: 'Map education debt amortization and fixed monthly repayment schedules.', tab: 'Student Loan Payoff' },
+      budget: { title: '50/30/20 Portfolio Allocation Strategy', subtitle: 'Partition net monthly post-tax revenue into standardized allocation channels.', tab: '50/30/20 Budget Setup' },
+      interest: { title: 'Simple Interest Contract Ledger', subtitle: 'Calculate linear principal growth without reinvestment compounding factors.', tab: 'Simple Interest Engine' },
+      dividend: { title: 'Stock Dividend Yield Console', subtitle: 'Estimate recurring passive cashflows generated by high-yield equity holdings.', tab: 'Stock Dividend Yield' },
+      inflation: { title: 'Cash Inflation Eroder Suite', subtitle: 'Simulate purchasing power loss across multi-year inflation-adjusted horizons.', tab: 'Cash Inflation Eroder' },
+      sip: { title: 'Systematic Monthly Investment (SIP) Engine', subtitle: 'Project cumulative wealth created via structured monthly dollar-cost averaging.', tab: 'Systematic SIP Planner' },
+      cagr: { title: 'Compound Annual Growth Rate (CAGR) Console', subtitle: 'Compute geometric progression growth rates over multiple fiscal horizons.', tab: 'CAGR Growth Rate' },
       // Engines 21-50 US Baseline
-      affordability: { title: 'Home Affordability Engine', subtitle: 'Calculate maximum home purchase price based on gross income, monthly debts, down payment, and DTI thresholds.', tab: '🏡 Home Affordability' },
-      refinance: { title: 'Mortgage Refinance Break-Even', subtitle: 'Calculate monthly savings, break-even payback period, and lifetime interest delta from refinancing.', tab: '🔄 Mortgage Refinance' },
-      biweekly: { title: 'Bi-Weekly Mortgage Acceleration', subtitle: 'Simulate 26 bi-weekly half-payments to shave years off your amortization and save tens of thousands in interest.', tab: '⚡ Bi-Weekly Mortgage' },
-      cashoncash: { title: 'Rental Cash-on-Cash Return & NOI', subtitle: 'Compute true cash-on-cash yield, net operating income (NOI), and pre-tax annualized cash flows.', tab: '🏠 Rental Cash-on-Cash' },
-      heloc: { title: 'HELOC Payment & Payoff Console', subtitle: 'Simulate interest-only draw period payments and fully amortized principal payoff adjustments.', tab: '💳 HELOC Payment & Payoff' },
-      closingcosts: { title: 'Title & Buyer Closing Costs Matrix', subtitle: 'Estimate lender fees, title insurance, transfer taxes, escrow prepaids, and out-of-pocket cash to close.', tab: '📑 Buyer Closing Costs' },
-      fire: { title: 'FIRE Independence & 4% Safe Withdrawal Rate', subtitle: 'Model lean, standard, and fat Financial Independence horizons using Trinity 4% rule heuristics.', tab: '🔥 FIRE Early Retirement' },
-      four01k: { title: '401(k) & Roth IRA Nest Egg Projector', subtitle: 'Simulate tax-deferred compound asset expansion with employer matching contributions.', tab: '🏦 401(k) & Roth IRA' },
-      rmd: { title: 'IRS Required Minimum Distribution (RMD)', subtitle: 'Determine mandatory annual distributions under IRS Uniform Lifetime Table actuarial divisors.', tab: '📋 IRS RMD Distributions' },
-      socialsecurity: { title: 'Social Security Benefit Maximizer', subtitle: 'Compare early claiming (age 62) vs full retirement (67) vs delayed credits (70).', tab: '🛡️ Social Security Maximizer' },
-      cdladder: { title: 'Certificate of Deposit (CD) Ladder Matrix', subtitle: 'Model a rolling 4-tranche certificate ladder to maximize APY yield while retaining rolling quarterly liquidity.', tab: '🪜 CD Ladder & APY' },
-      hsa: { title: 'HSA Triple-Tax Shield & Growth Suite', subtitle: 'Model tax-deductible contributions, tax-free investment compounding, and tax-exempt qualified withdrawals.', tab: '🏥 HSA Triple-Tax Shield' },
-      paycheck: { title: 'Paycheck Gross-to-Net Calculator', subtitle: 'Deduce federal withholding, FICA Medicare/Social Security, and state deductions to forecast net paycheck take-home.', tab: '💵 Paycheck Gross to Net' },
-      capitalgains: { title: 'Capital Gains Tax & Net Stock Profit', subtitle: 'Simulate short-term vs long-term capital gains tax rates and determine true net post-tax investment profits.', tab: '📊 Capital Gains Tax' },
-      quarterlytax: { title: 'Self-Employed 1040-ES Quarterly Tax', subtitle: 'Calculate quarterly IRS estimated tax vouchers, self-employment SE tax, and safe harbor thresholds.', tab: '📝 1040-ES Quarterly Tax' },
-      overtime: { title: 'Overtime & Double-Time Pay Calculator', subtitle: 'Calculate FLSA compliant 1.5x overtime and 2.0x holiday compensation differentials.', tab: '⏱️ Overtime & Double-Time' },
-      bonustax: { title: 'Bonus Tax Withholding Matrix', subtitle: 'Model statutory 22% federal supplemental wage withholding vs actual marginal tax refund adjustments.', tab: '🎁 Bonus Tax Withholding' },
-      severance: { title: 'Severance Pay & Runway Estimator', subtitle: 'Calculate post-tax severance lump sums combined with state unemployment benefit runway weeks.', tab: '🛡️ Severance & Runway' },
-      snowball: { title: 'Debt Snowball vs. Avalanche Payoff', subtitle: 'Compare psychological momentum (lowest balance first) vs mathematical optimization (highest interest APR first).', tab: '❄️ Snowball vs Avalanche' },
-      carlease: { title: 'Car Lease vs. Buy Decision Engine', subtitle: 'Compare full lifecycle cost-of-capital between dealership leasing and ownership financing.', tab: '🚙 Car Lease vs Buy' },
-      personalloan: { title: 'Personal Loan & Debt Consolidation', subtitle: 'Analyze fixed-rate installment loans to consolidate high-interest credit card debt.', tab: '🤝 Personal Loan Matrix' },
-      autorefi: { title: 'Auto Loan Refinance Savings Matrix', subtitle: 'Determine monthly cash savings and net break-even timeline when refinancing high-interest vehicle debt.', tab: '🚘 Auto Loan Refinance' },
-      studentrefi: { title: 'Student Loan Refinance vs. PSLF', subtitle: 'Contrast private refinance interest rate reductions against loss of federal PSLF and IDR income-driven forgiveness.', tab: '🎓 Student Refinance & PSLF' },
-      creditscore: { title: 'Credit Score Utilization Simulator', subtitle: 'Simulate how revolving balance paydowns impact FICO/Vantage revolving utilization brackets.', tab: '💳 Credit Score Simulator' },
-      solar: { title: 'Residential Solar ROI & Payback Engine', subtitle: 'Forecast 25-year electric utility bill offset, federal ITC tax credit savings, and payback period.', tab: '☀️ Residential Solar ROI' },
-      evgas: { title: 'Electric Vehicle (EV) vs. Gas TCO Engine', subtitle: 'Compare lifetime fuel expenditure: electric kWh charging vs internal combustion gas gallons.', tab: '⚡ EV vs Gas TCO' },
-      staking: { title: 'Crypto Staking & Impermanent Loss Engine', subtitle: 'Simulate protocol staking rewards against automated market maker (AMM) impermanent loss price divergence.', tab: '🪙 Crypto Staking & IL' },
-      dropship: { title: 'E-Commerce & Amazon FBA Profit Engine', subtitle: 'Model merchant gross revenue, COGS, platform fulfillment referral fees, and target ROAS.', tab: '📦 Amazon FBA & E-Com' },
-      realreturns: { title: 'Fisher Real Return & True Wealth Growth', subtitle: 'Strip out inflation from nominal investment returns to discover actual purchasing power velocity.', tab: '📈 Fisher Real Return' },
-      airbnb: { title: 'Airbnb & Vacation Rental ROI Matrix', subtitle: 'Model average daily rate (ADR), occupancy percentages, platform cuts, and net hospitality cash flows.', tab: '🏖️ Airbnb & Short-Term ROI' }
+      affordability: { title: 'Home Affordability Engine', subtitle: 'Calculate maximum home purchase price based on gross income, monthly debts, down payment, and DTI thresholds.', tab: 'Home Affordability' },
+      refinance: { title: 'Mortgage Refinance Break-Even', subtitle: 'Calculate monthly savings, break-even payback period, and lifetime interest delta from refinancing.', tab: 'Mortgage Refinance' },
+      biweekly: { title: 'Bi-Weekly Mortgage Acceleration', subtitle: 'Simulate 26 bi-weekly half-payments to shave years off your amortization and save tens of thousands in interest.', tab: 'Bi-Weekly Mortgage' },
+      cashoncash: { title: 'Rental Cash-on-Cash Return & NOI', subtitle: 'Compute true cash-on-cash yield, net operating income (NOI), and pre-tax annualized cash flows.', tab: 'Rental Cash-on-Cash' },
+      heloc: { title: 'HELOC Payment & Payoff Console', subtitle: 'Simulate interest-only draw period payments and fully amortized principal payoff adjustments.', tab: 'HELOC Payment & Payoff' },
+      closingcosts: { title: 'Title & Buyer Closing Costs Matrix', subtitle: 'Estimate lender fees, title insurance, transfer taxes, escrow prepaids, and out-of-pocket cash to close.', tab: 'Buyer Closing Costs' },
+      fire: { title: 'FIRE Independence & 4% Safe Withdrawal Rate', subtitle: 'Model lean, standard, and fat Financial Independence horizons using Trinity 4% rule heuristics.', tab: 'FIRE Early Retirement' },
+      four01k: { title: '401(k) & Roth IRA Nest Egg Projector', subtitle: 'Simulate tax-deferred compound asset expansion with employer matching contributions.', tab: '401(k) & Roth IRA' },
+      rmd: { title: 'IRS Required Minimum Distribution (RMD)', subtitle: 'Determine mandatory annual distributions under IRS Uniform Lifetime Table actuarial divisors.', tab: 'IRS RMD Distributions' },
+      socialsecurity: { title: 'Social Security Benefit Maximizer', subtitle: 'Compare early claiming (age 62) vs full retirement (67) vs delayed credits (70).', tab: 'Social Security Maximizer' },
+      cdladder: { title: 'Certificate of Deposit (CD) Ladder Matrix', subtitle: 'Model a rolling 4-tranche certificate ladder to maximize APY yield while retaining rolling quarterly liquidity.', tab: 'CD Ladder & APY' },
+      hsa: { title: 'HSA Triple-Tax Shield & Growth Suite', subtitle: 'Model tax-deductible contributions, tax-free investment compounding, and tax-exempt qualified withdrawals.', tab: 'HSA Triple-Tax Shield' },
+      paycheck: { title: 'Paycheck Gross-to-Net Calculator', subtitle: 'Deduce federal withholding, FICA Medicare/Social Security, and state deductions to forecast net paycheck take-home.', tab: 'Paycheck Gross to Net' },
+      capitalgains: { title: 'Capital Gains Tax & Net Stock Profit', subtitle: 'Simulate short-term vs long-term capital gains tax rates and determine true net post-tax investment profits.', tab: 'Capital Gains Tax' },
+      quarterlytax: { title: 'Self-Employed 1040-ES Quarterly Tax', subtitle: 'Calculate quarterly IRS estimated tax vouchers, self-employment SE tax, and safe harbor thresholds.', tab: '1040-ES Quarterly Tax' },
+      overtime: { title: 'Overtime & Double-Time Pay Calculator', subtitle: 'Calculate FLSA compliant 1.5x overtime and 2.0x holiday compensation differentials.', tab: ' Overtime & Double-Time' },
+      bonustax: { title: 'Bonus Tax Withholding Matrix', subtitle: 'Model statutory 22% federal supplemental wage withholding vs actual marginal tax refund adjustments.', tab: 'Bonus Tax Withholding' },
+      severance: { title: 'Severance Pay & Runway Estimator', subtitle: 'Calculate post-tax severance lump sums combined with state unemployment benefit runway weeks.', tab: 'Severance & Runway' },
+      snowball: { title: 'Debt Snowball vs. Avalanche Payoff', subtitle: 'Compare psychological momentum (lowest balance first) vs mathematical optimization (highest interest APR first).', tab: 'Snowball vs Avalanche' },
+      carlease: { title: 'Car Lease vs. Buy Decision Engine', subtitle: 'Compare full lifecycle cost-of-capital between dealership leasing and ownership financing.', tab: 'Car Lease vs Buy' },
+      personalloan: { title: 'Personal Loan & Debt Consolidation', subtitle: 'Analyze fixed-rate installment loans to consolidate high-interest credit card debt.', tab: 'Personal Loan Matrix' },
+      autorefi: { title: 'Auto Loan Refinance Savings Matrix', subtitle: 'Determine monthly cash savings and net break-even timeline when refinancing high-interest vehicle debt.', tab: 'Auto Loan Refinance' },
+      studentrefi: { title: 'Student Loan Refinance vs. PSLF', subtitle: 'Contrast private refinance interest rate reductions against loss of federal PSLF and IDR income-driven forgiveness.', tab: 'Student Refinance & PSLF' },
+      creditscore: { title: 'Credit Score Utilization Simulator', subtitle: 'Simulate how revolving balance paydowns impact FICO/Vantage revolving utilization brackets.', tab: 'Credit Score Simulator' },
+      solar: { title: 'Residential Solar ROI & Payback Engine', subtitle: 'Forecast 25-year electric utility bill offset, federal ITC tax credit savings, and payback period.', tab: 'Residential Solar ROI' },
+      evgas: { title: 'Electric Vehicle (EV) vs. Gas TCO Engine', subtitle: 'Compare lifetime fuel expenditure: electric kWh charging vs internal combustion gas gallons.', tab: 'EV vs Gas TCO' },
+      staking: { title: 'Crypto Staking & Impermanent Loss Engine', subtitle: 'Simulate protocol staking rewards against automated market maker (AMM) impermanent loss price divergence.', tab: 'Crypto Staking & IL' },
+      dropship: { title: 'E-Commerce & Amazon FBA Profit Engine', subtitle: 'Model merchant gross revenue, COGS, platform fulfillment referral fees, and target ROAS.', tab: 'Amazon FBA & E-Com' },
+      realreturns: { title: 'Fisher Real Return & True Wealth Growth', subtitle: 'Strip out inflation from nominal investment returns to discover actual purchasing power velocity.', tab: 'Fisher Real Return' },
+      airbnb: { title: 'Airbnb & Vacation Rental ROI Matrix', subtitle: 'Model average daily rate (ADR), occupancy percentages, platform cuts, and net hospitality cash flows.', tab: 'Airbnb & Short-Term ROI' }
     },
     labels: {
       'mortgage-asset': 'Asset Value',
@@ -2571,35 +2740,35 @@ const REGIONAL_DICTIONARIES = {
   // India (INR - ₹)
   IN: {
     engines: {
-      mortgage: { title: 'Home Loan EMI Calculator', subtitle: 'Calculate real-time capital home loan EMIs, interest schedule, and prepayment savings.', tab: '🏠 Home Loan EMI Core' },
-      invoice: { title: 'Freelancer GST & TDS Invoice Matrix', subtitle: 'Simulate billable client parameters with GST buffer and TDS deductions.', tab: '💼 Freelancer GST & TDS Matrix' },
-      roi: { title: 'Digital Ad ROAS & Marketing ROI', subtitle: 'Track ad spend efficiency, blended ROAS, and net marketing profitability.', tab: '📈 Digital Ad ROAS & ROI' },
-      crypto: { title: 'Crypto Futures Leverage & Liquidation', subtitle: 'Simulate margin thresholds and liquidation triggers for futures trades.', tab: '⚡ Crypto Futures Leverage' },
-      compound: { title: 'Compound Interest Wealth Multiplier', subtitle: 'Project long-term compound wealth and capital accumulation across time horizons.', tab: '💰 Compound Wealth Multiplier' },
-      caprate: { title: 'Rental Yield & Property ROI Matrix', subtitle: 'Evaluate rental yield, net operating income, and real estate valuation.', tab: '🏢 Rental Yield & Property ROI' },
-      salary: { title: 'Hourly Wage to Annual CTC / Salary', subtitle: 'Convert hourly consultant rates into total annualized CTC and monthly in-hand.', tab: '⏱️ Wage to Annual CTC / Salary' },
-      breakeven: { title: 'Business Break-Even Unit Matrix', subtitle: 'Calculate sales volume and revenue required to recover overheads and achieve profit.', tab: '📊 Business Break-Even Matrix' },
-      creditcard: { title: 'Credit Card Outstanding & Debt Payoff', subtitle: 'Model payoff timelines, revolving interest charges, and debt-free schedules.', tab: '💳 Card Outstanding Payoff' },
-      stockavg: { title: 'Share Average Price (Buy-Down) Suite', subtitle: 'Calculate weighted average price across multiple share purchases on NSE/BSE.', tab: '📉 Share Average Buy-Down' },
-      rentbuy: { title: 'Rent vs Buy Home Decision Matrix', subtitle: 'Compare total homeownership outlays vs rental cash flows over time.', tab: '🏘️ Rent vs Buy Decision Matrix' },
-      margin: { title: 'Retail Gross Margin & Markup Calculator', subtitle: 'Calculate gross margins, cost markups, and unit retail pricing.', tab: '🛒 Retail Margin & Markup' },
-      autoloan: { title: 'Car Loan EMI Estimator', subtitle: 'Model on-road vehicle financing, monthly EMI, and total interest cost.', tab: '🚗 Car Loan EMI Estimator' },
-      student: { title: 'Education Loan Repayment Matrix', subtitle: 'Simulate student/higher education loan repayment timelines and interest cost.', tab: '🎓 Education Loan Matrix' },
-      budget: { title: '50/30/20 Monthly Budgeting Rule', subtitle: 'Allocate monthly in-hand income across Needs, Wants, and Wealth Investments.', tab: '💵 50/30/20 Budgeting Rule' },
-      interest: { title: 'Simple Interest & Promissory Note', subtitle: 'Compute linear interest yields and final maturity values on simple loan notes.', tab: '🔢 Simple Interest Note' },
-      dividend: { title: 'Dividend Yield & Payout Console', subtitle: 'Forecast annual dividend income and dividend yield on stock portfolios.', tab: '🪙 Dividend Yield Console' },
-      inflation: { title: 'Rupee Inflation & Purchasing Power', subtitle: 'Measure erosion of Indian Rupee purchasing power over future time horizons.', tab: '🎈 Rupee Inflation Eroder' },
-      sip: { title: 'Mutual Fund SIP Wealth Planner', subtitle: 'Simulate compound growth of monthly Mutual Fund SIP investments.', tab: '🗓️ Mutual Fund SIP Planner' },
-      cagr: { title: 'Compound Annual Growth Rate (CAGR)', subtitle: 'Determine annualized growth rate of investments across multi-year holding periods.', tab: '🔄 CAGR Growth Rate' },
+      mortgage: { title: 'Home Loan EMI Calculator', subtitle: 'Calculate real-time capital home loan EMIs, interest schedule, and prepayment savings.', tab: 'Home Loan EMI Core' },
+      invoice: { title: 'Freelancer GST & TDS Invoice Matrix', subtitle: 'Simulate billable client parameters with GST buffer and TDS deductions.', tab: 'Freelancer GST & TDS Matrix' },
+      roi: { title: 'Digital Ad ROAS & Marketing ROI', subtitle: 'Track ad spend efficiency, blended ROAS, and net marketing profitability.', tab: 'Digital Ad ROAS & ROI' },
+      crypto: { title: 'Crypto Futures Leverage & Liquidation', subtitle: 'Simulate margin thresholds and liquidation triggers for futures trades.', tab: 'Crypto Futures Leverage' },
+      compound: { title: 'Compound Interest Wealth Multiplier', subtitle: 'Project long-term compound wealth and capital accumulation across time horizons.', tab: 'Compound Wealth Multiplier' },
+      caprate: { title: 'Rental Yield & Property ROI Matrix', subtitle: 'Evaluate rental yield, net operating income, and real estate valuation.', tab: 'Rental Yield & Property ROI' },
+      salary: { title: 'Hourly Wage to Annual CTC / Salary', subtitle: 'Convert hourly consultant rates into total annualized CTC and monthly in-hand.', tab: ' Wage to Annual CTC / Salary' },
+      breakeven: { title: 'Business Break-Even Unit Matrix', subtitle: 'Calculate sales volume and revenue required to recover overheads and achieve profit.', tab: 'Business Break-Even Matrix' },
+      creditcard: { title: 'Credit Card Outstanding & Debt Payoff', subtitle: 'Model payoff timelines, revolving interest charges, and debt-free schedules.', tab: 'Card Outstanding Payoff' },
+      stockavg: { title: 'Share Average Price (Buy-Down) Suite', subtitle: 'Calculate weighted average price across multiple share purchases on NSE/BSE.', tab: 'Share Average Buy-Down' },
+      rentbuy: { title: 'Rent vs Buy Home Decision Matrix', subtitle: 'Compare total homeownership outlays vs rental cash flows over time.', tab: 'Rent vs Buy Decision Matrix' },
+      margin: { title: 'Retail Gross Margin & Markup Calculator', subtitle: 'Calculate gross margins, cost markups, and unit retail pricing.', tab: 'Retail Margin & Markup' },
+      autoloan: { title: 'Car Loan EMI Estimator', subtitle: 'Model on-road vehicle financing, monthly EMI, and total interest cost.', tab: 'Car Loan EMI Estimator' },
+      student: { title: 'Education Loan Repayment Matrix', subtitle: 'Simulate student/higher education loan repayment timelines and interest cost.', tab: 'Education Loan Matrix' },
+      budget: { title: '50/30/20 Monthly Budgeting Rule', subtitle: 'Allocate monthly in-hand income across Needs, Wants, and Wealth Investments.', tab: '50/30/20 Budgeting Rule' },
+      interest: { title: 'Simple Interest & Promissory Note', subtitle: 'Compute linear interest yields and final maturity values on simple loan notes.', tab: 'Simple Interest Note' },
+      dividend: { title: 'Dividend Yield & Payout Console', subtitle: 'Forecast annual dividend income and dividend yield on stock portfolios.', tab: 'Dividend Yield Console' },
+      inflation: { title: 'Rupee Inflation & Purchasing Power', subtitle: 'Measure erosion of Indian Rupee purchasing power over future time horizons.', tab: 'Rupee Inflation Eroder' },
+      sip: { title: 'Mutual Fund SIP Wealth Planner', subtitle: 'Simulate compound growth of monthly Mutual Fund SIP investments.', tab: 'Mutual Fund SIP Planner' },
+      cagr: { title: 'Compound Annual Growth Rate (CAGR)', subtitle: 'Determine annualized growth rate of investments across multi-year holding periods.', tab: 'CAGR Growth Rate' },
       // Regional Adaptations for India
-      four01k: { title: 'EPF, PPF & NPS Retirement Corpus', subtitle: 'Simulate Employee Provident Fund (EPF), PPF, and National Pension Scheme corpus growth.', tab: '🏦 EPF & PPF Retirement' },
-      paycheck: { title: 'Salary Slip Gross to In-Hand Net', subtitle: 'Deduct EPF (12%), Professional Tax, and Income Tax TDS under New vs Old Regime.', tab: '💵 Salary Slip In-Hand Net' },
-      capitalgains: { title: 'LTCG / STCG Capital Gains Tax (Sec 112A)', subtitle: 'Compute 12.5% LTCG (beyond ₹1.25L exemption) and 20% STCG on equity and mutual fund gains.', tab: '📊 LTCG & STCG Tax' },
-      quarterlytax: { title: 'Advance Tax Payment Matrix (Sec 208)', subtitle: 'Calculate quarterly advance tax installments (15%, 45%, 75%, 100%) to prevent Sec 234B/C interest penalties.', tab: '📝 Advance Tax Matrix' },
-      cdladder: { title: 'Fixed Deposit (FD) Ladder Matrix', subtitle: 'Plan rolling quarterly bank Fixed Deposits to optimize interest yield and liquidity.', tab: '🪜 Fixed Deposit (FD) Ladder' },
-      hsa: { title: 'Section 80D Health Cover Tax Shield', subtitle: 'Calculate tax deduction savings on health insurance premiums under Section 80D.', tab: '🏥 Section 80D Health Shield' },
-      carlease: { title: 'Corporate Car Lease vs Car Loan Matrix', subtitle: 'Compare tax-exempt corporate car lease tax breaks against vehicle bank loan financing.', tab: '🚙 Car Lease vs Loan EMI' },
-      snowball: { title: 'Debt Snowball vs Avalanche Payoff', subtitle: 'Accelerate clearance of personal loans, credit cards, and EMIs systematically.', tab: '❄️ Debt Repayment Plan' },
+      four01k: { title: 'EPF, PPF & NPS Retirement Corpus', subtitle: 'Simulate Employee Provident Fund (EPF), PPF, and National Pension Scheme corpus growth.', tab: 'EPF & PPF Retirement' },
+      paycheck: { title: 'Salary Slip Gross to In-Hand Net', subtitle: 'Deduct EPF (12%), Professional Tax, and Income Tax TDS under New vs Old Regime.', tab: 'Salary Slip In-Hand Net' },
+      capitalgains: { title: 'LTCG / STCG Capital Gains Tax (Sec 112A)', subtitle: 'Compute 12.5% LTCG (beyond ₹1.25L exemption) and 20% STCG on equity and mutual fund gains.', tab: 'LTCG & STCG Tax' },
+      quarterlytax: { title: 'Advance Tax Payment Matrix (Sec 208)', subtitle: 'Calculate quarterly advance tax installments (15%, 45%, 75%, 100%) to prevent Sec 234B/C interest penalties.', tab: 'Advance Tax Matrix' },
+      cdladder: { title: 'Fixed Deposit (FD) Ladder Matrix', subtitle: 'Plan rolling quarterly bank Fixed Deposits to optimize interest yield and liquidity.', tab: 'Fixed Deposit (FD) Ladder' },
+      hsa: { title: 'Section 80D Health Cover Tax Shield', subtitle: 'Calculate tax deduction savings on health insurance premiums under Section 80D.', tab: 'Section 80D Health Shield' },
+      carlease: { title: 'Corporate Car Lease vs Car Loan Matrix', subtitle: 'Compare tax-exempt corporate car lease tax breaks against vehicle bank loan financing.', tab: 'Car Lease vs Loan EMI' },
+      snowball: { title: 'Debt Snowball vs Avalanche Payoff', subtitle: 'Accelerate clearance of personal loans, credit cards, and EMIs systematically.', tab: 'Debt Repayment Plan' },
     },
     labels: {
       'mortgage-asset': 'Property Cost / Value',
@@ -2659,33 +2828,33 @@ const REGIONAL_DICTIONARIES = {
   // United Kingdom (GBP - £)
   UK: {
     engines: {
-      mortgage: { title: 'Mortgage Repayment Calculator', subtitle: 'Calculate monthly mortgage capital and interest repayments.', tab: '🏠 Mortgage Repayment Core' },
-      invoice: { title: 'Contractor Day Rate & VAT / IR35 Matrix', subtitle: 'Model billable day rates, VAT reserves, and inside/outside IR35 retention.', tab: '💼 Day Rate & IR35 Matrix' },
-      roi: { title: 'Campaign ROAS & Marketing Return', subtitle: 'Track ad spend efficiency and return on digital marketing capital.', tab: '📈 Campaign ROAS & Return' },
-      crypto: { title: 'Crypto Derivatives & Liquidation Threshold', subtitle: 'Model margin limits and liquidation triggers for derivative contracts.', tab: '⚡ Crypto Derivatives Matrix' },
-      compound: { title: 'Compound Interest & Capital Growth', subtitle: 'Project long-term compound wealth and capital growth across years.', tab: '💰 Compound Capital Growth' },
-      caprate: { title: 'Commercial Property Yield Matrix', subtitle: 'Calculate commercial property passing yields and net operating income.', tab: '🏢 Property Yield Matrix' },
-      salary: { title: 'Hourly Rate to Annual Salary (PAYE)', subtitle: 'Convert contractor hourly rates to PAYE salary and take-home pay.', tab: '⏱️ Wage to Annual Salary (PAYE)' },
-      breakeven: { title: 'Venture Break-Even Volume Calculator', subtitle: 'Calculate unit volume required to reach break-even profitability.', tab: '📊 Venture Break-Even Volume' },
-      creditcard: { title: 'Credit Card Balance & Interest Payoff', subtitle: 'Model repayment schedules and interest charges to clear card balances.', tab: '💳 Card Balance & Payoff' },
-      stockavg: { title: 'Share Cost Averaging (DCA) Suite', subtitle: 'Calculate weighted average purchase price across share tranches on LSE.', tab: '📉 Share Cost Averaging (DCA)' },
-      rentbuy: { title: 'Rent vs Buy Property Framework', subtitle: 'Compare homeownership outlays vs rental cash flows over time.', tab: '🏘️ Rent vs Buy Framework' },
-      margin: { title: 'Retail Gross Margin & Markup Matrix', subtitle: 'Calculate retail margins and markups on product inventory.', tab: '🛒 Retail Margin & Markup' },
-      autoloan: { title: 'Car Finance (PCP / HP) Calculator', subtitle: 'Simulate Personal Contract Purchase (PCP) or Hire Purchase (HP) payments.', tab: '🚗 Car Finance (PCP / HP)' },
-      student: { title: 'Student Finance (Plan 2/5) Repayment', subtitle: 'Forecast UK Student Finance Plan 2 / Plan 5 debt clearing horizons.', tab: '🎓 Student Finance (Plan 2/5)' },
-      budget: { title: '50/30/20 Income Budgeting Framework', subtitle: 'Allocate monthly take-home pay across Needs, Wants, and Savings.', tab: '💵 50/30/20 Budgeting Plan' },
-      interest: { title: 'Simple Interest Loan Ledger', subtitle: 'Compute linear interest yields and final repayment values.', tab: '🔢 Simple Interest Ledger' },
-      dividend: { title: 'Share Dividend Yield & ISA Payout', subtitle: 'Calculate annual dividend income on shares held in Trading or ISA accounts.', tab: '🪙 Dividend Yield & ISA Payout' },
-      inflation: { title: 'Pound Inflation & Real Purchasing Power', subtitle: 'Measure the erosion of Sterling purchasing power over future timeframes.', tab: '🎈 Pound Inflation Eroder' },
-      sip: { title: 'Monthly Regular Investing (ISA) Planner', subtitle: 'Model compound returns on monthly Stocks & Shares ISA contributions.', tab: '🗓️ Regular Investing (ISA)' },
-      cagr: { title: 'Compound Annual Growth Rate (CAGR)', subtitle: 'Determine annualized growth rate of portfolio holdings over time.', tab: '🔄 Compound Annual Growth (CAGR)' },
+      mortgage: { title: 'Mortgage Repayment Calculator', subtitle: 'Calculate monthly mortgage capital and interest repayments.', tab: 'Mortgage Repayment Core' },
+      invoice: { title: 'Contractor Day Rate & VAT / IR35 Matrix', subtitle: 'Model billable day rates, VAT reserves, and inside/outside IR35 retention.', tab: 'Day Rate & IR35 Matrix' },
+      roi: { title: 'Campaign ROAS & Marketing Return', subtitle: 'Track ad spend efficiency and return on digital marketing capital.', tab: 'Campaign ROAS & Return' },
+      crypto: { title: 'Crypto Derivatives & Liquidation Threshold', subtitle: 'Model margin limits and liquidation triggers for derivative contracts.', tab: 'Crypto Derivatives Matrix' },
+      compound: { title: 'Compound Interest & Capital Growth', subtitle: 'Project long-term compound wealth and capital growth across years.', tab: 'Compound Capital Growth' },
+      caprate: { title: 'Commercial Property Yield Matrix', subtitle: 'Calculate commercial property passing yields and net operating income.', tab: 'Property Yield Matrix' },
+      salary: { title: 'Hourly Rate to Annual Salary (PAYE)', subtitle: 'Convert contractor hourly rates to PAYE salary and take-home pay.', tab: ' Wage to Annual Salary (PAYE)' },
+      breakeven: { title: 'Venture Break-Even Volume Calculator', subtitle: 'Calculate unit volume required to reach break-even profitability.', tab: 'Venture Break-Even Volume' },
+      creditcard: { title: 'Credit Card Balance & Interest Payoff', subtitle: 'Model repayment schedules and interest charges to clear card balances.', tab: 'Card Balance & Payoff' },
+      stockavg: { title: 'Share Cost Averaging (DCA) Suite', subtitle: 'Calculate weighted average purchase price across share tranches on LSE.', tab: 'Share Cost Averaging (DCA)' },
+      rentbuy: { title: 'Rent vs Buy Property Framework', subtitle: 'Compare homeownership outlays vs rental cash flows over time.', tab: 'Rent vs Buy Framework' },
+      margin: { title: 'Retail Gross Margin & Markup Matrix', subtitle: 'Calculate retail margins and markups on product inventory.', tab: 'Retail Margin & Markup' },
+      autoloan: { title: 'Car Finance (PCP / HP) Calculator', subtitle: 'Simulate Personal Contract Purchase (PCP) or Hire Purchase (HP) payments.', tab: 'Car Finance (PCP / HP)' },
+      student: { title: 'Student Finance (Plan 2/5) Repayment', subtitle: 'Forecast UK Student Finance Plan 2 / Plan 5 debt clearing horizons.', tab: 'Student Finance (Plan 2/5)' },
+      budget: { title: '50/30/20 Income Budgeting Framework', subtitle: 'Allocate monthly take-home pay across Needs, Wants, and Savings.', tab: '50/30/20 Budgeting Plan' },
+      interest: { title: 'Simple Interest Loan Ledger', subtitle: 'Compute linear interest yields and final repayment values.', tab: 'Simple Interest Ledger' },
+      dividend: { title: 'Share Dividend Yield & ISA Payout', subtitle: 'Calculate annual dividend income on shares held in Trading or ISA accounts.', tab: 'Dividend Yield & ISA Payout' },
+      inflation: { title: 'Pound Inflation & Real Purchasing Power', subtitle: 'Measure the erosion of Sterling purchasing power over future timeframes.', tab: 'Pound Inflation Eroder' },
+      sip: { title: 'Monthly Regular Investing (ISA) Planner', subtitle: 'Model compound returns on monthly Stocks & Shares ISA contributions.', tab: 'Regular Investing (ISA)' },
+      cagr: { title: 'Compound Annual Growth Rate (CAGR)', subtitle: 'Determine annualized growth rate of portfolio holdings over time.', tab: 'Compound Annual Growth (CAGR)' },
       // Regional Adaptations for United Kingdom
-      four01k: { title: 'Pension Pot & SIPP Wealth Builder', subtitle: 'Simulate workplace auto-enrolment pension and Self-Invested Personal Pension (SIPP) with 20-45% tax relief.', tab: '🏦 Pension Pot & SIPP' },
-      paycheck: { title: 'Take-Home Pay & PAYE / NI Slip', subtitle: 'Calculate net monthly income after Income Tax (PAYE) and Class 1 National Insurance contributions.', tab: '💵 Take-Home Pay & PAYE' },
-      capitalgains: { title: 'Capital Gains Tax (CGT) & Allowance', subtitle: 'Calculate UK CGT on shares and property after applying annual exempt allowance.', tab: '📊 Capital Gains (CGT)' },
-      quarterlytax: { title: 'HMRC Self-Assessment Payments on Account', subtitle: 'Calculate dual Payments on Account due by 31 January and 31 July for self-employed contractors.', tab: '📝 HMRC Self-Assessment' },
-      carlease: { title: 'PCP / HP Car Finance vs Buy Matrix', subtitle: 'Compare Personal Contract Purchase (PCP) balloon payments vs Hire Purchase (HP).', tab: '🚙 PCP / HP vs Buy' },
-      studentrefi: { title: 'Plan 2 / Plan 5 Student Loan Payoff', subtitle: 'Forecast 9% student loan deductions above threshold and 30/40-year write-off projections.', tab: '🎓 Plan 2/5 Student Payoff' },
+      four01k: { title: 'Pension Pot & SIPP Wealth Builder', subtitle: 'Simulate workplace auto-enrolment pension and Self-Invested Personal Pension (SIPP) with 20-45% tax relief.', tab: 'Pension Pot & SIPP' },
+      paycheck: { title: 'Take-Home Pay & PAYE / NI Slip', subtitle: 'Calculate net monthly income after Income Tax (PAYE) and Class 1 National Insurance contributions.', tab: 'Take-Home Pay & PAYE' },
+      capitalgains: { title: 'Capital Gains Tax (CGT) & Allowance', subtitle: 'Calculate UK CGT on shares and property after applying annual exempt allowance.', tab: 'Capital Gains (CGT)' },
+      quarterlytax: { title: 'HMRC Self-Assessment Payments on Account', subtitle: 'Calculate dual Payments on Account due by 31 January and 31 July for self-employed contractors.', tab: 'HMRC Self-Assessment' },
+      carlease: { title: 'PCP / HP Car Finance vs Buy Matrix', subtitle: 'Compare Personal Contract Purchase (PCP) balloon payments vs Hire Purchase (HP).', tab: 'PCP / HP vs Buy' },
+      studentrefi: { title: 'Plan 2 / Plan 5 Student Loan Payoff', subtitle: 'Forecast 9% student loan deductions above threshold and 30/40-year write-off projections.', tab: 'Plan 2/5 Student Payoff' },
     },
     labels: {
       'mortgage-asset': 'Property Purchase Price',
@@ -2745,33 +2914,33 @@ const REGIONAL_DICTIONARIES = {
   // Australia (AUD - $)
   AU: {
     engines: {
-      mortgage: { title: 'Home Loan & Offset Calculator', subtitle: 'Calculate mortgage repayments and potential interest savings with offset.', tab: '🏠 Home Loan & Offset Core' },
-      invoice: { title: 'Sole Trader Invoice, GST & PAYG Matrix', subtitle: 'Model billable invoices with 10% GST provision and PAYG withholding.', tab: '💼 Sole Trader GST & PAYG' },
-      roi: { title: 'Campaign ROAS & Marketing ROI', subtitle: 'Track ad spend efficiency, ROAS, and marketing ROI on campaign spend.', tab: '📈 Campaign ROAS & ROI' },
-      crypto: { title: 'Crypto Derivatives & Liquidation Matrix', subtitle: 'Simulate futures leverage and liquidation thresholds for crypto contracts.', tab: '⚡ Crypto Derivatives Leverage' },
-      compound: { title: 'Compound Interest Wealth Accumulator', subtitle: 'Project long-term compound wealth and superannuation growth.', tab: '💰 Compound Wealth Accumulator' },
-      caprate: { title: 'Commercial Property Passing Yield Matrix', subtitle: 'Calculate net passing capitalization yields and net rental yields.', tab: '🏢 Property Passing Yield' },
-      salary: { title: 'Hourly Rate to Annual Salary + Super', subtitle: 'Convert casual/contract hourly rates to annualized salary inclusive of superannuation.', tab: '⏱️ Hourly to Salary + Super' },
-      breakeven: { title: 'Business Break-Even & Viability Level', subtitle: 'Determine unit volume needed for operational business profitability.', tab: '📊 Business Break-Even Level' },
-      creditcard: { title: 'Credit Card Debt Reduction Calculator', subtitle: 'Plan payoff strategies to eliminate revolving card debt and interest.', tab: '💳 Card Debt Reduction' },
-      stockavg: { title: 'Share Cost Averaging & Buy-Down Suite', subtitle: 'Calculate weighted average price across ASX share purchases.', tab: '📉 Share Averaging Suite' },
-      rentbuy: { title: 'Rent vs Buy Property Decision Matrix', subtitle: 'Compare homeownership outlays vs rental cash flows over time.', tab: '🏘️ Rent vs Buy Decision' },
-      margin: { title: 'Retail Margin & Markup Calculator', subtitle: 'Calculate gross margin percentages and wholesale cost markups.', tab: '🛒 Retail Margin & Markup' },
-      autoloan: { title: 'Car Finance & Chattel Lease Estimator', subtitle: 'Simulate novated lease, chattel mortgage, or consumer car loan repayments.', tab: '🚗 Car Finance & Chattel Lease' },
-      student: { title: 'HECS / HELP Debt Repayment Matrix', subtitle: 'Simulate Higher Education Loan Program (HECS-HELP) indexation and repayment horizons.', tab: '🎓 HECS / HELP Debt Matrix' },
-      budget: { title: '50/30/20 Monthly Budget Allocation', subtitle: 'Distribute net take-home pay across Living, Discretionary, and Savings.', tab: '💵 50/30/20 Budget Allocation' },
-      interest: { title: 'Simple Interest Contract Calculator', subtitle: 'Compute linear interest accrual and contract payout totals.', tab: '🔢 Simple Interest Contract' },
-      dividend: { title: 'Share Dividend & Franking Yield Console', subtitle: 'Track ASX dividend income and effective yield including franking credits.', tab: '🪙 Dividend & Franking Yield' },
-      inflation: { title: 'AUD Inflation & Purchasing Power Suite', subtitle: 'Model the impact of CPI inflation on Australian Dollar purchasing power.', tab: '🎈 AUD Inflation Eroder' },
-      sip: { title: 'Monthly Share Savings & Wealth Plan', subtitle: 'Calculate compound growth of regular index ETF and managed fund investments.', tab: '🗓️ Monthly Wealth & Super Plan' },
-      cagr: { title: 'Compound Annual Growth Rate (CAGR)', subtitle: 'Determine annualized growth rate of assets over multi-year periods.', tab: '🔄 Compound Annual Growth (CAGR)' },
+      mortgage: { title: 'Home Loan & Offset Calculator', subtitle: 'Calculate mortgage repayments and potential interest savings with offset.', tab: 'Home Loan & Offset Core' },
+      invoice: { title: 'Sole Trader Invoice, GST & PAYG Matrix', subtitle: 'Model billable invoices with 10% GST provision and PAYG withholding.', tab: 'Sole Trader GST & PAYG' },
+      roi: { title: 'Campaign ROAS & Marketing ROI', subtitle: 'Track ad spend efficiency, ROAS, and marketing ROI on campaign spend.', tab: 'Campaign ROAS & ROI' },
+      crypto: { title: 'Crypto Derivatives & Liquidation Matrix', subtitle: 'Simulate futures leverage and liquidation thresholds for crypto contracts.', tab: 'Crypto Derivatives Leverage' },
+      compound: { title: 'Compound Interest Wealth Accumulator', subtitle: 'Project long-term compound wealth and superannuation growth.', tab: 'Compound Wealth Accumulator' },
+      caprate: { title: 'Commercial Property Passing Yield Matrix', subtitle: 'Calculate net passing capitalization yields and net rental yields.', tab: 'Property Passing Yield' },
+      salary: { title: 'Hourly Rate to Annual Salary + Super', subtitle: 'Convert casual/contract hourly rates to annualized salary inclusive of superannuation.', tab: ' Hourly to Salary + Super' },
+      breakeven: { title: 'Business Break-Even & Viability Level', subtitle: 'Determine unit volume needed for operational business profitability.', tab: 'Business Break-Even Level' },
+      creditcard: { title: 'Credit Card Debt Reduction Calculator', subtitle: 'Plan payoff strategies to eliminate revolving card debt and interest.', tab: 'Card Debt Reduction' },
+      stockavg: { title: 'Share Cost Averaging & Buy-Down Suite', subtitle: 'Calculate weighted average price across ASX share purchases.', tab: 'Share Averaging Suite' },
+      rentbuy: { title: 'Rent vs Buy Property Decision Matrix', subtitle: 'Compare homeownership outlays vs rental cash flows over time.', tab: 'Rent vs Buy Decision' },
+      margin: { title: 'Retail Margin & Markup Calculator', subtitle: 'Calculate gross margin percentages and wholesale cost markups.', tab: 'Retail Margin & Markup' },
+      autoloan: { title: 'Car Finance & Chattel Lease Estimator', subtitle: 'Simulate novated lease, chattel mortgage, or consumer car loan repayments.', tab: 'Car Finance & Chattel Lease' },
+      student: { title: 'HECS / HELP Debt Repayment Matrix', subtitle: 'Simulate Higher Education Loan Program (HECS-HELP) indexation and repayment horizons.', tab: 'HECS / HELP Debt Matrix' },
+      budget: { title: '50/30/20 Monthly Budget Allocation', subtitle: 'Distribute net take-home pay across Living, Discretionary, and Savings.', tab: '50/30/20 Budget Allocation' },
+      interest: { title: 'Simple Interest Contract Calculator', subtitle: 'Compute linear interest accrual and contract payout totals.', tab: 'Simple Interest Contract' },
+      dividend: { title: 'Share Dividend & Franking Yield Console', subtitle: 'Track ASX dividend income and effective yield including franking credits.', tab: 'Dividend & Franking Yield' },
+      inflation: { title: 'AUD Inflation & Purchasing Power Suite', subtitle: 'Model the impact of CPI inflation on Australian Dollar purchasing power.', tab: 'AUD Inflation Eroder' },
+      sip: { title: 'Monthly Share Savings & Wealth Plan', subtitle: 'Calculate compound growth of regular index ETF and managed fund investments.', tab: 'Monthly Wealth & Super Plan' },
+      cagr: { title: 'Compound Annual Growth Rate (CAGR)', subtitle: 'Determine annualized growth rate of assets over multi-year periods.', tab: 'Compound Annual Growth (CAGR)' },
       // Regional Adaptations for Australia
-      four01k: { title: 'Superannuation Nest Egg & Concessional Plan', subtitle: 'Project retirement wealth growth with standard 11.5% Super Guarantee (SG) contributions and compound returns.', tab: '🏦 Superannuation Nest Egg' },
-      paycheck: { title: 'Paycheck Net Pay & PAYG Withholding', subtitle: 'Calculate take-home pay after PAYG withholding and 2% Medicare Levy.', tab: '💵 Paycheck Net & PAYG' },
-      capitalgains: { title: 'Capital Gains Tax (CGT) & 50% Discount', subtitle: 'Model Australian CGT at marginal tax rates with 50% general discount for assets held >12 months.', tab: '📊 Capital Gains Tax & Discount' },
-      biweekly: { title: 'Fortnightly Mortgage Acceleration', subtitle: 'Simulate 26 fortnightly mortgage payments to crush loan principal and save interest.', tab: '⚡ Fortnightly Mortgage' },
-      heloc: { title: 'Home Equity Line & Redraw Facility', subtitle: 'Simulate redraw facility and revolving line of credit interest payments.', tab: '💳 Home Equity & Redraw' },
-      studentrefi: { title: 'HECS-HELP Loan Repayment Index', subtitle: 'Calculate compulsory HECS-HELP repayments based on ATO income threshold brackets.', tab: '🎓 HECS-HELP Repayment' },
+      four01k: { title: 'Superannuation Nest Egg & Concessional Plan', subtitle: 'Project retirement wealth growth with standard 11.5% Super Guarantee (SG) contributions and compound returns.', tab: 'Superannuation Nest Egg' },
+      paycheck: { title: 'Paycheck Net Pay & PAYG Withholding', subtitle: 'Calculate take-home pay after PAYG withholding and 2% Medicare Levy.', tab: 'Paycheck Net & PAYG' },
+      capitalgains: { title: 'Capital Gains Tax (CGT) & 50% Discount', subtitle: 'Model Australian CGT at marginal tax rates with 50% general discount for assets held >12 months.', tab: 'Capital Gains Tax & Discount' },
+      biweekly: { title: 'Fortnightly Mortgage Acceleration', subtitle: 'Simulate 26 fortnightly mortgage payments to crush loan principal and save interest.', tab: 'Fortnightly Mortgage' },
+      heloc: { title: 'Home Equity Line & Redraw Facility', subtitle: 'Simulate redraw facility and revolving line of credit interest payments.', tab: 'Home Equity & Redraw' },
+      studentrefi: { title: 'HECS-HELP Loan Repayment Index', subtitle: 'Calculate compulsory HECS-HELP repayments based on ATO income threshold brackets.', tab: 'HECS-HELP Repayment' },
     },
     labels: {
       'mortgage-asset': 'Property Purchase Price',
@@ -2831,31 +3000,31 @@ const REGIONAL_DICTIONARIES = {
   // Canada (CAD - $)
   CA: {
     engines: {
-      mortgage: { title: 'Canadian Mortgage & CMHC Amortization', subtitle: 'Calculate Canadian mortgage payments with bi-weekly/monthly amortization.', tab: '🏠 Mortgage & CMHC Core' },
-      invoice: { title: 'Independent Contractor GST/HST Invoice', subtitle: 'Calculate billable consulting income with federal & provincial GST/HST reserves.', tab: '💼 Contractor GST/HST Invoice' },
-      roi: { title: 'Digital Campaign ROAS & Marketing ROI', subtitle: 'Track digital advertising spend efficiency and net marketing profitability.', tab: '📈 Campaign ROAS & Marketing ROI' },
-      crypto: { title: 'Crypto Futures Margin & Liquidation', subtitle: 'Simulate crypto margin requirements and liquidation thresholds.', tab: '⚡ Crypto Margin & Liquidation' },
-      compound: { title: 'Compound Interest Wealth Growth', subtitle: 'Project long-term compound growth of capital assets across years.', tab: '💰 Compound Wealth Growth' },
-      caprate: { title: 'Commercial Real Estate Cap Rate Matrix', subtitle: 'Calculate property capitalization rates and net operating yields.', tab: '🏢 Real Estate Cap Rate' },
-      salary: { title: 'Hourly Wage to Gross Annual Salary', subtitle: 'Convert hourly wages to gross annualized and monthly salary.', tab: '⏱️ Hourly Wage to Annual Salary' },
-      breakeven: { title: 'Business Break-Even Unit Calculator', subtitle: 'Calculate unit sales volume needed to cover overheads and achieve profitability.', tab: '📊 Business Break-Even Unit' },
-      creditcard: { title: 'Credit Card Debt & Interest Elimination', subtitle: 'Map debt elimination schedules and minimize aggregate finance charges.', tab: '💳 Card Debt Elimination' },
-      stockavg: { title: 'Stock Cost Averaging (DCA) Suite', subtitle: 'Calculate weighted average cost basis across multiple share acquisitions.', tab: '📉 Stock Cost Averaging (DCA)' },
-      rentbuy: { title: 'Rent vs Buy Real Estate Framework', subtitle: 'Compare total homeownership outlays vs rental cash flows over time.', tab: '🏘️ Rent vs Buy Framework' },
-      margin: { title: 'Retail Profit Margin & Markup Suite', subtitle: 'Calculate gross margins and cost markups for wholesale inventory.', tab: '🛒 Retail Margin & Markup' },
-      autoloan: { title: 'Auto Loan & Vehicle Financing Estimator', subtitle: 'Forecast monthly vehicle loan payments across flexible financing terms.', tab: '🚗 Auto Loan Estimator' },
-      student: { title: 'Canada Student Loan (CSFA/OSAP) Payoff', subtitle: 'Simulate Canada Student Financial Assistance (CSFA/OSAP) debt payoff horizons.', tab: '🎓 Canada Student Loan (OSAP)' },
-      budget: { title: '50/30/20 Take-Home Budget Rule', subtitle: 'Partition net take-home pay into Needs, Wants, and Wealth Savings.', tab: '💵 50/30/20 Take-Home Budget' },
-      interest: { title: 'Simple Interest Loan Matrix', subtitle: 'Calculate linear interest returns and final loan repayments.', tab: '🔢 Simple Interest Matrix' },
-      dividend: { title: 'Dividend Yield & Income Console', subtitle: 'Forecast annual dividend income on Canadian equity portfolios.', tab: '🪙 Dividend Yield Console' },
-      inflation: { title: 'CAD Inflation & Real Purchasing Power', subtitle: 'Model the erosion of Canadian Dollar purchasing power over future timeframes.', tab: '🎈 CAD Inflation Eroder' },
-      sip: { title: 'Pre-Authorized Monthly TFSA/RRSP Plan', subtitle: 'Model compound returns on automatic monthly contributions to TFSA or RRSP.', tab: '🗓️ Monthly TFSA / RRSP Plan' },
-      cagr: { title: 'Compound Annual Growth Rate (CAGR)', subtitle: 'Determine annualized geometric return of investments across holding periods.', tab: '🔄 Compound Annual Growth (CAGR)' },
+      mortgage: { title: 'Canadian Mortgage & CMHC Amortization', subtitle: 'Calculate Canadian mortgage payments with bi-weekly/monthly amortization.', tab: 'Mortgage & CMHC Core' },
+      invoice: { title: 'Independent Contractor GST/HST Invoice', subtitle: 'Calculate billable consulting income with federal & provincial GST/HST reserves.', tab: 'Contractor GST/HST Invoice' },
+      roi: { title: 'Digital Campaign ROAS & Marketing ROI', subtitle: 'Track digital advertising spend efficiency and net marketing profitability.', tab: 'Campaign ROAS & Marketing ROI' },
+      crypto: { title: 'Crypto Futures Margin & Liquidation', subtitle: 'Simulate crypto margin requirements and liquidation thresholds.', tab: 'Crypto Margin & Liquidation' },
+      compound: { title: 'Compound Interest Wealth Growth', subtitle: 'Project long-term compound growth of capital assets across years.', tab: 'Compound Wealth Growth' },
+      caprate: { title: 'Commercial Real Estate Cap Rate Matrix', subtitle: 'Calculate property capitalization rates and net operating yields.', tab: 'Real Estate Cap Rate' },
+      salary: { title: 'Hourly Wage to Gross Annual Salary', subtitle: 'Convert hourly wages to gross annualized and monthly salary.', tab: ' Hourly Wage to Annual Salary' },
+      breakeven: { title: 'Business Break-Even Unit Calculator', subtitle: 'Calculate unit sales volume needed to cover overheads and achieve profitability.', tab: 'Business Break-Even Unit' },
+      creditcard: { title: 'Credit Card Debt & Interest Elimination', subtitle: 'Map debt elimination schedules and minimize aggregate finance charges.', tab: 'Card Debt Elimination' },
+      stockavg: { title: 'Stock Cost Averaging (DCA) Suite', subtitle: 'Calculate weighted average cost basis across multiple share acquisitions.', tab: 'Stock Cost Averaging (DCA)' },
+      rentbuy: { title: 'Rent vs Buy Real Estate Framework', subtitle: 'Compare total homeownership outlays vs rental cash flows over time.', tab: 'Rent vs Buy Framework' },
+      margin: { title: 'Retail Profit Margin & Markup Suite', subtitle: 'Calculate gross margins and cost markups for wholesale inventory.', tab: 'Retail Margin & Markup' },
+      autoloan: { title: 'Auto Loan & Vehicle Financing Estimator', subtitle: 'Forecast monthly vehicle loan payments across flexible financing terms.', tab: 'Auto Loan Estimator' },
+      student: { title: 'Canada Student Loan (CSFA/OSAP) Payoff', subtitle: 'Simulate Canada Student Financial Assistance (CSFA/OSAP) debt payoff horizons.', tab: 'Canada Student Loan (OSAP)' },
+      budget: { title: '50/30/20 Take-Home Budget Rule', subtitle: 'Partition net take-home pay into Needs, Wants, and Wealth Savings.', tab: '50/30/20 Take-Home Budget' },
+      interest: { title: 'Simple Interest Loan Matrix', subtitle: 'Calculate linear interest returns and final loan repayments.', tab: 'Simple Interest Matrix' },
+      dividend: { title: 'Dividend Yield & Income Console', subtitle: 'Forecast annual dividend income on Canadian equity portfolios.', tab: 'Dividend Yield Console' },
+      inflation: { title: 'CAD Inflation & Real Purchasing Power', subtitle: 'Model the erosion of Canadian Dollar purchasing power over future timeframes.', tab: 'CAD Inflation Eroder' },
+      sip: { title: 'Pre-Authorized Monthly TFSA/RRSP Plan', subtitle: 'Model compound returns on automatic monthly contributions to TFSA or RRSP.', tab: 'Monthly TFSA / RRSP Plan' },
+      cagr: { title: 'Compound Annual Growth Rate (CAGR)', subtitle: 'Determine annualized geometric return of investments across holding periods.', tab: 'Compound Annual Growth (CAGR)' },
       // Regional Adaptations for Canada
-      four01k: { title: 'RRSP & TFSA Nest Egg Projector', subtitle: 'Maximize tax-free compounding in TFSA and tax-deferred retirement deductions in RRSP.', tab: '🏦 RRSP & TFSA Nest Egg' },
-      paycheck: { title: 'Paycheque Net Pay & CPP / EI Deductions', subtitle: 'Calculate net pay after federal/provincial tax, Canada Pension Plan (CPP), and Employment Insurance (EI).', tab: '💵 Paycheque Net & CPP/EI' },
-      biweekly: { title: 'Accelerated Bi-Weekly Mortgage Matrix', subtitle: 'Simulate Canadian accelerated bi-weekly payments to shave years off 25-year amortizations.', tab: '⚡ Accelerated Bi-Weekly' },
-      capitalgains: { title: 'Capital Gains Tax & 50-66% Inclusion Rate', subtitle: 'Model post-2024 Canadian capital gains inclusion brackets on investment profits.', tab: '📊 Capital Gains & Inclusion' },
+      four01k: { title: 'RRSP & TFSA Nest Egg Projector', subtitle: 'Maximize tax-free compounding in TFSA and tax-deferred retirement deductions in RRSP.', tab: 'RRSP & TFSA Nest Egg' },
+      paycheck: { title: 'Paycheque Net Pay & CPP / EI Deductions', subtitle: 'Calculate net pay after federal/provincial tax, Canada Pension Plan (CPP), and Employment Insurance (EI).', tab: 'Paycheque Net & CPP/EI' },
+      biweekly: { title: 'Accelerated Bi-Weekly Mortgage Matrix', subtitle: 'Simulate Canadian accelerated bi-weekly payments to shave years off 25-year amortizations.', tab: 'Accelerated Bi-Weekly' },
+      capitalgains: { title: 'Capital Gains Tax & 50-66% Inclusion Rate', subtitle: 'Model post-2024 Canadian capital gains inclusion brackets on investment profits.', tab: 'Capital Gains & Inclusion' },
     },
     labels: {
       'mortgage-asset': 'Home Purchase Price',
@@ -2888,26 +3057,26 @@ const REGIONAL_DICTIONARIES = {
   // Europe (EUR - €)
   EU: {
     engines: {
-      mortgage: { title: 'Home Loan & Hypothèque Calculator', subtitle: 'Calculate European home loan installments and amortization schedules.', tab: '🏠 Home Loan & Hypothèque' },
-      invoice: { title: 'B2B Freelance & VAT / TVA Invoice Matrix', subtitle: 'Simulate billable client invoices with standard VAT/TVA reserves and social charges.', tab: '💼 B2B Freelance & VAT / TVA' },
-      roi: { title: 'Marketing ROAS & Ad Spend Return', subtitle: 'Track return on digital advertising investments and campaign efficiency.', tab: '📈 Marketing ROAS & Return' },
-      crypto: { title: 'Crypto Derivatives Leverage & Liquidation', subtitle: 'Model margin requirements and liquidation thresholds for crypto futures.', tab: '⚡ Crypto Derivatives Leverage' },
-      compound: { title: 'Compound Interest & Capital Accumulator', subtitle: 'Project long-term compound wealth and capital growth across years.', tab: '💰 Compound Capital Accumulator' },
-      caprate: { title: 'Real Estate Capitalization & Net Yield', subtitle: 'Compute property net operating yield and capitalization valuation.', tab: '🏢 Real Estate Net Yield' },
-      salary: { title: 'Hourly Rate to Annual Gross Salary', subtitle: 'Convert hourly rates to annualized and monthly gross compensation.', tab: '⏱️ Hourly Rate to Gross Salary' },
-      breakeven: { title: 'Commercial Break-Even Point Calculator', subtitle: 'Calculate unit sales volume needed to reach commercial profitability.', tab: '📊 Commercial Break-Even Point' },
-      creditcard: { title: 'Revolving Credit & Card Debt Payoff', subtitle: 'Model repayment schedules and interest charges on revolving credit lines.', tab: '💳 Revolving Credit Payoff' },
-      stockavg: { title: 'Equity Cost Averaging (DCA) Suite', subtitle: 'Calculate weighted average acquisition price across stock tranches.', tab: '📉 Equity Cost Averaging (DCA)' },
-      rentbuy: { title: 'Rent vs Buy Property Decision Matrix', subtitle: 'Compare homeownership outlays vs rental cash flows over time.', tab: '🏘️ Rent vs Buy Decision' },
-      margin: { title: 'Retail Gross Margin & Markup Suite', subtitle: 'Calculate gross margins and markup coefficients on retail goods.', tab: '🛒 Retail Margin & Markup' },
-      autoloan: { title: 'Auto Loan & Vehicle Credit Estimator', subtitle: 'Simulate vehicle financing, leasing (LOA/LLD), and monthly installments.', tab: '🚗 Auto Credit & Leasing' },
-      student: { title: 'Higher Education Loan Repayment Matrix', subtitle: 'Map student credit amortization and fixed monthly installments.', tab: '🎓 Education Loan Repayment' },
-      budget: { title: '50/30/20 Household Budget Framework', subtitle: 'Allocate household monthly net income across Needs, Wants, and Savings.', tab: '💵 50/30/20 Household Budget' },
-      interest: { title: 'Simple Interest Loan & Contract Ledger', subtitle: 'Compute linear interest accrual and total contract repayment.', tab: '🔢 Simple Interest Contract' },
-      dividend: { title: 'Equity Dividend Yield & Income Console', subtitle: 'Forecast annual dividend income on European equity portfolios.', tab: '🪙 Dividend Yield Console' },
-      inflation: { title: 'Euro Inflation & Real Purchasing Power', subtitle: 'Measure the erosion of Euro purchasing power over future time horizons.', tab: '🎈 Euro Inflation Eroder' },
-      sip: { title: 'Monthly ETF Savings Plan (Sparplan)', subtitle: 'Project long-term compound growth of a monthly ETF / Fund Sparplan.', tab: '🗓️ ETF Savings Plan (Sparplan)' },
-      cagr: { title: 'Compound Annual Growth Rate (CAGR)', subtitle: 'Determine annualized geometric rate of return on investments.', tab: '🔄 Compound Annual Growth (CAGR)' }
+      mortgage: { title: 'Home Loan & Hypothèque Calculator', subtitle: 'Calculate European home loan installments and amortization schedules.', tab: 'Home Loan & Hypothèque' },
+      invoice: { title: 'B2B Freelance & VAT / TVA Invoice Matrix', subtitle: 'Simulate billable client invoices with standard VAT/TVA reserves and social charges.', tab: 'B2B Freelance & VAT / TVA' },
+      roi: { title: 'Marketing ROAS & Ad Spend Return', subtitle: 'Track return on digital advertising investments and campaign efficiency.', tab: 'Marketing ROAS & Return' },
+      crypto: { title: 'Crypto Derivatives Leverage & Liquidation', subtitle: 'Model margin requirements and liquidation thresholds for crypto futures.', tab: 'Crypto Derivatives Leverage' },
+      compound: { title: 'Compound Interest & Capital Accumulator', subtitle: 'Project long-term compound wealth and capital growth across years.', tab: 'Compound Capital Accumulator' },
+      caprate: { title: 'Real Estate Capitalization & Net Yield', subtitle: 'Compute property net operating yield and capitalization valuation.', tab: 'Real Estate Net Yield' },
+      salary: { title: 'Hourly Rate to Annual Gross Salary', subtitle: 'Convert hourly rates to annualized and monthly gross compensation.', tab: ' Hourly Rate to Gross Salary' },
+      breakeven: { title: 'Commercial Break-Even Point Calculator', subtitle: 'Calculate unit sales volume needed to reach commercial profitability.', tab: 'Commercial Break-Even Point' },
+      creditcard: { title: 'Revolving Credit & Card Debt Payoff', subtitle: 'Model repayment schedules and interest charges on revolving credit lines.', tab: 'Revolving Credit Payoff' },
+      stockavg: { title: 'Equity Cost Averaging (DCA) Suite', subtitle: 'Calculate weighted average acquisition price across stock tranches.', tab: 'Equity Cost Averaging (DCA)' },
+      rentbuy: { title: 'Rent vs Buy Property Decision Matrix', subtitle: 'Compare homeownership outlays vs rental cash flows over time.', tab: 'Rent vs Buy Decision' },
+      margin: { title: 'Retail Gross Margin & Markup Suite', subtitle: 'Calculate gross margins and markup coefficients on retail goods.', tab: 'Retail Margin & Markup' },
+      autoloan: { title: 'Auto Loan & Vehicle Credit Estimator', subtitle: 'Simulate vehicle financing, leasing (LOA/LLD), and monthly installments.', tab: 'Auto Credit & Leasing' },
+      student: { title: 'Higher Education Loan Repayment Matrix', subtitle: 'Map student credit amortization and fixed monthly installments.', tab: 'Education Loan Repayment' },
+      budget: { title: '50/30/20 Household Budget Framework', subtitle: 'Allocate household monthly net income across Needs, Wants, and Savings.', tab: '50/30/20 Household Budget' },
+      interest: { title: 'Simple Interest Loan & Contract Ledger', subtitle: 'Compute linear interest accrual and total contract repayment.', tab: 'Simple Interest Contract' },
+      dividend: { title: 'Equity Dividend Yield & Income Console', subtitle: 'Forecast annual dividend income on European equity portfolios.', tab: 'Dividend Yield Console' },
+      inflation: { title: 'Euro Inflation & Real Purchasing Power', subtitle: 'Measure the erosion of Euro purchasing power over future time horizons.', tab: 'Euro Inflation Eroder' },
+      sip: { title: 'Monthly ETF Savings Plan (Sparplan)', subtitle: 'Project long-term compound growth of a monthly ETF / Fund Sparplan.', tab: 'ETF Savings Plan (Sparplan)' },
+      cagr: { title: 'Compound Annual Growth Rate (CAGR)', subtitle: 'Determine annualized geometric rate of return on investments.', tab: 'Compound Annual Growth (CAGR)' }
     },
     labels: {
       'mortgage-asset': 'Property Acquisition Price',
@@ -2944,26 +3113,26 @@ const REGIONAL_DICTIONARIES = {
   // Middle East / Gulf (AED - د.إ, SAR - ﷼)
   ME: {
     engines: {
-      mortgage: { title: 'Home Finance & Murabaha Calculator', subtitle: 'Calculate Islamic home finance (Murabaha/Ijara) monthly rental/profit installments.', tab: '🏠 Home Finance & Murabaha' },
-      invoice: { title: 'Consultant Invoice & VAT Matrix', subtitle: 'Calculate professional consulting fees with 5% / 15% VAT provisions.', tab: '💼 Consultant Invoice & VAT' },
-      roi: { title: 'Digital Campaign ROAS & Marketing ROI', subtitle: 'Track ad spend efficiency and return on digital marketing capital.', tab: '📈 Campaign ROAS & ROI' },
-      crypto: { title: 'Crypto Derivatives & Liquidation Threshold', subtitle: 'Simulate futures leverage and liquidation thresholds for crypto contracts.', tab: '⚡ Crypto Derivatives Matrix' },
-      compound: { title: 'Compound Wealth & Capital Accumulator', subtitle: 'Project long-term compound wealth and capital growth across years.', tab: '💰 Compound Wealth Accumulator' },
-      caprate: { title: 'Commercial Property Rental Yield Matrix', subtitle: 'Calculate annual rental yields and net capitalization outlays.', tab: '🏢 Property Rental Yield' },
-      salary: { title: 'Total Monthly & Annual Compensation', subtitle: 'Convert hourly rates into total monthly compensation package (Basic + Allowances).', tab: '⏱️ Monthly & Annual Package' },
-      breakeven: { title: 'Business Break-Even & Viability Level', subtitle: 'Determine exact sales volume required to recover overheads and achieve profit.', tab: '📊 Business Break-Even Level' },
-      creditcard: { title: 'Credit Card Debt Reduction Calculator', subtitle: 'Model payoff timelines and interest savings to clear credit balances.', tab: '💳 Card Debt Reduction' },
-      stockavg: { title: 'Share Cost Averaging & Buy-Down Suite', subtitle: 'Calculate weighted average acquisition price across share tranches.', tab: '📉 Share Averaging Suite' },
-      rentbuy: { title: 'Rent vs Buy Property Decision Matrix', subtitle: 'Compare property ownership outlays vs rental cash flows over time.', tab: '🏘️ Rent vs Buy Decision' },
-      margin: { title: 'Retail Commerce Margin & Markup', subtitle: 'Calculate product markup coefficients and net gross operational spread.', tab: '🛒 Retail Margin & Markup' },
-      autoloan: { title: 'Auto Finance & Vehicle Murabaha', subtitle: 'Calculate vehicle Murabaha finance installments and total profit margin.', tab: '🚗 Auto Murabaha Finance' },
-      student: { title: 'Higher Education Loan Repayment Matrix', subtitle: 'Map education financing amortization and fixed monthly installments.', tab: '🎓 Education Loan Repayment' },
-      budget: { title: '50/30/20 Monthly Budget Allocation', subtitle: 'Allocate consolidated net monthly income across Living, Lifestyle, and Savings.', tab: '💵 50/30/20 Budget Allocation' },
-      interest: { title: 'Simple Interest & Contract Payout', subtitle: 'Compute linear yields and contract payout totals.', tab: '🔢 Simple Interest Engine' },
-      dividend: { title: 'Share Dividend Yield & Income Console', subtitle: 'Forecast annual dividend income on equity portfolios.', tab: '🪙 Dividend Yield Console' },
-      inflation: { title: 'Cash Inflation & Purchasing Power', subtitle: 'Measure future purchasing power under regional inflation.', tab: '🎈 Cash Inflation Eroder' },
-      sip: { title: 'Monthly Wealth & Investment Plan', subtitle: 'Calculate compound growth of systematic monthly savings and investments.', tab: '🗓️ Monthly Wealth Plan' },
-      cagr: { title: 'Compound Annual Growth Rate (CAGR)', subtitle: 'Determine annualized geometric growth rate of portfolio assets.', tab: '🔄 Compound Annual Growth (CAGR)' }
+      mortgage: { title: 'Home Finance & Murabaha Calculator', subtitle: 'Calculate Islamic home finance (Murabaha/Ijara) monthly rental/profit installments.', tab: 'Home Finance & Murabaha' },
+      invoice: { title: 'Consultant Invoice & VAT Matrix', subtitle: 'Calculate professional consulting fees with 5% / 15% VAT provisions.', tab: 'Consultant Invoice & VAT' },
+      roi: { title: 'Digital Campaign ROAS & Marketing ROI', subtitle: 'Track ad spend efficiency and return on digital marketing capital.', tab: 'Campaign ROAS & ROI' },
+      crypto: { title: 'Crypto Derivatives & Liquidation Threshold', subtitle: 'Simulate futures leverage and liquidation thresholds for crypto contracts.', tab: 'Crypto Derivatives Matrix' },
+      compound: { title: 'Compound Wealth & Capital Accumulator', subtitle: 'Project long-term compound wealth and capital growth across years.', tab: 'Compound Wealth Accumulator' },
+      caprate: { title: 'Commercial Property Rental Yield Matrix', subtitle: 'Calculate annual rental yields and net capitalization outlays.', tab: 'Property Rental Yield' },
+      salary: { title: 'Total Monthly & Annual Compensation', subtitle: 'Convert hourly rates into total monthly compensation package (Basic + Allowances).', tab: ' Monthly & Annual Package' },
+      breakeven: { title: 'Business Break-Even & Viability Level', subtitle: 'Determine exact sales volume required to recover overheads and achieve profit.', tab: 'Business Break-Even Level' },
+      creditcard: { title: 'Credit Card Debt Reduction Calculator', subtitle: 'Model payoff timelines and interest savings to clear credit balances.', tab: 'Card Debt Reduction' },
+      stockavg: { title: 'Share Cost Averaging & Buy-Down Suite', subtitle: 'Calculate weighted average acquisition price across share tranches.', tab: 'Share Averaging Suite' },
+      rentbuy: { title: 'Rent vs Buy Property Decision Matrix', subtitle: 'Compare property ownership outlays vs rental cash flows over time.', tab: 'Rent vs Buy Decision' },
+      margin: { title: 'Retail Commerce Margin & Markup', subtitle: 'Calculate product markup coefficients and net gross operational spread.', tab: 'Retail Margin & Markup' },
+      autoloan: { title: 'Auto Finance & Vehicle Murabaha', subtitle: 'Calculate vehicle Murabaha finance installments and total profit margin.', tab: 'Auto Murabaha Finance' },
+      student: { title: 'Higher Education Loan Repayment Matrix', subtitle: 'Map education financing amortization and fixed monthly installments.', tab: 'Education Loan Repayment' },
+      budget: { title: '50/30/20 Monthly Budget Allocation', subtitle: 'Allocate consolidated net monthly income across Living, Lifestyle, and Savings.', tab: '50/30/20 Budget Allocation' },
+      interest: { title: 'Simple Interest & Contract Payout', subtitle: 'Compute linear yields and contract payout totals.', tab: 'Simple Interest Engine' },
+      dividend: { title: 'Share Dividend Yield & Income Console', subtitle: 'Forecast annual dividend income on equity portfolios.', tab: 'Dividend Yield Console' },
+      inflation: { title: 'Cash Inflation & Purchasing Power', subtitle: 'Measure future purchasing power under regional inflation.', tab: 'Cash Inflation Eroder' },
+      sip: { title: 'Monthly Wealth & Investment Plan', subtitle: 'Calculate compound growth of systematic monthly savings and investments.', tab: 'Monthly Wealth Plan' },
+      cagr: { title: 'Compound Annual Growth Rate (CAGR)', subtitle: 'Determine annualized geometric growth rate of portfolio assets.', tab: 'Compound Annual Growth (CAGR)' }
     },
     labels: {
       'mortgage-asset': 'Property Purchase Price',
@@ -4618,7 +4787,7 @@ const COUNTRY_META = {
   CHF: { country: 'Switzerland', flag: '🇨🇭', bankingTab: 'cross-border' },
   ZAR: { country: 'South Africa', flag: '🇿🇦', bankingTab: 'cross-border' },
   KRW: { country: 'South Korea', flag: '🇰🇷', bankingTab: 'cross-border' },
-  BTC: { country: 'Global Crypto', flag: '⚡', bankingTab: 'directory' },
+  BTC: { country: 'Global Crypto', flag: '', bankingTab: 'directory' },
   TRY: { country: 'Turkey', flag: '🇹🇷', bankingTab: 'cross-border' },
   IDR: { country: 'Indonesia', flag: '🇮🇩', bankingTab: 'cross-border' },
   MYR: { country: 'Malaysia', flag: '🇲🇾', bankingTab: 'cross-border' },
@@ -4637,7 +4806,7 @@ function detectUserLocation() {
     }
   } catch (e) {}
   if (manualChoice && CURRENCY_REGISTRY[manualChoice]) {
-    const meta = COUNTRY_META[manualChoice] || { country: manualChoice, flag: '🌐' };
+    const meta = COUNTRY_META[manualChoice] || { country: manualChoice, flag: '' };
     return {
       code: manualChoice,
       country: meta.country,
@@ -4755,16 +4924,10 @@ function updateLocationBadge(currencyCode, isAuto) {
   const textEl = document.getElementById('location-auto-text');
   if (!badgeEl || !textEl) return;
 
-  const meta = COUNTRY_META[currencyCode] || { country: currencyCode, flag: '🌐' };
+  const meta = COUNTRY_META[currencyCode] || { country: currencyCode, flag: '' };
   badgeEl.classList.remove('hidden');
 
-  if (isAuto) {
-    textEl.innerHTML = `📍 Auto: ${meta.country} ${meta.flag}`;
-    badgeEl.title = 'Location automatically detected from your browser. Click currency dropdown to change.';
-  } else {
-    textEl.innerHTML = `📍 ${meta.country} ${meta.flag}`;
-    badgeEl.title = 'Manually selected country. Select "Auto-Detect Location" in dropdown to re-enable detection.';
-  }
+    textEl.textContent = isAuto ? `Auto: ${meta.country}` : meta.country;
 }
 
 function applyUserLocation(loc) {
@@ -4818,7 +4981,7 @@ function checkIpLocationAsync() {
 
         if (matchedCode && matchedCode !== currentCurrencyCode) {
           if (!localStorage.getItem('afinancecalc_user_manual_currency')) {
-            const meta = COUNTRY_META[matchedCode] || { country: matchedCode, flag: '🌐' };
+            const meta = COUNTRY_META[matchedCode] || { country: matchedCode, flag: '' };
             applyUserLocation({
               code: matchedCode,
               country: meta.country,
@@ -4949,19 +5112,14 @@ function switchEngine(tabOrEngineId, shouldScroll = true) {
     });
 
     // Provide visual focus ring animation to clearly highlight the engine
-    targetPanel.classList.add('ring-2', 'ring-emerald-400', 'transition-all');
+    targetPanel.classList.add('engine-just-opened');
     setTimeout(() => {
-      targetPanel.classList.remove('ring-2', 'ring-emerald-400');
+      targetPanel.classList.remove('engine-just-opened');
     }, 1500);
   }
 
-  // Update contextual FinTech lead-gen card & statutory audit trail for active engine
-  try {
-    if (typeof updateContextualLeadCard === 'function') updateContextualLeadCard(tabId);
-    if (typeof updateAuditTrailContent === 'function') updateAuditTrailContent(tabId);
-  } catch (e) {}
-
   saveStateDebounced();
+  if (typeof updateSessionSheet === 'function') updateSessionSheet(tabId);
 }
 
 function setViewMode(mode) {
@@ -5648,7 +5806,7 @@ function copyAmortizationTable() {
   });
 
   navigator.clipboard.writeText(tsvContent).then(() => {
-    showToast(`✓ Copied ${rows.length} rows to clipboard (Excel/TSV ready)!`);
+    showToast(`Copied ${rows.length} rows to clipboard (Excel/TSV ready)!`);
   }).catch(() => {
     showToast('Failed to copy schedule to clipboard.');
   });
@@ -5683,7 +5841,7 @@ function exportAmortizationCsv() {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 
-  showToast('✓ Amortization Schedule exported to RFC 4180 CSV!');
+  showToast('Amortization Schedule exported to RFC 4180 CSV!');
 }
 
 // -------------------------------------------------------------
@@ -5781,7 +5939,7 @@ function generateSvgQrCode(text, displaySize = 130) {
       }
     }
   }
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${displaySize} ${displaySize}" width="${displaySize}" height="${displaySize}" class="rounded-lg shadow-sm" style="background:#020617; padding:4px;">${paths}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${displaySize} ${displaySize}" width="${displaySize}" height="${displaySize}" class="rounded-lg" style="background:#020617; padding:4px;">${paths}</svg>`;
 }
 
 function openShareModal() {
@@ -5818,7 +5976,7 @@ function copyShareUrlDirect() {
   const inputEl = document.getElementById('share-url-input') || document.getElementById('share-modal-url');
   if (!inputEl || !inputEl.value) return;
   navigator.clipboard.writeText(inputEl.value).then(() => {
-    showToast('✓ Share link copied to clipboard!');
+    showToast('Share link copied to clipboard!');
   }).catch(() => {
     showToast('Failed to copy link.');
   });
@@ -5877,7 +6035,7 @@ function restoreFromUrlHash() {
       switchEngine(engine);
     }
     recalculateAll();
-    showToast('✓ Loaded scenario from URL parameters.');
+    showToast('Loaded scenario from URL parameters.');
     return true;
   } catch (err) {
     console.warn('Could not parse URL hash', err);
@@ -6192,7 +6350,7 @@ function applyScenarioBToWorkspace() {
 
   saveStateDebounced();
   closeScenarioStudio();
-  showToast('✓ Applied Scenario B parameters directly to your active engine workspace!');
+  showToast('Applied Scenario B parameters directly to your active engine workspace!');
 }
 
 // -------------------------------------------------------------
@@ -6348,7 +6506,7 @@ function renderHistoryList() {
     if (!filtered.length) {
       listEl.innerHTML = `
         <div class="p-8 text-center text-xs text-slate-500">
-          <div class="text-2xl mb-2">📋</div>
+          <div class="text-2xl mb-2"></div>
           <div class="font-bold text-slate-400">No records found</div>
           <div class="text-[11px] text-slate-500 mt-1">Calculations and copied engine reports will appear here automatically.</div>
         </div>
@@ -6373,8 +6531,8 @@ function renderHistoryList() {
         </div>
         <div class="flex items-center gap-1.5 flex-shrink-0">
           <button onclick="switchEngine('${item.engineId}'); closeHistoryDrawer();" title="Jump to Engine" class="px-2.5 py-1 text-[11px] font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 rounded-lg hover:bg-emerald-900 transition-colors">Jump</button>
-          <button onclick="copyHistoryItem('${item.metric}')" title="Copy Result" class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">📋</button>
-          <button onclick="deleteHistoryItem(${index})" title="Delete Record" class="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-950/40 rounded-lg transition-colors">✕</button>
+          <button onclick="copyHistoryItem('${item.metric}')" title="Copy Result" class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"></button>
+          <button onclick="deleteHistoryItem(${index})" title="Delete Record" class="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-950/40 rounded-lg transition-colors"></button>
         </div>
       `;
       listEl.appendChild(card);
@@ -6384,7 +6542,7 @@ function renderHistoryList() {
 
 function copyHistoryItem(val) {
   navigator.clipboard.writeText(val).then(() => {
-    showToast(`✓ Copied "${val}" to clipboard!`);
+    showToast(`Copied "${val}" to clipboard!`);
   }).catch(() => {
     showToast('Failed to copy metric.');
   });
@@ -6417,7 +6575,7 @@ function exportHistoryData() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    showToast('✓ Exported history dataset to JSON!');
+    showToast('Exported history dataset to JSON!');
   } catch (e) {}
 }
 
@@ -6454,7 +6612,7 @@ function toggleTheme() {
 function updateThemeIcon(theme) {
   const icon = document.getElementById('theme-toggle-icon');
   if (!icon) return;
-  icon.textContent = theme === 'dark' ? '🌙' : '☀️';
+  icon.textContent = theme === 'dark' ? 'Dark' : 'Light';
 }
 
 function initTheme() {
@@ -6487,7 +6645,7 @@ function copyEngineMetrics(engineId) {
 
   const fullText = `=== ${title} ===\n${outputs}\nComputed via aFinanceCalculator Engine`;
   navigator.clipboard.writeText(fullText).then(() => {
-    showToast(`✓ Copied ${title} results to clipboard!`);
+    showToast(`Copied ${title} results to clipboard!`);
     const primaryMetric = card.querySelector('.output-value')?.innerText || '';
     recordHistory(title, primaryMetric);
   }).catch(() => {
@@ -6596,7 +6754,7 @@ function setupSidebarFilter() {
 
 function filterCategory(cat) {
   document.querySelectorAll('.category-chip').forEach(chip => {
-    chip.classList.toggle('bg-emerald-500/20', chip.dataset.cat === cat);
+    chip.classList.toggle('active', chip.dataset.cat === cat);
     chip.classList.toggle('text-emerald-400', chip.dataset.cat === cat);
     chip.classList.toggle('border-emerald-500/40', chip.dataset.cat === cat);
   });
@@ -6811,7 +6969,7 @@ function renderFireChart(expenses, currentSavings, annualSave, targetNumber, yea
     </defs>
     <!-- Target Horizon Line -->
     <line x1="0" y1="${targetY}" x2="${width}" y2="${targetY}" stroke="#eab308" stroke-width="1.5" stroke-dasharray="3,3"/>
-    <text x="${width - 70}" y="${targetY - 3}" fill="#eab308" font-size="9" font-family="monospace">FIRE Goal</text>
+    <text x="${width - 70}" y="${targetY - 3}" fill="#eab308" font-size="12" font-family="monospace">FIRE Goal</text>
     <!-- Capital Accumulation Area -->
     <path d="${areaD}" fill="url(#grad-fire)" />
     <path d="${lineD}" fill="none" stroke="#10b981" stroke-width="2.5" />
@@ -6843,14 +7001,12 @@ function renderRentBuyChart(rent, mortgage) {
 
   svg.innerHTML = `
     <!-- Rent Outflow Bar -->
-    <text x="10" y="24" fill="#94a3b8" font-size="10" font-family="sans-serif" font-weight="bold">Contract Rent (10y)</text>
-    <rect x="115" y="14" width="${rentBarW.toFixed(1)}" height="14" rx="4" fill="#38bdf8" />
-    <text x="${120 + rentBarW}" y="25" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">${formatCurrency(rent10Yr)}</text>
-
-    <!-- Buy Outflow Bar -->
-    <text x="10" y="56" fill="#94a3b8" font-size="10" font-family="sans-serif" font-weight="bold">Mortgage P&I (10y)</text>
-    <rect x="115" y="46" width="${mortBarW.toFixed(1)}" height="14" rx="4" fill="#10b981" />
-    <text x="${120 + mortBarW}" y="57" fill="#34d399" font-size="9" font-family="monospace" font-weight="bold">${formatCurrency(mort10Yr)}</text>
+    <text x="10" y="24" fill="#8a8c92" font-size="12" font-family="JetBrains Mono, monospace">Contract Rent (10y)</text>
+    <rect x="130" y="14" width="${rentBarW.toFixed(1)}" height="14" fill="#f2f2f3" />
+    <text x="${136 + rentBarW}" y="25" fill="#ffffff" font-size="12" font-family="JetBrains Mono, monospace">${formatCurrency(rent10Yr)}</text>
+    <text x="10" y="56" fill="#8a8c92" font-size="12" font-family="JetBrains Mono, monospace">Mortgage P&amp;I (10y)</text>
+    <rect x="130" y="46" width="${mortBarW.toFixed(1)}" height="14" fill="#c4a574" />
+    <text x="${136 + mortBarW}" y="57" fill="#ffffff" font-size="12" font-family="JetBrains Mono, monospace">${formatCurrency(mort10Yr)}</text>
   `;
 
   const deltaEl = document.getElementById('rentbuy-chart-delta');
@@ -6860,18 +7016,11 @@ function renderRentBuyChart(rent, mortgage) {
   }
 }
 
-function renderSnowballChart(debt1Bal, debt2Bal, extraPay, apr1, apr2) {
+function renderSnowballChart(snowballInterest, avalancheInterest) {
   const svg = document.getElementById('snowball-comparison-svg');
   if (!svg) return;
 
-  const width = 340;
-  const height = 80;
-  const totalDebt = debt1Bal + debt2Bal;
-  if (totalDebt <= 0) return;
-
-  const snowballInterest = (debt1Bal * (apr1 / 100) * 1.5) + (debt2Bal * (apr2 / 100) * 1.8);
-  const avalancheInterest = snowballInterest * 0.82; // Avalanche saves ~18% interest
-  const maxInterest = Math.max(snowballInterest, 1);
+  const maxInterest = Math.max(snowballInterest, avalancheInterest, 1);
 
   const snowW = (snowballInterest / maxInterest) * 200;
   const avW = (avalancheInterest / maxInterest) * 200;
@@ -6879,14 +7028,14 @@ function renderSnowballChart(debt1Bal, debt2Bal, extraPay, apr1, apr2) {
 
   svg.innerHTML = `
     <!-- Snowball Bar -->
-    <text x="10" y="24" fill="#94a3b8" font-size="10" font-weight="bold">Snowball Interest</text>
+    <text x="10" y="24" fill="#94a3b8" font-size="12" font-weight="bold">Snowball Interest</text>
     <rect x="125" y="14" width="${snowW.toFixed(1)}" height="14" rx="4" fill="#f43f5e" />
-    <text x="${130 + snowW}" y="25" fill="#fb7185" font-size="9" font-family="monospace">${formatCurrency(snowballInterest)}</text>
+    <text x="${130 + snowW}" y="25" fill="#fb7185" font-size="12" font-family="monospace">${formatCurrency(snowballInterest)}</text>
 
     <!-- Avalanche Bar -->
-    <text x="10" y="56" fill="#94a3b8" font-size="10" font-weight="bold">Avalanche Interest</text>
+    <text x="10" y="56" fill="#94a3b8" font-size="12" font-weight="bold">Avalanche Interest</text>
     <rect x="125" y="46" width="${avW.toFixed(1)}" height="14" rx="4" fill="#10b981" />
-    <text x="${130 + avW}" y="57" fill="#34d399" font-size="9" font-family="monospace">${formatCurrency(avalancheInterest)}</text>
+    <text x="${130 + avW}" y="57" fill="#34d399" font-size="12" font-family="monospace">${formatCurrency(avalancheInterest)}</text>
   `;
 
   const speedEl = document.getElementById('snowball-chart-speed');
@@ -7201,7 +7350,7 @@ function openDossierModal() {
   // Compile Key Engine Snapshots into Pillars
   const sections = [
     {
-      category: '🏠 Real Estate & Housing Profile',
+      category: 'Real Estate & Housing Profile',
       items: [
         { label: 'Mortgage Target Monthly Payment', value: document.getElementById('mortgage-payment')?.textContent || '$0.00' },
         { label: 'Total Mortgage Lifetime Outlay', value: document.getElementById('mortgage-total-payment')?.textContent || '$0.00' },
@@ -7210,7 +7359,7 @@ function openDossierModal() {
       ]
     },
     {
-      category: '💰 Wealth, Retirement & Financial Independence',
+      category: 'Wealth, Retirement & Financial Independence',
       items: [
         { label: 'FIRE Target Portfolio Capital (4% Rule)', value: document.getElementById('fire-target-number')?.textContent || '$0.00' },
         { label: 'Years to Financial Freedom', value: document.getElementById('fire-years-to-fire')?.textContent || '0.0 Years' },
@@ -7219,7 +7368,7 @@ function openDossierModal() {
       ]
     },
     {
-      category: '💳 Debt Clearance & Credit Optimization',
+      category: 'Debt Clearance & Credit Optimization',
       items: [
         { label: 'Credit Card Debt-Free Timeline', value: document.getElementById('creditcard-months')?.textContent || '0 Months' },
         { label: 'Snowball vs Avalanche Interest Saved', value: document.getElementById('snowball-avalanche-savings')?.textContent || '$0.00' },
@@ -7227,7 +7376,7 @@ function openDossierModal() {
       ]
     },
     {
-      category: '💼 Tax Optimization & Net Take-Home Cashflow',
+      category: 'Tax Optimization & Net Take-Home Cashflow',
       items: [
         { label: 'Estimated Net Paycheck Take-Home', value: document.getElementById('paycheck-net-pay')?.textContent || '$0.00' },
         { label: '1040-ES / Advance Tax Quarterly Voucher', value: document.getElementById('quarterlytax-quarterly-voucher')?.textContent || '$0.00' },
@@ -7240,11 +7389,11 @@ function openDossierModal() {
   sections.forEach(sec => {
     html += `
       <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <h4 class="text-xs uppercase font-black text-emerald-400 tracking-wider mb-3">${sec.category}</h4>
+        <h4 class="text-xs font-black text-emerald-400 mb-3">${sec.category}</h4>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           ${sec.items.map(it => `
             <div class="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800/60">
-              <span class="text-[10px] uppercase font-bold text-slate-400 block">${it.label}</span>
+              <span class="text-[10px] font-bold text-slate-400 block">${it.label}</span>
               <span class="text-sm font-bold text-white font-mono-num mt-0.5 block">${it.value}</span>
             </div>
           `).join('')}
@@ -7295,7 +7444,7 @@ function copyDossierReport() {
   text += `Generated via aFinanceCalculator Suite (Pure Client-Side Private Engine)`;
 
   navigator.clipboard.writeText(text).then(() => {
-    showToast('✓ Executive Dossier copied to clipboard!');
+    showToast('Executive Dossier copied to clipboard!');
   }).catch(() => {
     showToast('Failed to copy Dossier report.');
   });
@@ -7350,7 +7499,7 @@ function exportDossierJson() {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
-  showToast('✓ Exported Executive Dossier to JSON!');
+  showToast('Exported Executive Dossier to JSON!');
 }
 
 function printDossierReport() {
@@ -7388,7 +7537,7 @@ function setupPwa() {
     deferredPrompt = null;
     const btn = document.getElementById('pwa-install-btn');
     if (btn) btn.style.display = 'none';
-    showToast('✓ aFinanceCalculator installed successfully!');
+    showToast('aFinanceCalculator installed successfully!');
   });
 
   if ('serviceWorker' in navigator) {
@@ -7412,6 +7561,16 @@ function triggerPwaInstall() {
   }
 }
 
+
+function openEngineFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const raw = params.get('engine');
+  if (!raw) return;
+  const tabId = raw.startsWith('tab-') || raw.startsWith('engine-') ? raw : 'tab-' + raw;
+  if (document.getElementById(tabId) || document.getElementById(tabId.replace('tab-', 'engine-'))) {
+    switchEngine(tabId, false);
+  }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
@@ -7526,6 +7685,7 @@ document.addEventListener('DOMContentLoaded', () => {
   syncDualInput('fire-expenses', 'fire-expenses-range', calcFire);
   syncDualInput('fire-savings', 'fire-savings-range', calcFire);
   syncDualInput('fire-annual-save', 'fire-annual-save-range', calcFire);
+  syncDualInput('fire-growth', 'fire-growth-range', calcFire);
   syncDualInput('fire-swr', 'fire-swr-range', calcFire);
   syncDualInput('four01k-salary', 'four01k-salary-range', calcFour01k);
   syncDualInput('four01k-contrib-pct', 'four01k-contrib-pct-range', calcFour01k);
@@ -7575,6 +7735,7 @@ document.addEventListener('DOMContentLoaded', () => {
   syncDualInput('carlease-msrp', 'carlease-msrp-range', calcCarLease);
   syncDualInput('carlease-lease-monthly', 'carlease-lease-monthly-range', calcCarLease);
   syncDualInput('carlease-lease-down', 'carlease-lease-down-range', calcCarLease);
+  syncDualInput('carlease-loan-rate', 'carlease-loan-rate-range', calcCarLease);
   syncDualInput('carlease-loan-monthly', 'carlease-loan-monthly-range', calcCarLease);
   syncDualInput('carlease-residual', 'carlease-residual-range', calcCarLease);
   syncDualInput('personalloan-amount', 'personalloan-amount-range', calcPersonalLoan);
@@ -7620,7 +7781,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Setup tabs & sidebar
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => switchEngine(btn.id));
+    btn.addEventListener('click', (event) => {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+      if (btn.tagName === 'A') event.preventDefault();
+      switchEngine(btn.id);
+    });
   });
 
   setupCurrencySelector();
@@ -7662,6 +7827,12 @@ document.addEventListener('DOMContentLoaded', () => {
   loadAdvisorProfile();
   updateContextualLeadCard(activeEngineId);
   updateAuditTrailContent(activeEngineId);
+  openEngineFromQuery();
+  if (window.top !== window.self) {
+    document.querySelectorAll('a[href^="/"]').forEach((link) => {
+      if (!link.classList.contains('tab-btn')) link.target = '_parent';
+    });
+  }
 });
 
 // =============================================================
@@ -7676,7 +7847,7 @@ let currentPersonaWorkspace = 'all';
 const personaWorkspaces = {
   'real-estate': {
     name: 'Real Estate & Mortgage Strategy',
-    icon: '🏡',
+    icon: '',
     description: 'Model property acquisition leverage, evaluate net operating income (NOI), verify 43% DTI affordability, and simulate cash-on-cash equity yield.',
     primaryEngine: 'tab-mortgage',
     engines: [
@@ -7694,7 +7865,7 @@ const personaWorkspaces = {
   },
   'wealth': {
     name: 'Wealth, FIRE & Retirement Horizon',
-    icon: '🛡️',
+    icon: '',
     description: 'Engineer financial independence (FIRE 4% rule), project tax-advantaged 401(k) / Roth accumulation, and model inflation-adjusted safe withdrawal rates.',
     primaryEngine: 'tab-compound',
     engines: [
@@ -7712,7 +7883,7 @@ const personaWorkspaces = {
   },
   'business': {
     name: 'Small Business, Commerce & Tax Matrix',
-    icon: '💼',
+    icon: '',
     description: 'Optimize enterprise gross margin, simulate quarterly 1040-ES estimated taxes, analyze venture break-even units, and forecast contractor billing outlays.',
     primaryEngine: 'tab-invoice',
     engines: [
@@ -7730,7 +7901,7 @@ const personaWorkspaces = {
   },
   'debt': {
     name: 'Debt Elimination & Budget Solvency',
-    icon: '💳',
+    icon: '',
     description: 'Eradicate high-APR revolving card debt via mathematical avalanche/snowball protocols, model personal consolidation, and optimize FICO credit utilization.',
     primaryEngine: 'tab-creditcard',
     engines: [
@@ -7748,16 +7919,16 @@ const personaWorkspaces = {
   },
   'all': {
     name: 'Universal Matrix (All 50 Engines)',
-    icon: '🌐',
-    description: 'Master View: Displaying all 50 global computing engines spanning Real Estate, Wealth, Debt, Tax, and Business.',
+    icon: '',
+    description: 'Five figures for one house: the payment, a faster schedule, a refinance, renting, and cash at closing.',
     primaryEngine: 'tab-mortgage',
     engines: [],
     workflow: [
-      { label: 'Mortgage', engineId: 'tab-mortgage' },
-      { label: 'FIRE Retirement', engineId: 'tab-fire' },
-      { label: 'Compound Wealth', engineId: 'tab-compound' },
-      { label: 'Paycheck Tax', engineId: 'tab-paycheck' },
-      { label: 'Snowball Payoff', engineId: 'tab-snowball' }
+      { label: 'Mortgage payment', engineId: 'tab-mortgage' },
+      { label: 'Biweekly payoff', engineId: 'tab-biweekly' },
+      { label: 'Refinance', engineId: 'tab-refinance' },
+      { label: 'Rent or buy', engineId: 'tab-rentbuy' },
+      { label: 'Closing cash', engineId: 'tab-closingcosts' }
     ]
   }
 };
@@ -7802,7 +7973,8 @@ function setPersonaWorkspace(workspaceKey, autoSwitch = true) {
 
     config.workflow.forEach(step => {
       const stepBtn = document.createElement('button');
-      stepBtn.className = 'workflow-step-btn px-2 py-0.5 rounded-md bg-slate-950 border border-slate-800 text-slate-300 hover:text-white cursor-pointer';
+      stepBtn.className = 'workflow-step-btn';
+      stepBtn.dataset.engine = step.engineId;
       stepBtn.textContent = step.label;
       stepBtn.onclick = () => switchEngine(step.engineId);
       workflowBox.appendChild(stepBtn);
@@ -7821,6 +7993,43 @@ function setPersonaWorkspace(workspaceKey, autoSwitch = true) {
   } catch (e) {}
 
   showToast(`Active Workspace: ${config.name}`);
+  updateSessionSheet(activeEngineId);
+}
+
+function updateSessionSheet(tabId) {
+  const countEl = document.getElementById('session-sheet-count');
+  const nextEl = document.getElementById('session-sheet-next');
+  const go = document.getElementById('session-sheet-go');
+  const config = personaWorkspaces[currentPersonaWorkspace] || personaWorkspaces.all;
+  if (!countEl || !nextEl || !config) return;
+
+  const steps = config.workflow;
+  const idx = steps.findIndex((step) => step.engineId === tabId);
+  const stepNo = idx >= 0 ? idx + 1 : 1;
+  countEl.textContent = 'Figure ' + stepNo + ' of ' + steps.length;
+
+  document.querySelectorAll('.workflow-step-btn').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.engine === tabId);
+  });
+
+  const next = idx >= 0 && idx < steps.length - 1 ? steps[idx + 1] : (idx === -1 ? steps[0] : null);
+  if (!next) {
+    nextEl.textContent = 'This sheet is complete. Pick another workspace to keep going.';
+    if (go) go.hidden = true;
+    return;
+  }
+  const name = next.label.replace(/^\d+\.\s*/, '');
+  nextEl.textContent = 'Next figure: ' + name + '.';
+  if (go) {
+    go.hidden = false;
+    go.textContent = 'Continue';
+    const slug = window.CALCULATOR_BY_ENGINE && window.CALCULATOR_BY_ENGINE[next.engineId];
+    if (slug && 'href' in go) go.href = '/' + slug + '/';
+    go.onclick = (event) => {
+      if (event) event.preventDefault();
+      switchEngine(next.engineId);
+    };
+  }
 }
 
 function cyclePersonaWorkspace() {
@@ -7927,7 +8136,7 @@ function saveFinancialProfile() {
   const lastTxt = document.getElementById('profile-last-synced-txt');
   if (lastTxt) lastTxt.textContent = `Last saved: Just now`;
 
-  showToast('✓ Financial Profile saved to browser runtime!');
+  showToast('Financial Profile saved to browser runtime!');
 }
 
 function applyProfileToAllEngines() {
@@ -8063,7 +8272,7 @@ function applyProfileToAllEngines() {
   recalculateAll();
   saveStateDebounced();
   closeProfileModal();
-  showToast('⚡ Financial Profile applied! 13 computing engines synchronized.');
+  showToast('Financial Profile applied! 13 computing engines synchronized.');
 }
 
 function openProfileModal() {
@@ -8082,64 +8291,64 @@ function closeProfileModal() {
 // -------------------------------------------------------------
 const contextualLeadOffers = {
   housing: {
-    badge: 'Mortgage Lending Partner',
-    title: 'Compare Today\'s Top Mortgage Rates',
-    desc: 'Lock in 30-year fixed rates from 5.75% APR. Zero impact on your credit score to view personalized pre-approval terms.',
+    badge: 'Planning note',
+    title: 'This page is not a mortgage lender',
+    desc: 'The payment is principal and interest only. A real quote includes taxes, insurance, and any mortgage insurance from a licensed lender.',
     benefits: [
-      'Save up to $340/month on refinance',
-      'Compare 5+ vetted lenders in 60s'
+      'No rate, APR, or pre-approval is offered here',
+      'Use the mortgage engine to test extra payments'
     ],
-    ctaText: 'Check Pre-Approved Rates →',
-    disclaimer: 'Equal Housing Lender • NMLS #1138290',
-    link: 'https://afinancecalculator.com/#mortgage-offers'
+    ctaText: 'Open the mortgage calculator',
+    disclaimer: 'Not a lender. No NMLS number. No rate lock.',
+    engine: 'tab-mortgage'
   },
   wealth: {
-    badge: 'High-Yield Cash Partner',
-    title: 'Earn 5.05% APY on Liquid Cash',
-    desc: 'FDIC-insured up to $2.5M. Put your emergency fund or idle capital to work with zero maintenance fees.',
+    badge: 'Planning note',
+    title: 'Savings yields on this site are not live quotes',
+    desc: 'Bank yields in the directory are an editorial snapshot. Check the institution before you move cash.',
     benefits: [
-      '10x higher yield than national average',
-      'No minimum deposit & free wire transfers'
+      'FDIC insurance is $250,000 per depositor, per bank, per ownership category',
+      'A money-market fund is not the same as an FDIC deposit'
     ],
-    ctaText: 'Explore Top High-Yield Accounts →',
-    disclaimer: 'Member FDIC • Daily Compound Yield',
-    link: 'https://afinancecalculator.com/#hysa-offers'
+    ctaText: 'Open the compound-growth calculator',
+    disclaimer: 'Not a bank. No APY is guaranteed by this site.',
+    engine: 'tab-compound'
   },
   debt: {
-    badge: 'Debt Elimination Partner',
-    title: 'Consolidate High-APR Cards from 6.99%',
-    desc: 'Combine multiple 24%+ credit card balances into one single predictable low-rate monthly payment.',
+    badge: 'Planning note',
+    title: 'Debt results come from the schedule, not a lender offer',
+    desc: 'Snowball and avalanche use your balances, rates, and a 36-month minimum payment plus the extra you enter.',
     benefits: [
-      'Pay off debt up to 24 months faster',
-      'Fixed payments with $0 prepayment penalty'
+      'No consolidation APR is advertised here',
+      'Compare the two payoff orders in the debt engine'
     ],
-    ctaText: 'Check Consolidation Rates →',
-    disclaimer: 'Personal Loan Rates from 6.99% to 29.99% APR',
-    link: 'https://afinancecalculator.com/#consolidation-offers'
+    ctaText: 'Open the debt payoff calculator',
+    disclaimer: 'Not a lender. No advertised APR.',
+    engine: 'tab-snowball'
   },
   tax: {
-    badge: 'Tax Strategy & Invoicing Partner',
-    title: 'Automate Deductions & 1040-ES Taxes',
-    desc: 'All-in-one business checking, payroll, and 1040-ES automated tax savings with up to $300 welcome bonus.',
+    badge: 'Planning note',
+    title: 'Tax results are estimates, not a filing',
+    desc: 'Paycheck federal tax is the percent you enter. FICA uses the 2026 wage base and Additional Medicare tax.',
     benefits: [
-      'Auto-categorize IRS Schedule C write-offs',
-      'Zero monthly fee & automated contractor 1099s'
+      'No bank bonus or business-account offer is attached',
+      'Confirm brackets and withholding with a tax preparer'
     ],
-    ctaText: 'Claim Business Account Bonus →',
-    disclaimer: 'FDIC Insured • Seamless Accounting Sync',
-    link: 'https://afinancecalculator.com/#business-offers'
+    ctaText: 'Open the paycheck calculator',
+    disclaimer: 'Not tax advice and not a bank offer.',
+    engine: 'tab-paycheck'
   },
   business: {
-    badge: 'Enterprise Commerce Partner',
-    title: 'Optimize Working Capital & Invoicing',
-    desc: 'Unlock next-day payment terms on commercial invoices and scale advertising ROI with 1.5% cashback.',
+    badge: 'Planning note',
+    title: 'Business tools estimate margin and break-even',
+    desc: 'They do not approve credit, factor invoices, or quote a cash-back rate.',
     benefits: [
-      'Instant invoice factoring from 1.25%',
-      'Unlimited corporate cards with spend limits'
+      'Enter your own costs and prices',
+      'Treat the result as a planning estimate'
     ],
-    ctaText: 'View Working Capital Lines →',
-    disclaimer: 'Commercial Credit • No Personal Guarantee Underwriting',
-    link: 'https://afinancecalculator.com/#commercial-offers'
+    ctaText: 'Open the break-even calculator',
+    disclaimer: 'Not a lender and not a credit offer.',
+    engine: 'tab-breakeven'
   }
 };
 
@@ -8170,18 +8379,10 @@ function handleLeadClick(event) {
   const cat = getEngineCategory(engineId);
   const offer = contextualLeadOffers[cat] || contextualLeadOffers.wealth;
 
-  if (typeof gtag === 'function') {
-    gtag('event', 'lead_card_click', {
-      event_category: 'Monetization',
-      event_label: offer.title,
-      engine_category: cat
-    });
+  if (offer.engine && typeof switchEngine === 'function') {
+    switchEngine(offer.engine);
   }
-
-  showToast(`Redirecting to verified partner rates (${offer.badge})...`);
-  setTimeout(() => {
-    openLeadModal();
-  }, 400);
+  showToast('Opened the related calculator. This card is not a lender or bank offer.');
 }
 
 // -------------------------------------------------------------
@@ -8190,19 +8391,19 @@ function handleLeadClick(event) {
 const statutoryAssumptions = {
   mortgage: {
     statute: 'CFPB Regulation Z / Truth in Lending Act (TILA) & Qualified Mortgage (QM) Standard',
-    details: 'Calculated using standard 360-month/180-month fixed-rate compound amortization: M = P * [r(1+r)^n] / [(1+r)^n - 1]. Benchmark conforms to CFPB QM 43% Debt-to-Income (DTI) ceiling and conforming loan limits ($766,550 for 2025/2026).'
+    details: 'Principal and interest uses M = P * [r(1+r)^n] / [(1+r)^n - 1]. Extra payments are applied on a month-by-month schedule. Taxes, insurance, and mortgage insurance are excluded. The 2026 baseline conforming loan limit is $832,750 and is not applied as a cap here.'
   },
   paycheck: {
     statute: 'IRS 2025/2026 Tax Year Federal Revenue Procedure 2024-40',
-    details: 'Federal standard deduction: $15,000 (Single), $30,000 (Married Filing Jointly). FICA Social Security tax applied at 6.2% up to the statutory wage ceiling ($176,100 for 2025). Medicare tax applied at 1.45% base, plus 0.9% Additional Medicare Tax on wages exceeding $200,000.'
+    details: 'Federal income tax is the effective percent you type. It is not a bracket calculation and does not subtract the standard deduction. Employee FICA uses 6.2% Social Security up to the 2026 wage base of $184,500, Medicare at 1.45%, and Additional Medicare tax of 0.9% above $200,000.'
   },
   four01k: {
     statute: 'IRS Notice 2024-80 (2025 Pension Plan Limitations)',
-    details: 'Elective employee deferral ceiling: $23,500. Catch-up contribution for individuals aged 50 and over: $7,500 (Total $31,000). Total defined contribution annual addition limit under Section 415(c): $70,000.'
+    details: 'Employee contributions are capped at the 2026 elective deferral of $24,500. The age-50 catch-up is not added. Employer match is the percent of pay you enter, and it cannot exceed the employee contribution.'
   },
   fire: {
     statute: 'Trinity Study Protocol & Empirical S&P 500 / Intermediate Bond Safe Withdrawal Analysis',
-    details: 'Safe Withdrawal Rate (SWR) modeled according to Cooley, Hubbard, and Walz (Trinity Study). Assumes 4.0% annual initial portfolio withdrawal indexed annually to CPI-U headline inflation, yielding a 95%+ historical survival probability over a 30-year horizon.'
+    details: 'The target is annual spending divided by the withdrawal rate you enter. Years to reach it use the real growth rate you enter, defaulting to 7%. If the portfolio is still short after 60 years, the result says it was not reached.'
   },
   capitalgains: {
     statute: 'Internal Revenue Code Section 1(h) (2025 Capital Gains Rate Brackets)',
@@ -8210,7 +8411,7 @@ const statutoryAssumptions = {
   },
   hsa: {
     statute: 'IRS Revenue Procedure 2024-25 (2025 HSA Contribution Limits)',
-    details: 'Annual contribution limit: $4,300 for self-only coverage; $8,550 for family coverage. Additional $1,000 catch-up contribution permitted for individuals aged 55+. Triple tax advantage: pre-tax contributions, tax-free growth, and tax-free qualified distributions.'
+    details: '2026 contribution limits used here are $4,400 self-only and $8,750 family. Amounts above the family limit are capped. The age-55 catch-up is not included. Tax savings apply the bracket percent you enter to contributions and to growth.'
   },
   socialsecurity: {
     statute: 'Social Security Act Full Retirement Age (FRA) Matrix & COLA Adjustments',
@@ -8222,7 +8423,7 @@ const statutoryAssumptions = {
   },
   creditscore: {
     statute: 'FICO® / VantageScore® Revolving Credit Utilization Mathematical Weighting',
-    details: 'Revolving credit utilization constitutes ~30% of total FICO scoring weight. Algorithms mathematically optimize when total and per-card utilization drops beneath key statutory reporting thresholds: < 30% (Standard), < 10% (Prime), and < 6% (Super-Prime).'
+    details: 'This engine reports utilization only: balance divided by limit, before and after the paydown you enter. It does not estimate FICO or VantageScore points.'
   },
   default: {
     statute: 'Standard Institutional Financial Mathematical Framework',
@@ -8248,14 +8449,14 @@ function updateAuditTrailContent(engineId) {
   if (container) {
     container.innerHTML = `
       <div class="flex items-start gap-2">
-        <span class="text-emerald-400 font-bold shrink-0">📜 Statutory Rule:</span>
+        <span class="text-emerald-400 font-bold shrink-0">Statutory Rule:</span>
         <span class="font-bold text-white">${assumption.statute}</span>
       </div>
       <div class="text-[11px] text-slate-300 mt-1 pl-5">
         ${assumption.details}
       </div>
       <div class="text-[9px] text-slate-500 mt-1 pl-5 font-mono">
-        Audit Verified: IRS 2025/2026 Rev Proc 2024-40 • CFPB Standard • Client-Side Zero Storage
+        Estimate only. Not a verified filing, credit decision, or lender disclosure. Inputs stay in this browser.
       </div>
     `;
   }
@@ -8334,7 +8535,7 @@ function saveAdvisorProfile() {
 
   loadAdvisorProfile();
   closeAdvisorModal();
-  showToast(toggle ? '✓ Advisor White-Label Mode Activated!' : 'Advisor White-Label Mode Disabled.');
+  showToast(toggle ? 'Advisor White-Label Mode Activated!' : 'Advisor White-Label Mode Disabled.');
 }
 
 function toggleAdvisorMode(enabled) {
@@ -8425,14 +8626,14 @@ SECTION 1: THE CORE FINANCIAL RULES
    - Keep total shelter outlays (PITI) beneath 28% of gross monthly income (front-end DTI).
    - Keep total recurring debt outlays beneath 36% to 43% of gross income (back-end DTI).
 
-SECTION 2: 2025/2026 STATUTORY TAX LIMITS
-- IRS 401(k) / 403(b) Elective Limit: $23,500 ($31,000 for age 50+)
-- HSA Contribution Ceilings: $4,300 (Single) / $8,550 (Family)
-- Federal Standard Deduction: $15,000 (Single) / $30,000 (Married)
-- FICA Social Security Wage Cap: $176,100
+SECTION 2: 2026 STATUTORY FIGURES USED BY THE CALCULATORS
+- 401(k) employee deferral modeled here: $24,500 before any age-50 catch-up
+- HSA ceilings modeled here: $4,400 self-only / $8,750 family
+- Social Security wage base modeled here: $184,500
+- These are planning figures, not a tax filing
 
 ========================================================================
-100% Client-Side Privacy: Your financial models run in your private browser.
+Calculator inputs stay in this browser. The website itself uses ads and analytics.
 Access all 50 financial engines anytime at https://afinancecalculator.com
 ========================================================================`;
 
@@ -8447,7 +8648,7 @@ Access all 50 financial engines anytime at https://afinancecalculator.com
   URL.revokeObjectURL(url);
 
   closeLeadModal();
-  showToast('✓ Financial Plan & Master Playbook successfully prepared and delivered!');
+  showToast('Financial Plan & Master Playbook successfully prepared and delivered!');
 }
 
 // -------------------------------------------------------------
