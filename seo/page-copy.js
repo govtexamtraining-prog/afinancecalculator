@@ -6,12 +6,23 @@ module.exports = {
   'mortgage-calculator': {
     how: 'The monthly principal and interest payment is M = P × [i(1+i)^n] / [(1+i)^n − 1]. P is the price minus the down payment. For a United States fixed mortgage, i is the annual rate divided by 12, and n is the number of months. A 30-year loan uses 360 months. The payment stays the same each month. Early payments are mostly interest. Later payments retire more principal.',
     example: 'A $450,000 home with $90,000 down leaves a $360,000 loan. At 6.2% for 30 years the payment is $2,204.89 a month. Interest over the full 360 payments is $433,759.79. The same loan at 15 years is $3,076.92 a month.',
-    leaves: 'Property tax, homeowners insurance, mortgage insurance, and HOA dues are not in the payment. The rate is compounded monthly, which is the US fixed-rate convention. This is not a lender approval and it does not apply Canadian semi-annual compounding. Use the Canada mortgage page for that schedule.'
+    leaves: 'Property tax, homeowners insurance, mortgage insurance, and HOA dues are not in the payment. The rate is compounded monthly, which is the US fixed-rate convention. This is not a lender approval and it does not apply Canadian semi-annual compounding. Use the Canada mortgage page for that schedule.',
+    faq: [
+      { q: 'What is the monthly payment on a $360,000 mortgage at 6.2% for 30 years?', a: 'Principal and interest is $2,204.89 a month. Taxes and insurance are not included.' },
+      { q: 'Does this mortgage calculator include taxes and insurance?', a: 'No. It shows principal and interest only. Add tax, insurance, and mortgage insurance separately for a full housing payment.' },
+      { q: 'Is this free mortgage calculator also a loan calculator or amortization calculator?', a: 'Yes for principal and interest. The same amortizing formula powers a fixed loan payment. Use the personal loan or auto loan pages when the product is not a home mortgage.' },
+      { q: 'Is this for the United States or Canada?', a: 'This page uses US monthly compounding. For a Canadian quote compounded semi-annually, use the Canada mortgage calculator.' }
+    ]
   },
   'canada-mortgage-calculator': {
     how: 'Canadian mortgage rates are quoted as a rate compounded twice a year. This page converts that quote to a monthly rate with i = (1 + annual rate / 2)^(1/6) − 1, then uses the standard payment formula for the number of months. When the down payment is under 20% and the price is $1,500,000 or less, the CMHC homeowner premium is added to the loan before the payment is calculated. The published bands used here are 2.80% from just over 80% loan-to-value through 85%, 3.10% through 90%, and 4.00% through 95%. An amortization longer than 25 years adds the published 0.20 point surcharge. The premium table is CMHC’s homeowner schedule for the total loan amount.',
     example: 'A C$600,000 home with C$120,000 down is an 80% loan of C$480,000. At 4.5% compounded semi-annually for 25 years, principal and interest is C$2,656.67 a month. Interest over 300 payments is C$317,001.05. No CMHC premium is added, because the down payment is 20%. The same home with C$60,000 down is a 90% loan. The 3.10% premium is C$16,740, the insured loan is C$556,740, and the payment is C$3,081.41 a month.',
-    leaves: 'Provincial sales tax on the premium in Ontario, Quebec, and Saskatchewan is not added, and that tax cannot be rolled into the loan. Sagen and other insurers are not priced here. The federal stress test, the minimum qualifying rate, and a lender’s approval are not decided. A non-traditional down payment, which CMHC prices at 4.50% in the top band, is not assumed. This is not an RRSP, TFSA, or land-transfer-tax calculator.'
+    leaves: 'Provincial sales tax on the premium in Ontario, Quebec, and Saskatchewan is not added, and that tax cannot be rolled into the loan. Sagen and other insurers are not priced here. The federal stress test, the minimum qualifying rate, and a lender’s approval are not decided. A non-traditional down payment, which CMHC prices at 4.50% in the top band, is not assumed. This is not an RRSP, TFSA, or land-transfer-tax calculator.',
+    faq: [
+      { q: 'How does a Canada mortgage calculator differ from a US mortgage calculator?', a: 'Canadian quotes are compounded semi-annually. This page converts that quote to a monthly payment rate. The US page divides the annual rate by 12.' },
+      { q: 'Does this Canadian mortgage calculator include CMHC insurance?', a: 'Yes when the down payment is under 20% and the price is within the published homeowner limit. Provincial sales tax on the premium is not added.' },
+      { q: 'Is this a CMHC calculator?', a: 'It applies CMHC’s published homeowner premium bands to the loan before payment. It is not a CMHC application and does not run the federal stress test.' }
+    ]
   },
   'biweekly-mortgage-calculator': {
     how: 'A biweekly plan takes half of the monthly principal-and-interest payment and collects it 26 times a year. That is one extra monthly payment each year, because 26 half-payments equal 13 full payments. Interest in this tool accrues once per biweekly period, using the annual rate divided by 26. The page compares that path with paying the ordinary monthly amount.',
@@ -21,17 +32,32 @@ module.exports = {
   'refinance-calculator': {
     how: 'The current payment and the new payment are each a standard monthly principal-and-interest calculation on the balance, rate, and term you enter. The monthly savings are the old payment minus the new payment. Break-even months are the closing costs you enter divided by that monthly savings, when the new payment is lower.',
     example: 'A lower rate on the same balance reduces the payment. If closing costs are $6,000 and the payment falls by $200 a month, the costs are covered in 30 months. After that, the lower payment is the gain. If the new payment is higher, there is no break-even from payment savings.',
-    leaves: 'The result is not a lender quote. Cash-out, points bought with a higher fee, mortgage insurance, and prepayment penalties are only present if you have already put them into the balance or the closing-cost field.'
+    leaves: 'The result is not a lender quote. Cash-out, points bought with a higher fee, mortgage insurance, and prepayment penalties are only present if you have already put them into the balance or the closing-cost field.',
+    faq: [
+      { q: 'When should I use a refinance calculator?', a: 'Use it when you have a current balance, rate, and term and want to compare a new rate and term after closing costs. It shows payment change and break-even months, not a lender offer.' },
+      { q: 'Does this mortgage refinance calculator include cash-out?', a: 'Only if you raise the balance to include cash-out. Points and penalties count only when you put them in the closing-cost or balance fields.' },
+      { q: 'How is refinance break-even calculated?', a: 'Closing costs divided by the monthly payment savings, when the new payment is lower. If the new payment is higher, there is no break-even from payment savings alone.' }
+    ]
   },
   'rent-vs-buy-calculator': {
     how: 'The page compares five years of rent with the principal and interest on a purchase, plus a sale cost you can read on the form. Rent can grow at the rate you enter. The buy side uses the home price, down payment, and mortgage rate on the form. Any investment return you enter is applied only to the case the form labels.',
     example: 'If rent is $2,200 a month and does not change, five years of rent is $132,000 before moving costs. The buy side depends on the price, the down payment, and the rate you type. The verdict is the difference between those two paths over the years on the form, not a lifetime forecast.',
-    leaves: 'Repairs, property tax, insurance, and homeowners association fees are left out unless a field on the form asks for them. It is not a full cost of owning, and it is not tax advice on the mortgage-interest deduction.'
+    leaves: 'Repairs, property tax, insurance, and homeowners association fees are left out unless a field on the form asks for them. It is not a full cost of owning, and it is not tax advice on the mortgage-interest deduction.',
+    faq: [
+      { q: 'Is it better to rent or buy a home?', a: 'It depends on rent, the mortgage payment, how long you stay, and what you do with the down payment you would otherwise invest. This page compares five years of those cash paths from the numbers you enter. It does not decide the right choice for every city.' },
+      { q: 'Does this rent vs buy calculator include property tax?', a: 'Only if you add tax, insurance, or repairs in the fields the form provides. The default comparison is rent versus principal, interest, and a sale cost. It is not a full PITI budget.' },
+      { q: 'Can I use this for the US and Canada?', a: 'Yes for a cash comparison. It does not run the Canadian mortgage stress test, land transfer tax, or US mortgage-interest deduction rules by itself.' }
+    ]
   },
   'home-affordability-calculator': {
     how: 'The payment the form allows is the housing share you set, times gross monthly income, minus the monthly debts you enter. That payment is turned back into a loan amount with the standard mortgage formula at the rate and term you enter. Adding the down payment gives a purchase price.',
     example: 'A household that can put $2,200 a month toward principal and interest, at 6.2% for 30 years, supports a loan near $360,000. With $90,000 down, the price is near $450,000. Change the rate or the term and both numbers move.',
-    leaves: 'This is not a lender pre-approval. It is not the Canadian mortgage stress test. Taxes, insurance, and mortgage insurance are outside the payment unless you have already reduced the housing budget to leave room for them.'
+    leaves: 'This is not a lender pre-approval. It is not the Canadian mortgage stress test. Taxes, insurance, and mortgage insurance are outside the payment unless you have already reduced the housing budget to leave room for them.',
+    faq: [
+      { q: 'How much house can I afford?', a: 'This home affordability calculator turns income, debts, rate, term, and down payment into an estimated purchase price. It is a planning estimate, not a lender pre-approval.' },
+      { q: 'Does this house affordability calculator include taxes and insurance?', a: 'Not inside the payment unless you have already left room for them in the housing share you set. The tool focuses on principal and interest capacity.' },
+      { q: 'Is this the Canadian mortgage stress test?', a: 'No. Use a lender or broker for the federal qualifying rate. This page is a US-style income-and-debt estimate.' }
+    ]
   },
   'heloc-calculator': {
     how: 'During the draw years the payment is interest only: the drawn balance times the annual rate divided by 12. During the repayment years the same balance is amortized with the standard monthly payment over the repayment term you enter. Total interest adds the interest-only months to the interest inside the repayment payments.',
@@ -56,12 +82,22 @@ module.exports = {
   'airbnb-calculator': {
     how: 'Gross booking revenue is the nightly rate times occupied nights. Occupied nights are the occupancy percent you enter times 365. Platform fees, the mortgage payment, and the operating costs you enter are subtracted. Net monthly cash is that annual result divided by 12. Margin is net divided by gross.',
     example: 'A $200 night at 60% occupancy is 219 occupied nights and $43,800 of gross bookings before fees. Subtract the platform percent, mortgage, and operating bills you type to reach the cash left.',
-    leaves: 'It is not a forecast of bookings. Seasonality, cleaning, local lodging tax, and empty months appear only when you put them in the occupancy or cost fields.'
+    leaves: 'It is not a forecast of bookings. Seasonality, cleaning, local lodging tax, and empty months appear only when you put them in the occupancy or cost fields.',
+    faq: [
+      { q: 'How do I calculate Airbnb income?', a: 'Multiply the nightly rate by occupied nights. Occupied nights are occupancy percent times 365. Subtract platform fees, the mortgage, and operating costs. This page does that from the numbers you type.' },
+      { q: 'What occupancy rate should I use?', a: 'Use a rate you believe for that market and season, not a best-case month. Empty weeks lower cash flow quickly. The tool does not forecast bookings.' },
+      { q: 'Does this include cleaning fees and lodging tax?', a: 'Only if you put them in the operating cost or fee fields. They are not added automatically.' }
+    ]
   },
   'compound-interest-calculator': {
     how: 'This tool compounds a lump sum once a year. Future value is principal times (1 + rate)^years. There is no monthly contribution on this page. The rate is the number you type. It is not a market return.',
     example: '$10,000 at 7% compounded once a year for 20 years grows to $38,696.84. The gain is $28,696.84. That is 3.87 times the starting amount. A monthly contribution belongs on the monthly investment page, not this one.',
-    leaves: 'Fees, taxes, and a varying market return are not applied. Inflation is a separate calculator. The growth is not a forecast that a savings account or a stock index will earn 7%.'
+    leaves: 'Fees, taxes, and a varying market return are not applied. Inflation is a separate calculator. The growth is not a forecast that a savings account or a stock index will earn 7%.',
+    faq: [
+      { q: 'How do I use a free compound interest calculator?', a: 'Enter the starting amount, annual rate, and years. This page compounds once a year. For monthly deposits, use the investment calculator.' },
+      { q: 'What is $10,000 at 7% for 20 years?', a: 'With annual compounding, $10,000 grows to $38,696.84. That is not a guarantee of any investment return.' },
+      { q: 'Is this an investment calculator?', a: 'It is a compound interest growth tool for a lump sum. The monthly investment calculator covers recurring contributions.' }
+    ]
   },
   'cagr-calculator': {
     how: 'Compound annual growth rate is the constant yearly rate that connects a starting value to an ending value. CAGR = (ending / starting)^(1 / years) − 1. It smooths a bumpy path into one annual rate. It does not show the path between the two dates.',
@@ -106,12 +142,22 @@ module.exports = {
   'fire-calculator': {
     how: 'The target portfolio is annual spending divided by the withdrawal rate. At 4%, the target is spending times 25. Each year the current savings grow by the growth rate you enter, and then the annual savings amount is added. The page counts years until the balance reaches the target, and it stops at 60 years.',
     example: 'Spending of $60,000 a year at a 4% withdrawal rate sets a target of $1,500,000. If savings are already at that target, the years to get there are zero. If they are not, the years depend on the starting balance, the yearly contribution, and the growth rate, which defaults to 7% when that field is empty.',
-    leaves: 'A 4% withdrawal is a planning target, not a guarantee that the portfolio survives. Social Security, CPP, a pension, and taxes are not subtracted from the spending figure unless you have already done that yourself.'
+    leaves: 'A 4% withdrawal is a planning target, not a guarantee that the portfolio survives. Social Security, CPP, a pension, and taxes are not subtracted from the spending figure unless you have already done that yourself.',
+    faq: [
+      { q: 'What is a FIRE calculator?', a: 'It estimates years until savings cover annual spending at a withdrawal rate such as 4%. This page grows savings each year and stops when the FIRE number is reached, or at 60 years.' },
+      { q: 'Does this include a Coast FIRE calculator?', a: 'Not as a separate Coast FIRE mode. You can treat the FIRE number as a target and stop new contributions mentally once invested assets would grow to that target by retirement age. It is not a historical Monte Carlo like FIRECalc.' },
+      { q: 'Is this a retirement calculator guarantee?', a: 'No. The 4% rule is a planning target. Markets, taxes, and pensions are not simulated here.' }
+    ]
   },
   '401k-calculator': {
     how: 'The employee deferral is the percent of salary you enter, capped at the 2026 employee limit used in this tool, $24,500. The employer match is the match percent of salary, and it cannot exceed the employee deferral. Each year the balance grows by that combined contribution at the annual rate you enter. Catch-up contributions for older workers are not added on top of the cap.',
     example: 'A $100,000 salary with a 10% deferral is $10,000, which is under the $24,500 cap. A match of 4% of pay is $4,000, and because that is less than the deferral, the full $4,000 is added. The yearly addition is $14,000 before growth. A match percent that would exceed the deferral is cut back to the deferral.',
-    leaves: 'This is a United States 401(k). It is not an RRSP, a TFSA, or a Canadian pension adjustment. The $24,500 figure is the employee elective deferral limit used here for 2026, not a personal IRS determination, and it does not include a catch-up amount.'
+    leaves: 'This is a United States 401(k). It is not an RRSP, a TFSA, or a Canadian pension adjustment. The $24,500 figure is the employee elective deferral limit used here for 2026, not a personal IRS determination, and it does not include a catch-up amount.',
+    faq: [
+      { q: 'How does this free 401k calculator work?', a: 'It caps the employee deferral at the 2026 limit used in the tool ($24,500), adds an employer match that cannot exceed the deferral, then grows the balance at the rate you enter.' },
+      { q: 'Is this also a retirement calculator?', a: 'It projects 401(k) growth from salary, deferral, match, and return. For a spending-based FIRE number, use the FIRE calculator.' },
+      { q: 'Does this calculate RRSP or TFSA growth?', a: 'No. It is a United States 401(k) tool only.' }
+    ]
   },
   'rmd-calculator': {
     how: 'The required distribution is the account balance divided by the IRS Uniform Lifetime factor for the age you enter. This tool uses the published factors for ages 72 through 120. Age 73 uses 26.5. The page does not use the Joint Life table.',
@@ -131,7 +177,12 @@ module.exports = {
   'paycheck-calculator': {
     how: 'Annual wages are the gross pay per period times the number of periods. Social Security is 6.2% of wages up to the 2026 wage base used here, $184,500. Medicare is 1.45% of all wages. Additional Medicare is 0.9% of wages above $200,000. Those three are calculated. Federal income tax and state or provincial income tax are the percents you type, applied to the period’s gross pay. Net pay is gross minus those amounts. A 401(k) deferral does not reduce these payroll taxes on this page.',
     example: 'Gross pay of $3,500, 26 times a year, is $91,000 a year. That is under the Social Security wage base and under the additional Medicare threshold. FICA on one paycheck is $267.75. At 12.5% federal and 4.5% state, those income-tax amounts are $437.50 and $157.50. Net pay is $2,637.25.',
-    leaves: 'The federal and state percents are not tax brackets. A California, Texas, or New York paycheck still needs you to type that state’s rate. Texas has no wage income tax, so the state field would be 0 there. Pre-tax health insurance, local tax, and the federal withholding tables are not applied. This is not Canadian payroll, CPP, or EI.'
+    leaves: 'The federal and state percents are not tax brackets. A California, Texas, or New York paycheck still needs you to type that state’s rate. Texas has no wage income tax, so the state field would be 0 there. Pre-tax health insurance, local tax, and the federal withholding tables are not applied. This is not Canadian payroll, CPP, or EI.',
+    faq: [
+      { q: 'How is take-home pay calculated?', a: 'Start with gross pay. Subtract calculated Social Security and Medicare, then the federal and state percents you enter. What remains is net pay for that period.' },
+      { q: 'Does this paycheck calculator use California or Texas tax brackets?', a: 'No. You type the state percent. Texas wage income tax is 0%. California and New York need a percent you choose. FICA still uses the 2026 rates built into the tool.' },
+      { q: 'Is this a Canadian paycheck calculator?', a: 'No. It is a US paycheck estimate. It does not calculate CPP, EI, or provincial tax tables.' }
+    ]
   },
   'capital-gains-calculator': {
     how: 'The gain is the sale proceeds minus the purchase cost, and it cannot go below zero on this page. Tax is the gain times the rate you enter. The field starts at 15%. Net profit is the gain minus that tax. The rate is not chosen from US brackets or from Canada’s inclusion rate.',
@@ -171,7 +222,12 @@ module.exports = {
   'auto-loan-calculator': {
     how: 'The monthly payment uses the standard amortizing formula. The amount is the number you enter. The rate is divided by 12. The term is the number of months on the form. Total interest is the payment times the number of months, minus the amount borrowed.',
     example: 'A $30,000 loan at 7% for 60 months has a fixed monthly principal-and-interest payment. Sales tax is not added on top. If the amount you typed already includes tax and fees, those costs are inside the payment. If it does not, they are missing.',
-    leaves: 'Tax, title, and dealer fees are not added unless they are already in the amount. A down payment should be subtracted before you type the amount, or entered in the down-payment field when the form has one.'
+    leaves: 'Tax, title, and dealer fees are not added unless they are already in the amount. A down payment should be subtracted before you type the amount, or entered in the down-payment field when the form has one.',
+    faq: [
+      { q: 'How do I estimate a car payment with an auto loan calculator?', a: 'Enter the financed amount, APR, and term in months. The page returns principal and interest. Tax and title are included only if already in the amount.' },
+      { q: 'Is this a car loan calculator and car payment calculator?', a: 'Yes. It uses the same amortizing formula for auto loans. Lease vs buy is a separate page.' },
+      { q: 'Does the car payment include insurance?', a: 'No. Insurance and registration are outside this payment unless you added them to the loan amount yourself.' }
+    ]
   },
   'auto-refinance-calculator': {
     how: 'The current payment and the refinanced payment are two amortizing loans: the remaining balance at the old rate and remaining term, and the same balance at the new rate and new term. Monthly savings are the difference. It is not an offer from a lender.',
@@ -183,10 +239,25 @@ module.exports = {
     example: 'A higher residual lowers the lease payment and leaves you without the car at the end unless you buy it for that residual. The loan payment buys the car and continues until the term ends. The comparison is those two sets of inputs, not a dealer’s worksheet.',
     leaves: 'Disposition fees, excess miles, and wear charges are not estimated. Sales tax is included only in the fields that ask for it.'
   },
+  'loan-calculator': {
+    how: 'The payment is the standard monthly amortization of the amount, rate, and term you enter. Interest is the payment times the number of months, minus the amount borrowed. This is the same amortizing loan math used for many personal loans.',
+    example: 'Borrowing $10,000 at 12% for 36 months produces a fixed payment that covers interest and principal. The total of the 36 payments is more than $10,000 by the interest. A 0% rate makes the payment the amount divided by the months.',
+    leaves: 'A late fee, a variable rate, and credit insurance are not added. For a home mortgage use the mortgage calculator. For a car loan use the auto loan calculator.',
+    faq: [
+      { q: 'What does this free loan calculator show?', a: 'Monthly payment and total interest from the amount, rate, and term you enter.' },
+      { q: 'Is this also an amortization calculator?', a: 'Yes for a fixed amortizing loan payment. It does not print a full month-by-month schedule table on this page.' },
+      { q: 'Should I use mortgage calculator or loan calculator?', a: 'Use the mortgage calculator for a home loan with US monthly compounding. Use this loan calculator for a general or personal loan payment. Use the auto loan calculator for a car payment.' }
+    ]
+  },
   'personal-loan-calculator': {
     how: 'The payment is the standard monthly amortization of the amount, rate, and term you enter. Interest is the payment times the number of months, minus the amount borrowed. An origination fee is part of the cost only when the form asks for it or you have added it to the amount.',
     example: 'Borrowing $10,000 at 12% for 36 months produces a fixed payment that covers interest and principal. The total of the 36 payments is more than $10,000 by the interest. A 0% rate makes the payment the amount divided by the months.',
-    leaves: 'A late fee, a variable rate, and credit insurance are not added. The APR a lender advertises may already include a fee that this payment ignores unless you enter it.'
+    leaves: 'A late fee, a variable rate, and credit insurance are not added. The APR a lender advertises may already include a fee that this payment ignores unless you enter it.',
+    faq: [
+      { q: 'What does this personal loan calculator show?', a: 'Monthly payment and total interest for a personal loan from the amount, rate, and term you enter.' },
+      { q: 'Is this the same as a loan payment calculator?', a: 'Yes for fixed personal loans. The general loan calculator page uses the same payment math. For a home loan use the mortgage calculator. For a vehicle use the auto loan calculator.' },
+      { q: 'Does the personal loan calculator include origination fees?', a: 'Only if you add the fee to the amount or the form asks for it. Advertised APR may already include fees this payment ignores.' }
+    ]
   },
   'student-loan-calculator': {
     how: 'The payment amortizes the balance at the rate and term you enter, compounded monthly. Interest over the term is the sum of the payments minus the starting balance. Extra payments, when the form has that field, shorten the term the same way an extra mortgage payment does.',

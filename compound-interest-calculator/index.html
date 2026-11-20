@@ -3,46 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compound Interest Calculator | aFinanceCalculator</title>
-    <meta name="description" content="Growth compounded once a year at the rate you enter. It is not a market forecast.">
+    <title>Compound Interest Calculator — Free Growth Tool | aFinanceCalculator</title>
+    <meta name="description" content="Free compound interest calculator. Growth is compounded once a year at the rate you enter. It is not a market forecast or investment advice.">
+    <meta name="keywords" content="compound interest calculator, interest calculator, investment calculator, cumulative interest calculator">
     <link rel="canonical" href="https://afinancecalculator.com/compound-interest-calculator/">
     
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#171719">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="theme-color" content="#07080a">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://afinancecalculator.com/compound-interest-calculator/">
+    <meta property="og:title" content="Compound Interest Calculator — Free Growth Tool">
+    <meta property="og:description" content="Free compound interest calculator. Growth is compounded once a year at the rate you enter. It is not a market forecast or investment advice.">
+    <meta property="og:site_name" content="aFinanceCalculator">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Compound Interest Calculator — Free Growth Tool | aFinanceCalculator">
+    <meta name="twitter:description" content="Free compound interest calculator. Growth is compounded once a year at the rate you enter. It is not a market forecast or investment advice.">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://afinancecalculator.com/compound-interest-calculator/#webpage","url":"https://afinancecalculator.com/compound-interest-calculator/","name":"Compound Interest Calculator — Free Growth Tool | aFinanceCalculator","description":"Free compound interest calculator. Growth is compounded once a year at the rate you enter. It is not a market forecast or investment advice.","isPartOf":{"@id":"https://afinancecalculator.com/#website"},"about":{"@id":"https://afinancecalculator.com/compound-interest-calculator/#app"}},{"@type":"WebApplication","@id":"https://afinancecalculator.com/compound-interest-calculator/#app","name":"Compound Interest Calculator — Free Growth Tool","url":"https://afinancecalculator.com/compound-interest-calculator/","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free compound interest calculator. Growth is compounded once a year at the rate you enter. It is not a market forecast or investment advice."},{"@type":"BreadcrumbList","@id":"https://afinancecalculator.com/compound-interest-calculator/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://afinancecalculator.com/"},{"@type":"ListItem","position":2,"name":"Compound interest calculator","item":"https://afinancecalculator.com/compound-interest-calculator/"}]},{"@type":"FAQPage","@id":"https://afinancecalculator.com/compound-interest-calculator/#faq","mainEntity":[{"@type":"Question","name":"How do I use a free compound interest calculator?","acceptedAnswer":{"@type":"Answer","text":"Enter the starting amount, annual rate, and years. This page compounds once a year. For monthly deposits, use the investment calculator."}},{"@type":"Question","name":"What is $10,000 at 7% for 20 years?","acceptedAnswer":{"@type":"Answer","text":"With annual compounding, $10,000 grows to $38,696.84. That is not a guarantee of any investment return."}},{"@type":"Question","name":"Is this an investment calculator?","acceptedAnswer":{"@type":"Answer","text":"It is a compound interest growth tool for a lump sum. The monthly investment calculator covers recurring contributions."}}]}]}</script>
     <style>
-        body { margin: 0; background: #171719; color: #fff; font-family: "Public Sans", system-ui, sans-serif; }
-        header { padding: 20px 20px 12px; max-width: 980px; }
-        a { color: #fff; }
-        .brand { color: #8a8c92; font-size: 13px; text-decoration: none; }
-        h1 { font-size: 26px; font-weight: 600; line-height: 1.2; margin: 10px 0 8px; }
-        p { margin: 0 0 8px; color: #c8c8cc; font-size: 15px; line-height: 1.45; max-width: 68ch; }
-        .meta { color: #8a8c92; font-size: 13px; }
-        .example { color: #fff; font-variant-numeric: tabular-nums; }
-        nav { font-size: 14px; }
-        .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
-        h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
-        iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 36px 16px 64px; max-width: 720px; }
-        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
-        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
+        :root { color-scheme: dark; }
+        body { margin: 0; background: #07080a; color: #fff; font-family: "Plus Jakarta Sans", "Public Sans", system-ui, sans-serif; }
+        a { color: #67e8f9; }
+        .wrap { width: min(760px, calc(100% - 32px)); margin: 0 auto; }
+        .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 16px 0 8px; }
+        .brand { color: #a1a1aa; font-size: 14px; text-decoration: none; }
+        h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; margin: 8px 0 12px; }
+        .lede { font-size: 18px; line-height: 1.55; color: #d4d4d8; margin: 0 0 16px; max-width: 62ch; }
+        .meta { color: #a1a1aa; font-size: 13px; margin: 0 0 16px; }
+        .callout { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 18px; margin: 0 0 24px; }
+        .callout .label { color: #67e8f9; font-size: 12px; font-weight: 700; margin: 0 0 6px; text-transform: none; letter-spacing: 0; }
+        .callout p { margin: 0; color: #fff; font-size: 16px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+        article { padding: 8px 0 28px; }
+        article h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; }
+        article p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; margin: 0 0 10px; }
+        .tool { margin: 8px 0 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; }
+        .tool h2 { font-size: 22px; margin: 0 0 10px; }
+        iframe { display: block; width: 100%; height: min(85vh, 900px); min-height: 720px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: #07080a; }
+        details { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 14px 16px; margin: 0 0 10px; }
+        summary { cursor: pointer; font-weight: 700; color: #fff; }
+        details p { margin: 10px 0 0; color: #d4d4d8; font-size: 15px; line-height: 1.55; }
+        .related { list-style: none; padding: 0; margin: 0 0 28px; }
+        .related li { margin: 0 0 8px; }
+        footer { padding: 24px 0 48px; color: #a1a1aa; font-size: 14px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 24px; }
+        footer a { color: #a1a1aa; }
     </style>
 </head>
 <body>
-    <header class="top">
+    <div class="wrap">
+      <header class="top">
+          <a class="brand" href="/">aFinanceCalculator</a>
+          <a class="brand" href="/#calculators">All calculators</a>
+      </header>
+      <article>
+        <p class="meta">United States and Canada · Free browser calculator · Numbers stay on this device</p>
         <h1>Compound interest calculator</h1>
-        <a class="brand" href="/">All calculators</a>
-    </header>
-    <iframe src="/index.html?engine=tab-compound&landing=1" title="Compound interest calculator"></iframe>
-    <section>
-        <p class="meta">United States and Canada.</p>
-        <h2>How this figure is calculated</h2>
-        <p>This tool compounds a lump sum once a year. Future value is principal times (1 + rate)^years. There is no monthly contribution on this page. The rate is the number you type. It is not a market return.</p>
-        <h2>Worked example</h2>
+        <p class="lede">Free compound interest calculator. Growth is compounded once a year at the rate you enter. It is not a market forecast or investment advice.</p>
+        <div class="callout">
+        <p class="label">Worked example</p>
         <p>$10,000 at 7% compounded once a year for 20 years grows to $38,696.84. The gain is $28,696.84. That is 3.87 times the starting amount. A monthly contribution belongs on the monthly investment page, not this one.</p>
-        <h2>What this page leaves out</h2>
-        <p>Fees, taxes, and a varying market return are not applied. Inflation is a separate calculator. The growth is not a forecast that a savings account or a stock index will earn 7%.</p>
-        <nav><a href="/cagr-calculator/">CAGR calculator</a> · <a href="/inflation-calculator/">Inflation calculator</a></nav>
-    </section>
+      </div>
+        <h2>How this figure is calculated</h2>
+      <p>This tool compounds a lump sum once a year. Future value is principal times (1 + rate)^years. There is no monthly contribution on this page. The rate is the number you type. It is not a market return.</p>
+      <h2>What this page leaves out</h2>
+      <p>Fees, taxes, and a varying market return are not applied. Inflation is a separate calculator. The growth is not a forecast that a savings account or a stock index will earn 7%.</p>
+        <h2>Questions</h2>
+        <details>
+        <summary>How do I use a free compound interest calculator?</summary>
+        <p>Enter the starting amount, annual rate, and years. This page compounds once a year. For monthly deposits, use the investment calculator.</p>
+      </details>
+      <details>
+        <summary>What is $10,000 at 7% for 20 years?</summary>
+        <p>With annual compounding, $10,000 grows to $38,696.84. That is not a guarantee of any investment return.</p>
+      </details>
+      <details>
+        <summary>Is this an investment calculator?</summary>
+        <p>It is a compound interest growth tool for a lump sum. The monthly investment calculator covers recurring contributions.</p>
+      </details>
+        <h2>Related calculators</h2>
+        <ul class="related">
+            <li><a href="/cagr-calculator/">CAGR calculator</a></li>
+            <li><a href="/inflation-calculator/">Inflation calculator</a></li>
+            <li><a href="/monthly-investment-calculator/">Investment calculator</a></li>
+        </ul>
+        <h2>People also search for</h2>
+        <p class="meta">compound interest calculator · interest calculator · investment calculator · cumulative interest calculator</p>
+      </article>
+      <section class="tool" id="calculator">
+        <h2>Use the calculator</h2>
+        <p class="meta">Adjust the inputs below. The result updates in this browser.</p>
+        <iframe src="/index.html?engine=tab-compound&landing=1" title="Compound interest calculator" loading="lazy"></iframe>
+      </section>
+      <footer>
+        <p><a href="/">Home</a> · <a href="/about.html">About</a> · <a href="/privacy.html">Privacy</a> · <a href="/contact.html">Contact</a></p>
+        <p>Educational math only. Not a lender quote, tax filing, or financial advice.</p>
+      </footer>
+    </div>
 </body>
 </html>

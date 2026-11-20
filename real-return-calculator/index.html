@@ -5,44 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real Return Calculator | aFinanceCalculator</title>
     <meta name="description" content="Uses the Fisher effect on the nominal return and inflation rate you enter.">
+    
     <link rel="canonical" href="https://afinancecalculator.com/real-return-calculator/">
     
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#171719">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="theme-color" content="#07080a">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://afinancecalculator.com/real-return-calculator/">
+    <meta property="og:title" content="Real Return Calculator">
+    <meta property="og:description" content="Uses the Fisher effect on the nominal return and inflation rate you enter.">
+    <meta property="og:site_name" content="aFinanceCalculator">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Real Return Calculator | aFinanceCalculator">
+    <meta name="twitter:description" content="Uses the Fisher effect on the nominal return and inflation rate you enter.">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://afinancecalculator.com/real-return-calculator/#webpage","url":"https://afinancecalculator.com/real-return-calculator/","name":"Real Return Calculator | aFinanceCalculator","description":"Uses the Fisher effect on the nominal return and inflation rate you enter.","isPartOf":{"@id":"https://afinancecalculator.com/#website"},"about":{"@id":"https://afinancecalculator.com/real-return-calculator/#app"}},{"@type":"WebApplication","@id":"https://afinancecalculator.com/real-return-calculator/#app","name":"Real Return Calculator","url":"https://afinancecalculator.com/real-return-calculator/","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Uses the Fisher effect on the nominal return and inflation rate you enter."},{"@type":"BreadcrumbList","@id":"https://afinancecalculator.com/real-return-calculator/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://afinancecalculator.com/"},{"@type":"ListItem","position":2,"name":"Real return calculator","item":"https://afinancecalculator.com/real-return-calculator/"}]},{"@type":"FAQPage","@id":"https://afinancecalculator.com/real-return-calculator/#faq","mainEntity":[{"@type":"Question","name":"How does the Real return calculator work?","acceptedAnswer":{"@type":"Answer","text":"The Fisher equation used here is 1 + real = (1 + nominal) / (1 + inflation). Real return is that result minus 1. A rough subtraction of inflation from the nominal rate is close when both rates are small, and it is not the figure this page uses."}},{"@type":"Question","name":"What is a worked example for the Real return calculator?","acceptedAnswer":{"@type":"Answer","text":"A 7% nominal return with 3% inflation is a real return of 3.88%, because 1.07 / 1.03 − 1 = 0.0388. Subtracting 3 from 7 would have said 4%, which is a bit high."}},{"@type":"Question","name":"What does the Real return calculator leave out?","acceptedAnswer":{"@type":"Answer","text":"Taxes are not removed. The nominal return and the inflation rate are both numbers you enter, not forecasts."}}]}]}</script>
     <style>
-        body { margin: 0; background: #171719; color: #fff; font-family: "Public Sans", system-ui, sans-serif; }
-        header { padding: 20px 20px 12px; max-width: 980px; }
-        a { color: #fff; }
-        .brand { color: #8a8c92; font-size: 13px; text-decoration: none; }
-        h1 { font-size: 26px; font-weight: 600; line-height: 1.2; margin: 10px 0 8px; }
-        p { margin: 0 0 8px; color: #c8c8cc; font-size: 15px; line-height: 1.45; max-width: 68ch; }
-        .meta { color: #8a8c92; font-size: 13px; }
-        .example { color: #fff; font-variant-numeric: tabular-nums; }
-        nav { font-size: 14px; }
-        .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
-        h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
-        iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 36px 16px 64px; max-width: 720px; }
-        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
-        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
+        :root { color-scheme: dark; }
+        body { margin: 0; background: #07080a; color: #fff; font-family: "Plus Jakarta Sans", "Public Sans", system-ui, sans-serif; }
+        a { color: #67e8f9; }
+        .wrap { width: min(760px, calc(100% - 32px)); margin: 0 auto; }
+        .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 16px 0 8px; }
+        .brand { color: #a1a1aa; font-size: 14px; text-decoration: none; }
+        h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; margin: 8px 0 12px; }
+        .lede { font-size: 18px; line-height: 1.55; color: #d4d4d8; margin: 0 0 16px; max-width: 62ch; }
+        .meta { color: #a1a1aa; font-size: 13px; margin: 0 0 16px; }
+        .callout { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 18px; margin: 0 0 24px; }
+        .callout .label { color: #67e8f9; font-size: 12px; font-weight: 700; margin: 0 0 6px; text-transform: none; letter-spacing: 0; }
+        .callout p { margin: 0; color: #fff; font-size: 16px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+        article { padding: 8px 0 28px; }
+        article h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; }
+        article p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; margin: 0 0 10px; }
+        .tool { margin: 8px 0 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; }
+        .tool h2 { font-size: 22px; margin: 0 0 10px; }
+        iframe { display: block; width: 100%; height: min(85vh, 900px); min-height: 720px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: #07080a; }
+        details { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 14px 16px; margin: 0 0 10px; }
+        summary { cursor: pointer; font-weight: 700; color: #fff; }
+        details p { margin: 10px 0 0; color: #d4d4d8; font-size: 15px; line-height: 1.55; }
+        .related { list-style: none; padding: 0; margin: 0 0 28px; }
+        .related li { margin: 0 0 8px; }
+        footer { padding: 24px 0 48px; color: #a1a1aa; font-size: 14px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 24px; }
+        footer a { color: #a1a1aa; }
     </style>
 </head>
 <body>
-    <header class="top">
+    <div class="wrap">
+      <header class="top">
+          <a class="brand" href="/">aFinanceCalculator</a>
+          <a class="brand" href="/#calculators">All calculators</a>
+      </header>
+      <article>
+        <p class="meta">United States and Canada · Free browser calculator · Numbers stay on this device</p>
         <h1>Real return calculator</h1>
-        <a class="brand" href="/">All calculators</a>
-    </header>
-    <iframe src="/index.html?engine=tab-realreturns&landing=1" title="Real return calculator"></iframe>
-    <section>
-        <p class="meta">United States and Canada.</p>
-        <h2>How this figure is calculated</h2>
-        <p>The Fisher equation used here is 1 + real = (1 + nominal) / (1 + inflation). Real return is that result minus 1. A rough subtraction of inflation from the nominal rate is close when both rates are small, and it is not the figure this page uses.</p>
-        <h2>Worked example</h2>
+        <p class="lede">Uses the Fisher effect on the nominal return and inflation rate you enter.</p>
+        <div class="callout">
+        <p class="label">Worked example</p>
         <p>A 7% nominal return with 3% inflation is a real return of 3.88%, because 1.07 / 1.03 − 1 = 0.0388. Subtracting 3 from 7 would have said 4%, which is a bit high.</p>
-        <h2>What this page leaves out</h2>
+      </div>
+        <h2>How this figure is calculated</h2>
+      <p>The Fisher equation used here is 1 + real = (1 + nominal) / (1 + inflation). Real return is that result minus 1. A rough subtraction of inflation from the nominal rate is close when both rates are small, and it is not the figure this page uses.</p>
+      <h2>What this page leaves out</h2>
+      <p>Taxes are not removed. The nominal return and the inflation rate are both numbers you enter, not forecasts.</p>
+        <h2>Questions</h2>
+        <details>
+        <summary>How does the Real return calculator work?</summary>
+        <p>The Fisher equation used here is 1 + real = (1 + nominal) / (1 + inflation). Real return is that result minus 1. A rough subtraction of inflation from the nominal rate is close when both rates are small, and it is not the figure this page uses.</p>
+      </details>
+      <details>
+        <summary>What is a worked example for the Real return calculator?</summary>
+        <p>A 7% nominal return with 3% inflation is a real return of 3.88%, because 1.07 / 1.03 − 1 = 0.0388. Subtracting 3 from 7 would have said 4%, which is a bit high.</p>
+      </details>
+      <details>
+        <summary>What does the Real return calculator leave out?</summary>
         <p>Taxes are not removed. The nominal return and the inflation rate are both numbers you enter, not forecasts.</p>
-        <nav><a href="/inflation-calculator/">Inflation calculator</a> · <a href="/cagr-calculator/">CAGR calculator</a></nav>
-    </section>
+      </details>
+        <h2>Related calculators</h2>
+        <ul class="related">
+            <li><a href="/inflation-calculator/">Inflation calculator</a></li>
+            <li><a href="/cagr-calculator/">CAGR calculator</a></li>
+        </ul>
+        
+      </article>
+      <section class="tool" id="calculator">
+        <h2>Use the calculator</h2>
+        <p class="meta">Adjust the inputs below. The result updates in this browser.</p>
+        <iframe src="/index.html?engine=tab-realreturns&landing=1" title="Real return calculator" loading="lazy"></iframe>
+      </section>
+      <footer>
+        <p><a href="/">Home</a> · <a href="/about.html">About</a> · <a href="/privacy.html">Privacy</a> · <a href="/contact.html">Contact</a></p>
+        <p>Educational math only. Not a lender quote, tax filing, or financial advice.</p>
+      </footer>
+    </div>
 </body>
 </html>

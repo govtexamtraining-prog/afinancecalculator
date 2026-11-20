@@ -3,46 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Affordability Calculator | aFinanceCalculator</title>
-    <meta name="description" content="Estimates a purchase price from income, debts, and the housing share you set. It is not a Canadian mortgage stress test and it is not a lender pre-approval.">
+    <title>How Much House Can I Afford Calculator | aFinanceCalculator</title>
+    <meta name="description" content="Home affordability calculator estimating purchase price from income, debts, and the housing share you set. Not a Canadian stress test or lender pre-approval.">
+    <meta name="keywords" content="how much house can I afford, home affordability calculator, house affordability calculator">
     <link rel="canonical" href="https://afinancecalculator.com/home-affordability-calculator/">
     
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#171719">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="theme-color" content="#07080a">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://afinancecalculator.com/home-affordability-calculator/">
+    <meta property="og:title" content="How Much House Can I Afford Calculator">
+    <meta property="og:description" content="Home affordability calculator estimating purchase price from income, debts, and the housing share you set. Not a Canadian stress test or lender pre-approval.">
+    <meta property="og:site_name" content="aFinanceCalculator">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="How Much House Can I Afford Calculator | aFinanceCalculator">
+    <meta name="twitter:description" content="Home affordability calculator estimating purchase price from income, debts, and the housing share you set. Not a Canadian stress test or lender pre-approval.">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://afinancecalculator.com/home-affordability-calculator/#webpage","url":"https://afinancecalculator.com/home-affordability-calculator/","name":"How Much House Can I Afford Calculator | aFinanceCalculator","description":"Home affordability calculator estimating purchase price from income, debts, and the housing share you set. Not a Canadian stress test or lender pre-approval.","isPartOf":{"@id":"https://afinancecalculator.com/#website"},"about":{"@id":"https://afinancecalculator.com/home-affordability-calculator/#app"}},{"@type":"WebApplication","@id":"https://afinancecalculator.com/home-affordability-calculator/#app","name":"How Much House Can I Afford Calculator","url":"https://afinancecalculator.com/home-affordability-calculator/","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Home affordability calculator estimating purchase price from income, debts, and the housing share you set. Not a Canadian stress test or lender pre-approval."},{"@type":"BreadcrumbList","@id":"https://afinancecalculator.com/home-affordability-calculator/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://afinancecalculator.com/"},{"@type":"ListItem","position":2,"name":"How much house can I afford calculator","item":"https://afinancecalculator.com/home-affordability-calculator/"}]},{"@type":"FAQPage","@id":"https://afinancecalculator.com/home-affordability-calculator/#faq","mainEntity":[{"@type":"Question","name":"How much house can I afford?","acceptedAnswer":{"@type":"Answer","text":"This home affordability calculator turns income, debts, rate, term, and down payment into an estimated purchase price. It is a planning estimate, not a lender pre-approval."}},{"@type":"Question","name":"Does this house affordability calculator include taxes and insurance?","acceptedAnswer":{"@type":"Answer","text":"Not inside the payment unless you have already left room for them in the housing share you set. The tool focuses on principal and interest capacity."}},{"@type":"Question","name":"Is this the Canadian mortgage stress test?","acceptedAnswer":{"@type":"Answer","text":"No. Use a lender or broker for the federal qualifying rate. This page is a US-style income-and-debt estimate."}}]}]}</script>
     <style>
-        body { margin: 0; background: #171719; color: #fff; font-family: "Public Sans", system-ui, sans-serif; }
-        header { padding: 20px 20px 12px; max-width: 980px; }
-        a { color: #fff; }
-        .brand { color: #8a8c92; font-size: 13px; text-decoration: none; }
-        h1 { font-size: 26px; font-weight: 600; line-height: 1.2; margin: 10px 0 8px; }
-        p { margin: 0 0 8px; color: #c8c8cc; font-size: 15px; line-height: 1.45; max-width: 68ch; }
-        .meta { color: #8a8c92; font-size: 13px; }
-        .example { color: #fff; font-variant-numeric: tabular-nums; }
-        nav { font-size: 14px; }
-        .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
-        h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
-        iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 36px 16px 64px; max-width: 720px; }
-        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
-        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
+        :root { color-scheme: dark; }
+        body { margin: 0; background: #07080a; color: #fff; font-family: "Plus Jakarta Sans", "Public Sans", system-ui, sans-serif; }
+        a { color: #67e8f9; }
+        .wrap { width: min(760px, calc(100% - 32px)); margin: 0 auto; }
+        .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 16px 0 8px; }
+        .brand { color: #a1a1aa; font-size: 14px; text-decoration: none; }
+        h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; margin: 8px 0 12px; }
+        .lede { font-size: 18px; line-height: 1.55; color: #d4d4d8; margin: 0 0 16px; max-width: 62ch; }
+        .meta { color: #a1a1aa; font-size: 13px; margin: 0 0 16px; }
+        .callout { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 18px; margin: 0 0 24px; }
+        .callout .label { color: #67e8f9; font-size: 12px; font-weight: 700; margin: 0 0 6px; text-transform: none; letter-spacing: 0; }
+        .callout p { margin: 0; color: #fff; font-size: 16px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+        article { padding: 8px 0 28px; }
+        article h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; }
+        article p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; margin: 0 0 10px; }
+        .tool { margin: 8px 0 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; }
+        .tool h2 { font-size: 22px; margin: 0 0 10px; }
+        iframe { display: block; width: 100%; height: min(85vh, 900px); min-height: 720px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: #07080a; }
+        details { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 14px 16px; margin: 0 0 10px; }
+        summary { cursor: pointer; font-weight: 700; color: #fff; }
+        details p { margin: 10px 0 0; color: #d4d4d8; font-size: 15px; line-height: 1.55; }
+        .related { list-style: none; padding: 0; margin: 0 0 28px; }
+        .related li { margin: 0 0 8px; }
+        footer { padding: 24px 0 48px; color: #a1a1aa; font-size: 14px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 24px; }
+        footer a { color: #a1a1aa; }
     </style>
 </head>
 <body>
-    <header class="top">
-        <h1>Home affordability calculator</h1>
-        <a class="brand" href="/">All calculators</a>
-    </header>
-    <iframe src="/index.html?engine=tab-affordability&landing=1" title="Home affordability calculator"></iframe>
-    <section>
-        <p class="meta">United States.</p>
-        <h2>How this figure is calculated</h2>
-        <p>The payment the form allows is the housing share you set, times gross monthly income, minus the monthly debts you enter. That payment is turned back into a loan amount with the standard mortgage formula at the rate and term you enter. Adding the down payment gives a purchase price.</p>
-        <h2>Worked example</h2>
+    <div class="wrap">
+      <header class="top">
+          <a class="brand" href="/">aFinanceCalculator</a>
+          <a class="brand" href="/#calculators">All calculators</a>
+      </header>
+      <article>
+        <p class="meta">United States · Free browser calculator · Numbers stay on this device</p>
+        <h1>How much house can I afford calculator</h1>
+        <p class="lede">Home affordability calculator estimating purchase price from income, debts, and the housing share you set. Not a Canadian stress test or lender pre-approval.</p>
+        <div class="callout">
+        <p class="label">Worked example</p>
         <p>A household that can put $2,200 a month toward principal and interest, at 6.2% for 30 years, supports a loan near $360,000. With $90,000 down, the price is near $450,000. Change the rate or the term and both numbers move.</p>
-        <h2>What this page leaves out</h2>
-        <p>This is not a lender pre-approval. It is not the Canadian mortgage stress test. Taxes, insurance, and mortgage insurance are outside the payment unless you have already reduced the housing budget to leave room for them.</p>
-        <nav><a href="/mortgage-calculator/">Mortgage payment calculator</a> · <a href="/closing-costs-calculator/">Closing cost calculator</a></nav>
-    </section>
+      </div>
+        <h2>How this figure is calculated</h2>
+      <p>The payment the form allows is the housing share you set, times gross monthly income, minus the monthly debts you enter. That payment is turned back into a loan amount with the standard mortgage formula at the rate and term you enter. Adding the down payment gives a purchase price.</p>
+      <h2>What this page leaves out</h2>
+      <p>This is not a lender pre-approval. It is not the Canadian mortgage stress test. Taxes, insurance, and mortgage insurance are outside the payment unless you have already reduced the housing budget to leave room for them.</p>
+        <h2>Questions</h2>
+        <details>
+        <summary>How much house can I afford?</summary>
+        <p>This home affordability calculator turns income, debts, rate, term, and down payment into an estimated purchase price. It is a planning estimate, not a lender pre-approval.</p>
+      </details>
+      <details>
+        <summary>Does this house affordability calculator include taxes and insurance?</summary>
+        <p>Not inside the payment unless you have already left room for them in the housing share you set. The tool focuses on principal and interest capacity.</p>
+      </details>
+      <details>
+        <summary>Is this the Canadian mortgage stress test?</summary>
+        <p>No. Use a lender or broker for the federal qualifying rate. This page is a US-style income-and-debt estimate.</p>
+      </details>
+        <h2>Related calculators</h2>
+        <ul class="related">
+            <li><a href="/mortgage-calculator/">Mortgage calculator</a></li>
+            <li><a href="/closing-costs-calculator/">Closing cost calculator</a></li>
+        </ul>
+        <h2>People also search for</h2>
+        <p class="meta">how much house can I afford · home affordability calculator · house affordability calculator</p>
+      </article>
+      <section class="tool" id="calculator">
+        <h2>Use the calculator</h2>
+        <p class="meta">Adjust the inputs below. The result updates in this browser.</p>
+        <iframe src="/index.html?engine=tab-affordability&landing=1" title="How much house can I afford calculator" loading="lazy"></iframe>
+      </section>
+      <footer>
+        <p><a href="/">Home</a> · <a href="/about.html">About</a> · <a href="/privacy.html">Privacy</a> · <a href="/contact.html">Contact</a></p>
+        <p>Educational math only. Not a lender quote, tax filing, or financial advice.</p>
+      </footer>
+    </div>
 </body>
 </html>

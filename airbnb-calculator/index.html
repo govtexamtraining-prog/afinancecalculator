@@ -5,44 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Airbnb ROI Calculator | aFinanceCalculator</title>
     <meta name="description" content="Nightly rate times the occupancy you enter, minus the mortgage and operating costs you enter. It is not a forecast of bookings.">
+    
     <link rel="canonical" href="https://afinancecalculator.com/airbnb-calculator/">
     
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#171719">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="theme-color" content="#07080a">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://afinancecalculator.com/airbnb-calculator/">
+    <meta property="og:title" content="Airbnb ROI Calculator">
+    <meta property="og:description" content="Nightly rate times the occupancy you enter, minus the mortgage and operating costs you enter. It is not a forecast of bookings.">
+    <meta property="og:site_name" content="aFinanceCalculator">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Airbnb ROI Calculator | aFinanceCalculator">
+    <meta name="twitter:description" content="Nightly rate times the occupancy you enter, minus the mortgage and operating costs you enter. It is not a forecast of bookings.">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://afinancecalculator.com/airbnb-calculator/#webpage","url":"https://afinancecalculator.com/airbnb-calculator/","name":"Airbnb ROI Calculator | aFinanceCalculator","description":"Nightly rate times the occupancy you enter, minus the mortgage and operating costs you enter. It is not a forecast of bookings.","isPartOf":{"@id":"https://afinancecalculator.com/#website"},"about":{"@id":"https://afinancecalculator.com/airbnb-calculator/#app"}},{"@type":"WebApplication","@id":"https://afinancecalculator.com/airbnb-calculator/#app","name":"Airbnb ROI Calculator","url":"https://afinancecalculator.com/airbnb-calculator/","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Nightly rate times the occupancy you enter, minus the mortgage and operating costs you enter. It is not a forecast of bookings."},{"@type":"BreadcrumbList","@id":"https://afinancecalculator.com/airbnb-calculator/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://afinancecalculator.com/"},{"@type":"ListItem","position":2,"name":"Airbnb income calculator","item":"https://afinancecalculator.com/airbnb-calculator/"}]},{"@type":"FAQPage","@id":"https://afinancecalculator.com/airbnb-calculator/#faq","mainEntity":[{"@type":"Question","name":"How do I calculate Airbnb income?","acceptedAnswer":{"@type":"Answer","text":"Multiply the nightly rate by occupied nights. Occupied nights are occupancy percent times 365. Subtract platform fees, the mortgage, and operating costs. This page does that from the numbers you type."}},{"@type":"Question","name":"What occupancy rate should I use?","acceptedAnswer":{"@type":"Answer","text":"Use a rate you believe for that market and season, not a best-case month. Empty weeks lower cash flow quickly. The tool does not forecast bookings."}},{"@type":"Question","name":"Does this include cleaning fees and lodging tax?","acceptedAnswer":{"@type":"Answer","text":"Only if you put them in the operating cost or fee fields. They are not added automatically."}}]}]}</script>
     <style>
-        body { margin: 0; background: #171719; color: #fff; font-family: "Public Sans", system-ui, sans-serif; }
-        header { padding: 20px 20px 12px; max-width: 980px; }
-        a { color: #fff; }
-        .brand { color: #8a8c92; font-size: 13px; text-decoration: none; }
-        h1 { font-size: 26px; font-weight: 600; line-height: 1.2; margin: 10px 0 8px; }
-        p { margin: 0 0 8px; color: #c8c8cc; font-size: 15px; line-height: 1.45; max-width: 68ch; }
-        .meta { color: #8a8c92; font-size: 13px; }
-        .example { color: #fff; font-variant-numeric: tabular-nums; }
-        nav { font-size: 14px; }
-        .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
-        h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
-        iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 36px 16px 64px; max-width: 720px; }
-        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
-        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
+        :root { color-scheme: dark; }
+        body { margin: 0; background: #07080a; color: #fff; font-family: "Plus Jakarta Sans", "Public Sans", system-ui, sans-serif; }
+        a { color: #67e8f9; }
+        .wrap { width: min(760px, calc(100% - 32px)); margin: 0 auto; }
+        .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 16px 0 8px; }
+        .brand { color: #a1a1aa; font-size: 14px; text-decoration: none; }
+        h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; margin: 8px 0 12px; }
+        .lede { font-size: 18px; line-height: 1.55; color: #d4d4d8; margin: 0 0 16px; max-width: 62ch; }
+        .meta { color: #a1a1aa; font-size: 13px; margin: 0 0 16px; }
+        .callout { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 18px; margin: 0 0 24px; }
+        .callout .label { color: #67e8f9; font-size: 12px; font-weight: 700; margin: 0 0 6px; text-transform: none; letter-spacing: 0; }
+        .callout p { margin: 0; color: #fff; font-size: 16px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+        article { padding: 8px 0 28px; }
+        article h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; }
+        article p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; margin: 0 0 10px; }
+        .tool { margin: 8px 0 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; }
+        .tool h2 { font-size: 22px; margin: 0 0 10px; }
+        iframe { display: block; width: 100%; height: min(85vh, 900px); min-height: 720px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: #07080a; }
+        details { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 14px 16px; margin: 0 0 10px; }
+        summary { cursor: pointer; font-weight: 700; color: #fff; }
+        details p { margin: 10px 0 0; color: #d4d4d8; font-size: 15px; line-height: 1.55; }
+        .related { list-style: none; padding: 0; margin: 0 0 28px; }
+        .related li { margin: 0 0 8px; }
+        footer { padding: 24px 0 48px; color: #a1a1aa; font-size: 14px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 24px; }
+        footer a { color: #a1a1aa; }
     </style>
 </head>
 <body>
-    <header class="top">
+    <div class="wrap">
+      <header class="top">
+          <a class="brand" href="/">aFinanceCalculator</a>
+          <a class="brand" href="/#calculators">All calculators</a>
+      </header>
+      <article>
+        <p class="meta">United States and Canada · Free browser calculator · Numbers stay on this device</p>
         <h1>Airbnb income calculator</h1>
-        <a class="brand" href="/">All calculators</a>
-    </header>
-    <iframe src="/index.html?engine=tab-airbnb&landing=1" title="Airbnb income calculator"></iframe>
-    <section>
-        <p class="meta">United States and Canada.</p>
-        <h2>How this figure is calculated</h2>
-        <p>Gross booking revenue is the nightly rate times occupied nights. Occupied nights are the occupancy percent you enter times 365. Platform fees, the mortgage payment, and the operating costs you enter are subtracted. Net monthly cash is that annual result divided by 12. Margin is net divided by gross.</p>
-        <h2>Worked example</h2>
+        <p class="lede">Nightly rate times the occupancy you enter, minus the mortgage and operating costs you enter. It is not a forecast of bookings.</p>
+        <div class="callout">
+        <p class="label">Worked example</p>
         <p>A $200 night at 60% occupancy is 219 occupied nights and $43,800 of gross bookings before fees. Subtract the platform percent, mortgage, and operating bills you type to reach the cash left.</p>
-        <h2>What this page leaves out</h2>
-        <p>It is not a forecast of bookings. Seasonality, cleaning, local lodging tax, and empty months appear only when you put them in the occupancy or cost fields.</p>
-        <nav><a href="/cash-on-cash-calculator/">Cash on cash return calculator</a> · <a href="/cap-rate-calculator/">Cap rate calculator</a></nav>
-    </section>
+      </div>
+        <h2>How this figure is calculated</h2>
+      <p>Gross booking revenue is the nightly rate times occupied nights. Occupied nights are the occupancy percent you enter times 365. Platform fees, the mortgage payment, and the operating costs you enter are subtracted. Net monthly cash is that annual result divided by 12. Margin is net divided by gross.</p>
+      <h2>What this page leaves out</h2>
+      <p>It is not a forecast of bookings. Seasonality, cleaning, local lodging tax, and empty months appear only when you put them in the occupancy or cost fields.</p>
+        <h2>Questions</h2>
+        <details>
+        <summary>How do I calculate Airbnb income?</summary>
+        <p>Multiply the nightly rate by occupied nights. Occupied nights are occupancy percent times 365. Subtract platform fees, the mortgage, and operating costs. This page does that from the numbers you type.</p>
+      </details>
+      <details>
+        <summary>What occupancy rate should I use?</summary>
+        <p>Use a rate you believe for that market and season, not a best-case month. Empty weeks lower cash flow quickly. The tool does not forecast bookings.</p>
+      </details>
+      <details>
+        <summary>Does this include cleaning fees and lodging tax?</summary>
+        <p>Only if you put them in the operating cost or fee fields. They are not added automatically.</p>
+      </details>
+        <h2>Related calculators</h2>
+        <ul class="related">
+            <li><a href="/cash-on-cash-calculator/">Cash on cash return calculator</a></li>
+            <li><a href="/cap-rate-calculator/">Cap rate calculator</a></li>
+        </ul>
+        
+      </article>
+      <section class="tool" id="calculator">
+        <h2>Use the calculator</h2>
+        <p class="meta">Adjust the inputs below. The result updates in this browser.</p>
+        <iframe src="/index.html?engine=tab-airbnb&landing=1" title="Airbnb income calculator" loading="lazy"></iframe>
+      </section>
+      <footer>
+        <p><a href="/">Home</a> · <a href="/about.html">About</a> · <a href="/privacy.html">Privacy</a> · <a href="/contact.html">Contact</a></p>
+        <p>Educational math only. Not a lender quote, tax filing, or financial advice.</p>
+      </footer>
+    </div>
 </body>
 </html>

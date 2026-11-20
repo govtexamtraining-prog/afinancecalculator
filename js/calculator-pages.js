@@ -34,7 +34,7 @@ window.CALCULATOR_BY_ENGINE = {
   "tab-autoloan": "auto-loan-calculator",
   "tab-autorefi": "auto-refinance-calculator",
   "tab-carlease": "car-lease-calculator",
-  "tab-personalloan": "personal-loan-calculator",
+  "tab-personalloan": "loan-calculator",
   "tab-student": "student-loan-calculator",
   "tab-studentrefi": "student-loan-refinance-calculator",
   "tab-budget": "budget-calculator",

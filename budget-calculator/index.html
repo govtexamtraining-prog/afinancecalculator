@@ -5,44 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>50/30/20 Budget Calculator | aFinanceCalculator</title>
     <meta name="description" content="Splits take-home pay into 50% needs, 30% wants, and 20% savings. It is a planning split, not a budget you must follow.">
+    
     <link rel="canonical" href="https://afinancecalculator.com/budget-calculator/">
     
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#171719">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="theme-color" content="#07080a">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://afinancecalculator.com/budget-calculator/">
+    <meta property="og:title" content="50/30/20 Budget Calculator">
+    <meta property="og:description" content="Splits take-home pay into 50% needs, 30% wants, and 20% savings. It is a planning split, not a budget you must follow.">
+    <meta property="og:site_name" content="aFinanceCalculator">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="50/30/20 Budget Calculator | aFinanceCalculator">
+    <meta name="twitter:description" content="Splits take-home pay into 50% needs, 30% wants, and 20% savings. It is a planning split, not a budget you must follow.">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://afinancecalculator.com/budget-calculator/#webpage","url":"https://afinancecalculator.com/budget-calculator/","name":"50/30/20 Budget Calculator | aFinanceCalculator","description":"Splits take-home pay into 50% needs, 30% wants, and 20% savings. It is a planning split, not a budget you must follow.","isPartOf":{"@id":"https://afinancecalculator.com/#website"},"about":{"@id":"https://afinancecalculator.com/budget-calculator/#app"}},{"@type":"WebApplication","@id":"https://afinancecalculator.com/budget-calculator/#app","name":"50/30/20 Budget Calculator","url":"https://afinancecalculator.com/budget-calculator/","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Splits take-home pay into 50% needs, 30% wants, and 20% savings. It is a planning split, not a budget you must follow."},{"@type":"BreadcrumbList","@id":"https://afinancecalculator.com/budget-calculator/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://afinancecalculator.com/"},{"@type":"ListItem","position":2,"name":"50/30/20 budget calculator","item":"https://afinancecalculator.com/budget-calculator/"}]},{"@type":"FAQPage","@id":"https://afinancecalculator.com/budget-calculator/#faq","mainEntity":[{"@type":"Question","name":"How does the 50/30/20 budget calculator work?","acceptedAnswer":{"@type":"Answer","text":"Take-home pay is split 50% to needs, 30% to wants, and 20% to savings. Needs are half of the pay you enter. Wants are 30%. Savings are 20%. The split is a planning guide. The page also shows the amounts you type for actual spending so you can see the gap."}},{"@type":"Question","name":"What is a worked example for the 50/30/20 budget calculator?","acceptedAnswer":{"@type":"Answer","text":"Take-home pay of $5,000 a month assigns $2,500 to needs, $1,500 to wants, and $1,000 to savings. If rent alone is $2,200, most of the needs bucket is already used. The page does not move the rent. It shows the bucket."}},{"@type":"Question","name":"What does the 50/30/20 budget calculator leave out?","acceptedAnswer":{"@type":"Answer","text":"It is not a budget you must follow. Taxes are already out if the pay you typed is take-home. Gross pay should go through the paycheck page first."}}]}]}</script>
     <style>
-        body { margin: 0; background: #171719; color: #fff; font-family: "Public Sans", system-ui, sans-serif; }
-        header { padding: 20px 20px 12px; max-width: 980px; }
-        a { color: #fff; }
-        .brand { color: #8a8c92; font-size: 13px; text-decoration: none; }
-        h1 { font-size: 26px; font-weight: 600; line-height: 1.2; margin: 10px 0 8px; }
-        p { margin: 0 0 8px; color: #c8c8cc; font-size: 15px; line-height: 1.45; max-width: 68ch; }
-        .meta { color: #8a8c92; font-size: 13px; }
-        .example { color: #fff; font-variant-numeric: tabular-nums; }
-        nav { font-size: 14px; }
-        .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
-        h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
-        iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 36px 16px 64px; max-width: 720px; }
-        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
-        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
+        :root { color-scheme: dark; }
+        body { margin: 0; background: #07080a; color: #fff; font-family: "Plus Jakarta Sans", "Public Sans", system-ui, sans-serif; }
+        a { color: #67e8f9; }
+        .wrap { width: min(760px, calc(100% - 32px)); margin: 0 auto; }
+        .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 16px 0 8px; }
+        .brand { color: #a1a1aa; font-size: 14px; text-decoration: none; }
+        h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; margin: 8px 0 12px; }
+        .lede { font-size: 18px; line-height: 1.55; color: #d4d4d8; margin: 0 0 16px; max-width: 62ch; }
+        .meta { color: #a1a1aa; font-size: 13px; margin: 0 0 16px; }
+        .callout { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 18px; margin: 0 0 24px; }
+        .callout .label { color: #67e8f9; font-size: 12px; font-weight: 700; margin: 0 0 6px; text-transform: none; letter-spacing: 0; }
+        .callout p { margin: 0; color: #fff; font-size: 16px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+        article { padding: 8px 0 28px; }
+        article h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; }
+        article p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; margin: 0 0 10px; }
+        .tool { margin: 8px 0 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; }
+        .tool h2 { font-size: 22px; margin: 0 0 10px; }
+        iframe { display: block; width: 100%; height: min(85vh, 900px); min-height: 720px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: #07080a; }
+        details { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 14px 16px; margin: 0 0 10px; }
+        summary { cursor: pointer; font-weight: 700; color: #fff; }
+        details p { margin: 10px 0 0; color: #d4d4d8; font-size: 15px; line-height: 1.55; }
+        .related { list-style: none; padding: 0; margin: 0 0 28px; }
+        .related li { margin: 0 0 8px; }
+        footer { padding: 24px 0 48px; color: #a1a1aa; font-size: 14px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 24px; }
+        footer a { color: #a1a1aa; }
     </style>
 </head>
 <body>
-    <header class="top">
+    <div class="wrap">
+      <header class="top">
+          <a class="brand" href="/">aFinanceCalculator</a>
+          <a class="brand" href="/#calculators">All calculators</a>
+      </header>
+      <article>
+        <p class="meta">United States and Canada · Free browser calculator · Numbers stay on this device</p>
         <h1>50/30/20 budget calculator</h1>
-        <a class="brand" href="/">All calculators</a>
-    </header>
-    <iframe src="/index.html?engine=tab-budget&landing=1" title="50/30/20 budget calculator"></iframe>
-    <section>
-        <p class="meta">United States and Canada.</p>
-        <h2>How this figure is calculated</h2>
-        <p>Take-home pay is split 50% to needs, 30% to wants, and 20% to savings. Needs are half of the pay you enter. Wants are 30%. Savings are 20%. The split is a planning guide. The page also shows the amounts you type for actual spending so you can see the gap.</p>
-        <h2>Worked example</h2>
+        <p class="lede">Splits take-home pay into 50% needs, 30% wants, and 20% savings. It is a planning split, not a budget you must follow.</p>
+        <div class="callout">
+        <p class="label">Worked example</p>
         <p>Take-home pay of $5,000 a month assigns $2,500 to needs, $1,500 to wants, and $1,000 to savings. If rent alone is $2,200, most of the needs bucket is already used. The page does not move the rent. It shows the bucket.</p>
-        <h2>What this page leaves out</h2>
+      </div>
+        <h2>How this figure is calculated</h2>
+      <p>Take-home pay is split 50% to needs, 30% to wants, and 20% to savings. Needs are half of the pay you enter. Wants are 30%. Savings are 20%. The split is a planning guide. The page also shows the amounts you type for actual spending so you can see the gap.</p>
+      <h2>What this page leaves out</h2>
+      <p>It is not a budget you must follow. Taxes are already out if the pay you typed is take-home. Gross pay should go through the paycheck page first.</p>
+        <h2>Questions</h2>
+        <details>
+        <summary>How does the 50/30/20 budget calculator work?</summary>
+        <p>Take-home pay is split 50% to needs, 30% to wants, and 20% to savings. Needs are half of the pay you enter. Wants are 30%. Savings are 20%. The split is a planning guide. The page also shows the amounts you type for actual spending so you can see the gap.</p>
+      </details>
+      <details>
+        <summary>What is a worked example for the 50/30/20 budget calculator?</summary>
+        <p>Take-home pay of $5,000 a month assigns $2,500 to needs, $1,500 to wants, and $1,000 to savings. If rent alone is $2,200, most of the needs bucket is already used. The page does not move the rent. It shows the bucket.</p>
+      </details>
+      <details>
+        <summary>What does the 50/30/20 budget calculator leave out?</summary>
         <p>It is not a budget you must follow. Taxes are already out if the pay you typed is take-home. Gross pay should go through the paycheck page first.</p>
-        <nav><a href="/paycheck-calculator/">US paycheck calculator</a> · <a href="/debt-snowball-calculator/">Debt snowball and avalanche calculator</a></nav>
-    </section>
+      </details>
+        <h2>Related calculators</h2>
+        <ul class="related">
+            <li><a href="/paycheck-calculator/">Paycheck calculator</a></li>
+            <li><a href="/debt-snowball-calculator/">Debt snowball calculator</a></li>
+        </ul>
+        
+      </article>
+      <section class="tool" id="calculator">
+        <h2>Use the calculator</h2>
+        <p class="meta">Adjust the inputs below. The result updates in this browser.</p>
+        <iframe src="/index.html?engine=tab-budget&landing=1" title="50/30/20 budget calculator" loading="lazy"></iframe>
+      </section>
+      <footer>
+        <p><a href="/">Home</a> · <a href="/about.html">About</a> · <a href="/privacy.html">Privacy</a> · <a href="/contact.html">Contact</a></p>
+        <p>Educational math only. Not a lender quote, tax filing, or financial advice.</p>
+      </footer>
+    </div>
 </body>
 </html>

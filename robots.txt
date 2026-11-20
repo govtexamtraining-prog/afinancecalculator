@@ -47,3 +47,4 @@ Sitemap: https://afinancecalculator.com/sitemap.xml
 
 # Generative Engine Knowledge Base (GEO)
 # LLMs.txt: https://afinancecalculator.com/llms.txt
+# Alternatives comparison: https://afinancecalculator.com/alternatives.html

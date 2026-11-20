@@ -3,48 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mortgage Payment Calculator | aFinanceCalculator</title>
-    <meta name="description" content="Principal and interest only, compounded monthly. Taxes, insurance, and mortgage insurance are not included.">
+    <title>Mortgage Calculator — Free Payment &amp; Amortization | aFinanceCalculator</title>
+    <meta name="description" content="Free US mortgage payment calculator for principal and interest. Also used as a loan calculator and amortization schedule helper. Compounded monthly. Taxes, insurance, and mortgage insurance are not included.">
+    <meta name="keywords" content="mortgage calculator, mortgage payment calculator, loan calculator, amortization calculator, home mortgage calculator, free mortgage calculator">
     <link rel="canonical" href="https://afinancecalculator.com/mortgage-calculator/">
     <link rel="alternate" hreflang="en-US" href="https://afinancecalculator.com/mortgage-calculator/">
     <link rel="alternate" hreflang="en-CA" href="https://afinancecalculator.com/canada-mortgage-calculator/">
     <link rel="alternate" hreflang="x-default" href="https://afinancecalculator.com/mortgage-calculator/">
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#171719">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="theme-color" content="#07080a">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://afinancecalculator.com/mortgage-calculator/">
+    <meta property="og:title" content="Mortgage Calculator — Free Payment &amp; Amortization">
+    <meta property="og:description" content="Free US mortgage payment calculator for principal and interest. Also used as a loan calculator and amortization schedule helper. Compounded monthly. Taxes, insurance, and mortgage insurance are not included.">
+    <meta property="og:site_name" content="aFinanceCalculator">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mortgage Calculator — Free Payment &amp; Amortization | aFinanceCalculator">
+    <meta name="twitter:description" content="Free US mortgage payment calculator for principal and interest. Also used as a loan calculator and amortization schedule helper. Compounded monthly. Taxes, insurance, and mortgage insurance are not included.">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://afinancecalculator.com/mortgage-calculator/#webpage","url":"https://afinancecalculator.com/mortgage-calculator/","name":"Mortgage Calculator — Free Payment & Amortization | aFinanceCalculator","description":"Free US mortgage payment calculator for principal and interest. Also used as a loan calculator and amortization schedule helper. Compounded monthly. Taxes, insurance, and mortgage insurance are not included.","isPartOf":{"@id":"https://afinancecalculator.com/#website"},"about":{"@id":"https://afinancecalculator.com/mortgage-calculator/#app"}},{"@type":"WebApplication","@id":"https://afinancecalculator.com/mortgage-calculator/#app","name":"Mortgage Calculator — Free Payment & Amortization","url":"https://afinancecalculator.com/mortgage-calculator/","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free US mortgage payment calculator for principal and interest. Also used as a loan calculator and amortization schedule helper. Compounded monthly. Taxes, insurance, and mortgage insurance are not included."},{"@type":"BreadcrumbList","@id":"https://afinancecalculator.com/mortgage-calculator/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://afinancecalculator.com/"},{"@type":"ListItem","position":2,"name":"Mortgage calculator","item":"https://afinancecalculator.com/mortgage-calculator/"}]},{"@type":"FAQPage","@id":"https://afinancecalculator.com/mortgage-calculator/#faq","mainEntity":[{"@type":"Question","name":"What is the monthly payment on a $360,000 mortgage at 6.2% for 30 years?","acceptedAnswer":{"@type":"Answer","text":"Principal and interest is $2,204.89 a month. Taxes and insurance are not included."}},{"@type":"Question","name":"Does this mortgage calculator include taxes and insurance?","acceptedAnswer":{"@type":"Answer","text":"No. It shows principal and interest only. Add tax, insurance, and mortgage insurance separately for a full housing payment."}},{"@type":"Question","name":"Is this free mortgage calculator also a loan calculator or amortization calculator?","acceptedAnswer":{"@type":"Answer","text":"Yes for principal and interest. The same amortizing formula powers a fixed loan payment. Use the personal loan or auto loan pages when the product is not a home mortgage."}},{"@type":"Question","name":"Is this for the United States or Canada?","acceptedAnswer":{"@type":"Answer","text":"This page uses US monthly compounding. For a Canadian quote compounded semi-annually, use the Canada mortgage calculator."}}]}]}</script>
     <style>
-        body { margin: 0; background: #171719; color: #fff; font-family: "Public Sans", system-ui, sans-serif; }
-        header { padding: 20px 20px 12px; max-width: 980px; }
-        a { color: #fff; }
-        .brand { color: #8a8c92; font-size: 13px; text-decoration: none; }
-        h1 { font-size: 26px; font-weight: 600; line-height: 1.2; margin: 10px 0 8px; }
-        p { margin: 0 0 8px; color: #c8c8cc; font-size: 15px; line-height: 1.45; max-width: 68ch; }
-        .meta { color: #8a8c92; font-size: 13px; }
-        .example { color: #fff; font-variant-numeric: tabular-nums; }
-        nav { font-size: 14px; }
-        .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 16px; }
-        h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin: 0; }
-        iframe { display: block; width: 100%; height: calc(100vh - 52px); min-height: 680px; border: 0; background: #07080a; }
-        section { padding: 36px 16px 64px; max-width: 720px; }
-        section h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; color: #fff; }
-        section p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; }
+        :root { color-scheme: dark; }
+        body { margin: 0; background: #07080a; color: #fff; font-family: "Plus Jakarta Sans", "Public Sans", system-ui, sans-serif; }
+        a { color: #67e8f9; }
+        .wrap { width: min(760px, calc(100% - 32px)); margin: 0 auto; }
+        .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 16px 0 8px; }
+        .brand { color: #a1a1aa; font-size: 14px; text-decoration: none; }
+        h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; margin: 8px 0 12px; }
+        .lede { font-size: 18px; line-height: 1.55; color: #d4d4d8; margin: 0 0 16px; max-width: 62ch; }
+        .meta { color: #a1a1aa; font-size: 13px; margin: 0 0 16px; }
+        .callout { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 18px; margin: 0 0 24px; }
+        .callout .label { color: #67e8f9; font-size: 12px; font-weight: 700; margin: 0 0 6px; text-transform: none; letter-spacing: 0; }
+        .callout p { margin: 0; color: #fff; font-size: 16px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+        article { padding: 8px 0 28px; }
+        article h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; }
+        article p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; margin: 0 0 10px; }
+        .tool { margin: 8px 0 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; }
+        .tool h2 { font-size: 22px; margin: 0 0 10px; }
+        iframe { display: block; width: 100%; height: min(85vh, 900px); min-height: 720px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: #07080a; }
+        details { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 14px 16px; margin: 0 0 10px; }
+        summary { cursor: pointer; font-weight: 700; color: #fff; }
+        details p { margin: 10px 0 0; color: #d4d4d8; font-size: 15px; line-height: 1.55; }
+        .related { list-style: none; padding: 0; margin: 0 0 28px; }
+        .related li { margin: 0 0 8px; }
+        footer { padding: 24px 0 48px; color: #a1a1aa; font-size: 14px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 24px; }
+        footer a { color: #a1a1aa; }
     </style>
 </head>
 <body>
-    <header class="top">
-        <h1>Mortgage payment calculator</h1>
-        <a class="brand" href="/">All calculators</a>
-    </header>
-    <iframe src="/index.html?engine=tab-mortgage&landing=1" title="Mortgage payment calculator"></iframe>
-    <section>
-        <p class="meta">United States.</p>
-        <h2>How this figure is calculated</h2>
-        <p>The monthly principal and interest payment is M = P × [i(1+i)^n] / [(1+i)^n − 1]. P is the price minus the down payment. For a United States fixed mortgage, i is the annual rate divided by 12, and n is the number of months. A 30-year loan uses 360 months. The payment stays the same each month. Early payments are mostly interest. Later payments retire more principal.</p>
-        <h2>Worked example</h2>
+    <div class="wrap">
+      <header class="top">
+          <a class="brand" href="/">aFinanceCalculator</a>
+          <a class="brand" href="/#calculators">All calculators</a>
+      </header>
+      <article>
+        <p class="meta">United States · Free browser calculator · Numbers stay on this device</p>
+        <h1>Mortgage calculator</h1>
+        <p class="lede">Free US mortgage payment calculator for principal and interest. Also used as a loan calculator and amortization schedule helper. Compounded monthly. Taxes, insurance, and mortgage insurance are not included.</p>
+        <div class="callout">
+        <p class="label">Worked example</p>
         <p>A $450,000 home with $90,000 down leaves a $360,000 loan. At 6.2% for 30 years the payment is $2,204.89 a month. Interest over the full 360 payments is $433,759.79. The same loan at 15 years is $3,076.92 a month.</p>
-        <h2>What this page leaves out</h2>
-        <p>Property tax, homeowners insurance, mortgage insurance, and HOA dues are not in the payment. The rate is compounded monthly, which is the US fixed-rate convention. This is not a lender approval and it does not apply Canadian semi-annual compounding. Use the Canada mortgage page for that schedule.</p>
-        <nav><a href="/biweekly-mortgage-calculator/">Biweekly mortgage calculator</a> · <a href="/refinance-calculator/">Mortgage refinance calculator</a> · <a href="/canada-mortgage-calculator/">Canada mortgage payment calculator</a></nav>
-    </section>
+      </div>
+        <h2>How this figure is calculated</h2>
+      <p>The monthly principal and interest payment is M = P × [i(1+i)^n] / [(1+i)^n − 1]. P is the price minus the down payment. For a United States fixed mortgage, i is the annual rate divided by 12, and n is the number of months. A 30-year loan uses 360 months. The payment stays the same each month. Early payments are mostly interest. Later payments retire more principal.</p>
+      <h2>What this page leaves out</h2>
+      <p>Property tax, homeowners insurance, mortgage insurance, and HOA dues are not in the payment. The rate is compounded monthly, which is the US fixed-rate convention. This is not a lender approval and it does not apply Canadian semi-annual compounding. Use the Canada mortgage page for that schedule.</p>
+        <h2>Questions</h2>
+        <details>
+        <summary>What is the monthly payment on a $360,000 mortgage at 6.2% for 30 years?</summary>
+        <p>Principal and interest is $2,204.89 a month. Taxes and insurance are not included.</p>
+      </details>
+      <details>
+        <summary>Does this mortgage calculator include taxes and insurance?</summary>
+        <p>No. It shows principal and interest only. Add tax, insurance, and mortgage insurance separately for a full housing payment.</p>
+      </details>
+      <details>
+        <summary>Is this free mortgage calculator also a loan calculator or amortization calculator?</summary>
+        <p>Yes for principal and interest. The same amortizing formula powers a fixed loan payment. Use the personal loan or auto loan pages when the product is not a home mortgage.</p>
+      </details>
+      <details>
+        <summary>Is this for the United States or Canada?</summary>
+        <p>This page uses US monthly compounding. For a Canadian quote compounded semi-annually, use the Canada mortgage calculator.</p>
+      </details>
+        <h2>Related calculators</h2>
+        <ul class="related">
+            <li><a href="/biweekly-mortgage-calculator/">Biweekly mortgage calculator</a></li>
+            <li><a href="/refinance-calculator/">Refinance calculator</a></li>
+            <li><a href="/canada-mortgage-calculator/">Canada mortgage calculator</a></li>
+            <li><a href="/home-affordability-calculator/">How much house can I afford calculator</a></li>
+        </ul>
+        <h2>People also search for</h2>
+        <p class="meta">mortgage calculator · mortgage payment calculator · loan calculator · amortization calculator · home mortgage calculator · free mortgage calculator</p>
+      </article>
+      <section class="tool" id="calculator">
+        <h2>Use the calculator</h2>
+        <p class="meta">Adjust the inputs below. The result updates in this browser.</p>
+        <iframe src="/index.html?engine=tab-mortgage&landing=1" title="Mortgage calculator" loading="lazy"></iframe>
+      </section>
+      <footer>
+        <p><a href="/">Home</a> · <a href="/about.html">About</a> · <a href="/privacy.html">Privacy</a> · <a href="/contact.html">Contact</a></p>
+        <p>Educational math only. Not a lender quote, tax filing, or financial advice.</p>
+      </footer>
+    </div>
 </body>
 </html>
