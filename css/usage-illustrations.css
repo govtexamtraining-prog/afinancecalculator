@@ -1,0 +1,227 @@
+/* Usage illustrations — help users understand each calculator at a glance.
+   Photos are lazy-loaded; SVGs are inline. Does not touch form math. */
+
+.usage-hero {
+  display: grid;
+  grid-template-columns: minmax(140px, 220px) minmax(0, 1fr);
+  gap: 14px 18px;
+  align-items: stretch;
+  margin: 0 0 18px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(9, 9, 11, 0.55);
+}
+
+.usage-hero-media {
+  position: relative;
+  min-height: 120px;
+  background: #09090b;
+}
+
+.usage-hero-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  max-height: 160px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.usage-hero-media .usage-hero-art {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(7, 8, 10, 0.72);
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  display: grid;
+  place-items: center;
+  backdrop-filter: blur(8px);
+}
+
+.usage-hero-media .usage-hero-art svg {
+  width: 36px;
+  height: 36px;
+}
+
+.usage-hero-copy {
+  padding: 14px 16px 14px 0;
+  display: grid;
+  gap: 6px;
+  align-content: center;
+}
+
+.usage-hero-kicker {
+  margin: 0;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #67e8f9;
+}
+
+.usage-hero-title {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: clamp(15px, 2vw, 18px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+  line-height: 1.25;
+}
+
+.usage-hero-blurb {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #d4d4d8;
+  max-width: 62ch;
+}
+
+.usage-hero-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.usage-hero-steps span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(24, 24, 27, 0.8);
+  font-size: 11px;
+  color: #e4e4e7;
+}
+
+.usage-hero-steps b {
+  color: #67e8f9;
+  font-weight: 700;
+}
+
+/* Homepage gallery of usage scenes */
+.usage-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  width: min(1080px, calc(100% - 32px));
+  margin: 8px auto 28px;
+}
+
+.usage-gallery-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(24, 24, 27, 0.65);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 200ms ease, transform 200ms ease;
+}
+
+.usage-gallery-card:hover,
+.usage-gallery-card:focus-visible {
+  border-color: rgba(34, 211, 238, 0.45);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.usage-gallery-card img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  display: block;
+  background: #131217;
+}
+
+.usage-gallery-card .usage-gallery-body {
+  padding: 10px 12px 12px;
+}
+
+.usage-gallery-card strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.usage-gallery-card span {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #a1a1aa;
+}
+
+/* Sidebar tab mini icons */
+.tab-btn .usage-tab-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+  vertical-align: -3px;
+  opacity: 0.85;
+}
+
+.tab-btn .usage-tab-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Keep .usage-hero visible inside landing iframes so /{slug}/ pages still show images.
+   Only hide the homepage gallery chrome when embedded. */
+html.in-frame .usage-gallery {
+  display: none !important;
+}
+
+html.in-frame .usage-hero {
+  margin-bottom: 14px;
+}
+
+html.calculator-landing .usage-hero {
+  grid-template-columns: minmax(160px, 280px) minmax(0, 1fr);
+}
+
+@media (max-width: 700px) {
+  .usage-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .usage-hero-copy {
+    padding: 0 14px 14px;
+  }
+
+  .usage-hero-media img {
+    max-height: 140px;
+  }
+
+  .usage-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .usage-gallery {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .usage-gallery-card {
+    transition: none;
+  }
+  .usage-gallery-card:hover,
+  .usage-gallery-card:focus-visible {
+    transform: none;
+  }
+}

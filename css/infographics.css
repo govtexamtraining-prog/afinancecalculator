@@ -1,0 +1,321 @@
+/* Dynamic infographic layer — wide, glanceable results.
+   Namespace: .infographic-*  Does not restyle forms or #engine chrome. */
+
+/* Full-width results row under inputs so charts can breathe */
+.infographic-results-wide {
+  grid-column: 1 / -1 !important;
+  width: 100%;
+}
+
+.infographic-panel {
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 16px 24px;
+  margin: 0 0 16px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    radial-gradient(ellipse 70% 80% at 0% 50%, rgba(34, 211, 238, 0.1), transparent 55%),
+    rgba(9, 9, 11, 0.6);
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.infographic-panel--compact {
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+/* Wide bar charts need the full row */
+.infographic-panel[data-infographic="snowball"] {
+  grid-template-columns: 1fr;
+}
+
+.infographic-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 168px;
+  position: relative;
+}
+
+.infographic-visual svg {
+  width: min(100%, 240px);
+  height: auto;
+  overflow: visible;
+}
+
+.infographic-visual--wide {
+  width: 100%;
+  min-height: 0;
+}
+
+.infographic-visual--wide svg {
+  width: 100%;
+  max-width: 100%;
+}
+
+.infographic-center-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  pointer-events: none;
+  gap: 2px;
+  padding: 8px;
+}
+
+.infographic-center-label strong {
+  display: block;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: clamp(16px, 2.4vw, 22px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  max-width: 11ch;
+  margin: 0 auto;
+}
+
+.infographic-center-label span {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #67e8f9;
+}
+
+/* Metric cards — easy scan */
+.infographic-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.infographic-legend-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(24, 24, 27, 0.75);
+  min-height: 76px;
+}
+
+.infographic-legend-row .infographic-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  box-shadow: 0 0 12px currentColor;
+  margin-bottom: 2px;
+}
+
+.infographic-legend-row .infographic-metric-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #a1a1aa;
+  line-height: 1.3;
+}
+
+.infographic-legend-row .infographic-metric-value {
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: clamp(15px, 2vw, 18px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.infographic-legend-row .infographic-metric-sub {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  color: #67e8f9;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Readout strip under chart: big number + short caption, left-aligned wide */
+.result-display-card:has(.infographic-panel) {
+  text-align: left;
+  padding: 20px 22px !important;
+}
+
+.result-display-card:has(.infographic-panel) .solution-card {
+  display: none;
+}
+
+.result-display-card:has(.infographic-panel) > .output-label {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.result-display-card:has(.infographic-panel) > .output-value {
+  font-size: clamp(1.85rem, 4.5vw, 2.6rem) !important;
+  line-height: 1.15;
+  margin-top: 4px !important;
+}
+
+.result-display-card:has(.infographic-panel) > p.text-\[11px\] {
+  max-width: 62ch;
+}
+
+/* Homepage story strip */
+.infographic-story {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* Keep chart + metrics side-by-side whenever there is room */
+@media (max-width: 520px) {
+  .infographic-panel {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .infographic-visual {
+    min-height: 150px;
+  }
+
+  .infographic-legend {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .infographic-story {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .infographic-story {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Give the active calculator more horizontal room on large screens */
+@media (min-width: 1100px) {
+  #calculators:has(.infographic-panel),
+  #calculators {
+    max-width: 1400px;
+  }
+
+  #calculators:has(.infographic-panel) #engine-stage,
+  #calculators #engine-stage {
+    min-width: 0;
+  }
+
+  .infographic-panel {
+    grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
+    gap: 20px 32px;
+    padding: 22px 24px;
+  }
+
+  .infographic-legend {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .infographic-panel[data-infographic="paycheck"] .infographic-legend,
+  .infographic-panel[data-infographic="compound"] .infographic-legend,
+  .infographic-panel[data-infographic="autoloan"] .infographic-legend,
+  .infographic-panel[data-infographic="fire"] .infographic-legend {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Landing iframe: infographics use the full stage */
+html.calculator-landing .infographic-panel,
+html.in-frame .infographic-panel {
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  html.calculator-landing .infographic-legend,
+  html.in-frame .infographic-legend {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+}
+
+.infographic-story-card {
+  position: relative;
+  padding: 14px 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(9, 9, 11, 0.65);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: border-color 220ms ease, transform 220ms ease;
+}
+
+.infographic-story-card:hover,
+.infographic-story-card:focus-visible {
+  border-color: rgba(34, 211, 238, 0.45);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.infographic-story-card svg {
+  width: 100%;
+  height: 64px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.infographic-story-card strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.infographic-story-card span {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: #a1a1aa;
+  line-height: 1.35;
+}
+
+html.in-frame .infographic-story {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .infographic-story-card {
+    transition: none;
+  }
+  .infographic-story-card:hover,
+  .infographic-story-card:focus-visible {
+    transform: none;
+  }
+  .infographic-ring-anim,
+  .infographic-bar-anim {
+    transition: none !important;
+  }
+}
+
+.infographic-ring-anim {
+  transition: stroke-dashoffset 600ms ease;
+}
+
+.infographic-bar-anim {
+  transition: width 500ms ease, height 500ms ease;
+}

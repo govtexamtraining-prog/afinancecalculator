@@ -305,7 +305,11 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css?v=2.3.0">
     <link rel="stylesheet" href="css/terminal.css?v=2.3.4">
-    <link rel="stylesheet" href="css/noir.css?v=1.0.3">
+    <link rel="stylesheet" href="css/noir.css?v=1.0.9">
+    <link rel="stylesheet" href="css/site-chrome.css?v=1">
+    <link rel="stylesheet" href="css/cinematic.css?v=2">
+    <link rel="stylesheet" href="css/infographics.css?v=4">
+    <link rel="stylesheet" href="css/usage-illustrations.css?v=2">
     <script>try{if(window.top!==window.self)document.documentElement.classList.add("in-frame")}catch(e){}</script>
 </head>
 <body class="bg-[#07080a] text-white min-h-screen font-sans antialiased">
@@ -317,12 +321,12 @@
                 <span>aFinanceCalculator</span>
             </a>
             <div class="noir-links">
-                <a href="#calculators">Calculators</a>
-                <a href="#knowledge-base">Analytics</a>
-                <a href="about.html">About</a>
-                <a href="contact.html">Support</a>
+                <a href="/#calculators">Calculators</a>
+                <a href="/#calculators">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Support</a>
             </div>
-            <a class="noir-cta" href="#calculators" onclick="switchEngine('tab-mortgage')">Calculate now</a>
+            <a class="noir-cta" href="/#calculators" onclick="switchEngine('tab-mortgage')">Calculate now</a>
         </nav>
     </header>
     <div class="noir-tools">
@@ -435,6 +439,43 @@
             <button type="button" onclick="location.href='/compound-interest-calculator/'">Compound interest</button>
             <button type="button" onclick="location.href='/auto-loan-calculator/'">Auto loan</button>
             <button type="button" onclick="location.href='/canada-mortgage-calculator/'">Canada mortgage</button>
+        </div>
+    </section>
+
+    <section class="noir-cinematic-section" aria-label="aFinanceCalculator overview">
+        <div class="noir-cinematic-glow" aria-hidden="true"></div>
+        <div class="noir-cinematic-glow noir-cinematic-glow--secondary" aria-hidden="true"></div>
+        <div class="noir-cinematic-grid" aria-hidden="true"></div>
+        <div class="noir-cinematic-inner">
+            <p class="noir-cinematic-kicker">Visual finance · US &amp; Canada</p>
+            <h2 class="noir-cinematic-title">See the story, not just the spreadsheet.</h2>
+            <p class="noir-cinematic-copy">Each calculator paints the result as a live infographic—rings, gauges, and bars—so the payment, take-home, or FIRE path is obvious at a glance.</p>
+            <div class="noir-cinematic-actions">
+                <a class="noir-cinematic-link" href="#calculators" onclick="switchEngine('tab-mortgage')">Explore mortgage visual</a>
+                <a class="noir-cinematic-link noir-cinematic-link--ghost" href="#calculators" onclick="switchEngine('tab-paycheck')">Paycheck split</a>
+            </div>
+        </div>
+        <div class="infographic-story" aria-label="Calculator visual previews">
+            <a class="infographic-story-card" href="#calculators" onclick="switchEngine('tab-mortgage')">
+                <svg viewBox="0 0 120 64" aria-hidden="true"><circle cx="36" cy="32" r="22" fill="none" stroke="#3f3f46" stroke-width="8"/><path d="M36 10 a22 22 0 1 1 -0.01 0" fill="none" stroke="#34d399" stroke-width="8" stroke-dasharray="90 140"/><path d="M36 10 a22 22 0 0 1 19 33" fill="none" stroke="#fb7185" stroke-width="8"/><rect x="72" y="18" width="36" height="8" rx="4" fill="#22d3ee" opacity="0.9"/><rect x="72" y="32" width="28" height="8" rx="4" fill="#fb7185" opacity="0.85"/><rect x="72" y="46" width="20" height="8" rx="4" fill="#3f3f46"/></svg>
+                <strong>Mortgage ring</strong>
+                <span>Principal vs interest at a glance</span>
+            </a>
+            <a class="infographic-story-card" href="#calculators" onclick="switchEngine('tab-paycheck')">
+                <svg viewBox="0 0 120 64" aria-hidden="true"><circle cx="60" cy="32" r="22" fill="none" stroke="#3f3f46" stroke-width="8"/><path d="M60 10 a22 22 0 1 1 -15 38" fill="none" stroke="#34d399" stroke-width="8"/><path d="M45 48 a22 22 0 0 1 15 -38" fill="none" stroke="#fb7185" stroke-width="8"/></svg>
+                <strong>Paycheck split</strong>
+                <span>Take-home vs taxes as a donut</span>
+            </a>
+            <a class="infographic-story-card" href="#calculators" onclick="switchEngine('tab-fire')">
+                <svg viewBox="0 0 120 64" aria-hidden="true"><path d="M20 48 A34 34 0 0 1 100 48" fill="none" stroke="#3f3f46" stroke-width="10" stroke-linecap="round"/><path d="M20 48 A34 34 0 0 1 78 22" fill="none" stroke="#22d3ee" stroke-width="10" stroke-linecap="round"/><circle cx="78" cy="22" r="4" fill="#67e8f9"/></svg>
+                <strong>FIRE gauge</strong>
+                <span>How close you are to the number</span>
+            </a>
+            <a class="infographic-story-card" href="#calculators" onclick="switchEngine('tab-snowball')">
+                <svg viewBox="0 0 120 64" aria-hidden="true"><rect x="12" y="16" width="70" height="10" rx="5" fill="#fb7185"/><rect x="12" y="36" width="48" height="10" rx="5" fill="#34d399"/><text x="90" y="25" fill="#a1a1aa" font-size="8">SB</text><text x="90" y="45" fill="#a1a1aa" font-size="8">AV</text></svg>
+                <strong>Debt race</strong>
+                <span>Snowball vs avalanche bars</span>
+            </a>
         </div>
     </section>
 
@@ -764,8 +805,8 @@
                 </div>
             </div>
 
-            <!-- Universal Regulatory Assumptions & Statutory Audit Trail (Phase 4) -->
-            <div id="global-audit-trail-card" class="audit-trail-wrapper mb-4">
+            <!-- Universal Regulatory Assumptions & Statutory Audit Trail (Phase 4) — hidden: users prefer input → output -->
+            <div id="global-audit-trail-card" class="audit-trail-wrapper mb-4 hidden" hidden aria-hidden="true">
                 <button type="button" onclick="toggleAuditTrail()" class="audit-trail-trigger">
                     <span class="flex items-center gap-2">
                         <span class="text-emerald-400"></span>
@@ -1390,9 +1431,13 @@
                         </div>
                     </div>
 
-                    <!-- Target Outputs & Micro-Chart -->
-                    <div class="flex flex-col justify-between space-y-4">
+                    <!-- Target Outputs & Micro-Chart (full width for readable visuals) -->
+                    <div class="flex flex-col justify-between space-y-4 infographic-results-wide">
                         <div class="result-display-card rounded-2xl p-5 text-center output-item">
+                            <div class="infographic-panel" data-infographic="mortgage">
+                                <div id="infographic-mortgage"></div>
+                                <div class="infographic-legend" id="infographic-mortgage-legend"></div>
+                            </div>
                             <span class="output-label text-xs font-bold text-slate-400">Principal &amp; Interest</span>
                             <div id="mortgage-payment" class="output-value text-3xl sm:text-4xl font-black text-emerald-400 font-mono-num mt-1">$ 0.00</div>
                             <p class="text-[11px] text-slate-500 mt-1 font-medium">Principal & Interest Amortization</p>
@@ -1784,9 +1829,13 @@
                         </div>
                     </div>
 
-                    <div class="space-y-4">
+                    <div class="space-y-4 infographic-results-wide">
                         <div class="result-display-card rounded-2xl p-5 text-center output-item">
                             <span class="output-label text-xs font-bold text-slate-400">Your Total Future Wealth</span>
+                            <div class="infographic-panel" data-infographic="compound">
+                                <div id="infographic-compound"></div>
+                                <div class="infographic-legend" id="infographic-compound-legend"></div>
+                            </div>
                             <div id="compound-future-val" class="output-value text-3xl sm:text-4xl font-black text-emerald-400 font-mono-num mt-1">$ 0.00</div>
                             <p class="text-[11px] text-slate-500 mt-0.5 font-medium">Accumulated compounding future value</p>
 
@@ -2580,9 +2629,13 @@
                         </div>
                     </div>
 
-                    <div class="space-y-4">
+                    <div class="space-y-4 infographic-results-wide">
                         <div class="result-display-card rounded-2xl p-6 text-center output-item">
                             <span class="output-label text-xs font-bold text-slate-400">Estimated Monthly Auto Liability</span>
+                            <div class="infographic-panel" data-infographic="autoloan">
+                                <div id="infographic-autoloan"></div>
+                                <div class="infographic-legend" id="infographic-autoloan-legend"></div>
+                            </div>
                             <div id="autoloan-payment" class="output-value text-3xl sm:text-4xl font-black text-emerald-400 font-mono-num mt-2">$ 0.00</div>
                             <p class="text-[11px] text-slate-500 mt-1 font-medium">Fixed monthly debt installment payment</p>
                         </div>
@@ -3769,9 +3822,13 @@
                         </div>
                     </div>
 
-                    <div class="space-y-4">
+                    <div class="space-y-4 infographic-results-wide">
                         <div class="result-display-card rounded-2xl p-6 text-center output-item">
                             <span class="output-label text-xs font-bold text-slate-400">FIRE Target Portfolio Capital</span>
+                            <div class="infographic-panel" data-infographic="fire">
+                                <div id="infographic-fire"></div>
+                                <div class="infographic-legend" id="infographic-fire-legend"></div>
+                            </div>
                             <div id="fire-target-number" class="output-value text-3xl sm:text-4xl font-black text-emerald-400 font-mono-num mt-2">$ 0.00</div>
                             <p class="text-[11px] text-slate-500 mt-1 font-medium">Capital required to sustain living expenses indefinitely</p>
                         </div>
@@ -4248,9 +4305,13 @@
                         </div>
                     </div>
 
-                    <div class="space-y-4">
+                    <div class="space-y-4 infographic-results-wide">
                         <div class="result-display-card rounded-2xl p-6 text-center output-item">
                             <span class="output-label text-xs font-bold text-slate-400">Net Paycheck Take-Home</span>
+                            <div class="infographic-panel" data-infographic="paycheck">
+                                <div id="infographic-paycheck"></div>
+                                <div class="infographic-legend" id="infographic-paycheck-legend"></div>
+                            </div>
                             <div id="paycheck-net-pay" class="output-value text-3xl sm:text-4xl font-black text-emerald-400 font-mono-num mt-2">$ 0.00</div>
                             <p class="text-[11px] text-slate-500 mt-1 font-medium">Estimated net cash deposited per pay period</p>
                         </div>
@@ -4754,8 +4815,12 @@
                         </div>
                     </div>
 
-                    <div class="space-y-4">
+                    <div class="space-y-4 infographic-results-wide">
                         <div class="result-display-card rounded-2xl p-6 text-center output-item">
+                            <div class="infographic-panel" data-infographic="snowball">
+                                <div id="infographic-snowball"></div>
+                                <div class="infographic-legend" id="infographic-snowball-legend"></div>
+                            </div>
                             <span class="output-label text-xs font-bold text-slate-400">Interest Saved by Avalanche</span>
                             <div id="snowball-avalanche-savings" class="output-value text-3xl sm:text-4xl font-black text-emerald-400 font-mono-num mt-2">$ 0.00</div>
                             <p class="text-[11px] text-slate-500 mt-1 font-medium">Additional lifetime interest eliminated using Avalanche vs Snowball</p>
@@ -5763,28 +5828,12 @@
                 </div>
             </div>
 
-            <!-- Horizontal AdSense Leaderboard Placement Area -->
-            <div class="ad-slot-container bg-slate-900 rounded-2xl border border-slate-800 p-5 text-center relative overflow-hidden mt-8 transition-colors">
-                <div class="flex items-center justify-between text-[10px] font-bold text-slate-400 mb-3 px-1">
-                    <span class="flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                        Google AdSense Placement
-                    </span>
-                    <span class="text-slate-500 font-mono">728x90 Leaderboard / Responsive Banner</span>
-                </div>
-                <div class="w-full h-28 sm:h-32 border-2 border-dashed border-slate-800 hover:border-slate-700 rounded-xl flex flex-col items-center justify-center bg-slate-950/60 text-slate-400 transition-colors p-4">
-                    <p class="text-sm font-bold text-slate-300">[Horizontal AdSense Leaderboard Placement Area]</p>
-                    <p class="text-xs text-slate-500 font-mono mt-1">High-Impact High-CPC Financial Advertiser Banner Display</p>
-                    <span class="text-[9px] text-emerald-400/80 mt-2 font-semibold">Active Responsive Ad Infill</span>
-                </div>
-            </div>
-
             <!-- ========================================================= -->
             <!-- INSTITUTIONAL FINANCIAL KNOWLEDGE BASE & REGIONAL GUIDES -->
             <!-- Satisfies Google AdSense "Original Content" & "E-E-A-T"  -->
             <!-- Powers Voice Search (VEO) & Generative AI Search (GEO)    -->
             <!-- ========================================================= -->
-            <section id="knowledge-base" class="mt-12 space-y-8 border-t border-slate-800/80 pt-10">
+            <section id="knowledge-base" class="mt-12 space-y-8 border-t border-slate-800/80 pt-10 hidden" hidden aria-hidden="true">
                 <div class="text-center max-w-3xl mx-auto space-y-2">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
                         <span>Authoritative Financial Engineering</span>
@@ -6088,8 +6137,8 @@
         <!-- /seo-calculator-index -->
     </section>
 
-    <footer class="w-full bg-slate-950 border-t border-slate-800/80 text-slate-400 text-xs mt-12 transition-colors">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 lg:py-16">
+    <footer class="site-footer w-full bg-slate-950 border-t border-slate-800/80 text-slate-400 text-xs mt-12 transition-colors">
+        <div class="site-footer-inner max-w-7xl mx-auto px-4 sm:px-6 py-12 lg:py-16">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
                 
                 <!-- Col 1: Brand & Architecture (2 cols on lg) -->
@@ -7099,6 +7148,9 @@
     <script src="js/banking_data.js"></script>
     <script src="js/calculator-pages.js"></script>
     <!-- Core Computation Mechanics -->
-    <script src="js/mechanics.js?v=2.4.3"></script>
+    <script src="js/mechanics.js?v=2.4.4"></script>
+    <script src="js/infographics.js?v=2" defer></script>
+    <script src="js/usage-illustrations.js?v=2" defer></script>
+    <script src="js/cinematic.js?v=2" defer></script>
 </body>
 </html>

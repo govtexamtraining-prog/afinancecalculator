@@ -35,6 +35,7 @@ jobs:
             --exclude '.github/' \
             --exclude '_site/' \
             --exclude '.taste-skill/' \
+            --exclude '.cursor/' \
             --exclude 'scratch/' \
             --exclude 'seo/' \
             --exclude 'node_modules/' \

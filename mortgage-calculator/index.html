@@ -21,89 +21,273 @@
     <meta name="twitter:title" content="Mortgage Calculator — Free Payment &amp; Amortization | aFinanceCalculator">
     <meta name="twitter:description" content="Free US mortgage payment calculator for principal and interest. Also used as a loan calculator and amortization schedule helper. Compounded monthly. Taxes, insurance, and mortgage insurance are not included.">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/noir.css?v=1.0.9">
+    <link rel="stylesheet" href="/css/site-chrome.css?v=1">
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://afinancecalculator.com/mortgage-calculator/#webpage","url":"https://afinancecalculator.com/mortgage-calculator/","name":"Mortgage Calculator — Free Payment & Amortization | aFinanceCalculator","description":"Free US mortgage payment calculator for principal and interest. Also used as a loan calculator and amortization schedule helper. Compounded monthly. Taxes, insurance, and mortgage insurance are not included.","isPartOf":{"@id":"https://afinancecalculator.com/#website"},"about":{"@id":"https://afinancecalculator.com/mortgage-calculator/#app"}},{"@type":"WebApplication","@id":"https://afinancecalculator.com/mortgage-calculator/#app","name":"Mortgage Calculator — Free Payment & Amortization","url":"https://afinancecalculator.com/mortgage-calculator/","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free US mortgage payment calculator for principal and interest. Also used as a loan calculator and amortization schedule helper. Compounded monthly. Taxes, insurance, and mortgage insurance are not included."},{"@type":"BreadcrumbList","@id":"https://afinancecalculator.com/mortgage-calculator/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://afinancecalculator.com/"},{"@type":"ListItem","position":2,"name":"Mortgage calculator","item":"https://afinancecalculator.com/mortgage-calculator/"}]},{"@type":"FAQPage","@id":"https://afinancecalculator.com/mortgage-calculator/#faq","mainEntity":[{"@type":"Question","name":"What is the monthly payment on a $360,000 mortgage at 6.2% for 30 years?","acceptedAnswer":{"@type":"Answer","text":"Principal and interest is $2,204.89 a month. Taxes and insurance are not included."}},{"@type":"Question","name":"Does this mortgage calculator include taxes and insurance?","acceptedAnswer":{"@type":"Answer","text":"No. It shows principal and interest only. Add tax, insurance, and mortgage insurance separately for a full housing payment."}},{"@type":"Question","name":"Is this free mortgage calculator also a loan calculator or amortization calculator?","acceptedAnswer":{"@type":"Answer","text":"Yes for principal and interest. The same amortizing formula powers a fixed loan payment. Use the personal loan or auto loan pages when the product is not a home mortgage."}},{"@type":"Question","name":"Is this for the United States or Canada?","acceptedAnswer":{"@type":"Answer","text":"This page uses US monthly compounding. For a Canadian quote compounded semi-annually, use the Canada mortgage calculator."}}]}]}</script>
     <style>
-        :root { color-scheme: dark; }
-        body { margin: 0; background: #07080a; color: #fff; font-family: "Plus Jakarta Sans", "Public Sans", system-ui, sans-serif; }
-        a { color: #67e8f9; }
-        .wrap { width: min(760px, calc(100% - 32px)); margin: 0 auto; }
-        .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 16px 0 8px; }
-        .brand { color: #a1a1aa; font-size: 14px; text-decoration: none; }
-        h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; margin: 8px 0 12px; }
-        .lede { font-size: 18px; line-height: 1.55; color: #d4d4d8; margin: 0 0 16px; max-width: 62ch; }
-        .meta { color: #a1a1aa; font-size: 13px; margin: 0 0 16px; }
-        .callout { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 18px; margin: 0 0 24px; }
-        .callout .label { color: #67e8f9; font-size: 12px; font-weight: 700; margin: 0 0 6px; text-transform: none; letter-spacing: 0; }
-        .callout p { margin: 0; color: #fff; font-size: 16px; line-height: 1.5; font-variant-numeric: tabular-nums; }
-        article { padding: 8px 0 28px; }
-        article h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; }
-        article p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; margin: 0 0 10px; }
-        .tool { margin: 8px 0 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; }
-        .tool h2 { font-size: 22px; margin: 0 0 10px; }
-        iframe { display: block; width: 100%; height: min(85vh, 900px); min-height: 720px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: #07080a; }
-        details { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 14px 16px; margin: 0 0 10px; }
-        summary { cursor: pointer; font-weight: 700; color: #fff; }
-        details p { margin: 10px 0 0; color: #d4d4d8; font-size: 15px; line-height: 1.55; }
-        .related { list-style: none; padding: 0; margin: 0 0 28px; }
-        .related li { margin: 0 0 8px; }
-        footer { padding: 24px 0 48px; color: #a1a1aa; font-size: 14px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 24px; }
-        footer a { color: #a1a1aa; }
+        :root {
+          color-scheme: dark;
+          --bg: #07080a;
+          --ink: #f4f4f5;
+          --muted: #a1a1aa;
+          --line: rgba(255,255,255,0.1);
+          --cyan: #67e8f9;
+          --panel: rgba(12, 14, 18, 0.92);
+        }
+        * { box-sizing: border-box; }
+        body {
+          margin: 0;
+          min-height: 100vh;
+          color: var(--ink);
+          background:
+            radial-gradient(ellipse 70% 45% at 10% -10%, rgba(34, 211, 238, 0.16), transparent 55%),
+            radial-gradient(ellipse 50% 40% at 100% 0%, rgba(30, 64, 175, 0.28), transparent 50%),
+            var(--bg);
+          font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+        }
+        .wrap a { color: var(--cyan); text-decoration: none; }
+        .wrap a:hover { text-decoration: underline; }
+        .wrap { width: min(1400px, calc(100% - 28px)); margin: 0 auto; }
+        .hero {
+          position: relative;
+          margin: 4px 0 14px;
+          padding: 18px 0 6px;
+          overflow: hidden;
+        }
+        .hero-bg {
+          position: absolute; inset: 0 -4% auto;
+          height: 170px; border-radius: 22px; overflow: hidden;
+          pointer-events: none; z-index: 0;
+        }
+        .hero-bg img {
+          width: 100%; height: 100%; object-fit: cover;
+          filter: saturate(0.85) brightness(0.45);
+          transform: scale(1.02);
+        }
+        .hero-bg::after {
+          content: ""; position: absolute; inset: 0;
+          background:
+            linear-gradient(180deg, rgba(7,8,10,0.2) 0%, rgba(7,8,10,0.92) 78%, var(--bg) 100%),
+            linear-gradient(90deg, rgba(7,8,10,0.75), transparent 55%);
+        }
+        .hero-copy { position: relative; z-index: 1; max-width: 46rem; }
+        .meta {
+          color: var(--muted); font-size: 12px; font-weight: 600;
+          letter-spacing: 0.02em; margin: 0 0 10px;
+        }
+        h1 {
+          margin: 0 0 10px;
+          font-size: clamp(2rem, 4.6vw, 3.35rem);
+          font-weight: 800; letter-spacing: -0.045em; line-height: 1.02;
+          color: #fff;
+        }
+        .lede {
+          margin: 0;
+          font-size: clamp(15px, 1.7vw, 17px);
+          line-height: 1.5; color: #d4d4d8; max-width: 48ch;
+        }
+        .example-chip {
+          display: inline-block; margin-top: 14px;
+          padding: 8px 12px; border-radius: 999px;
+          border: 1px solid rgba(103, 232, 249, 0.28);
+          background: rgba(8, 47, 58, 0.55);
+          color: #a5f3fc; font-size: 12px; font-weight: 600;
+          font-family: "JetBrains Mono", ui-monospace, monospace;
+          max-width: 100%;
+        }
+        .tool { position: relative; z-index: 1; margin: 0 0 28px; }
+        .tool-frame {
+          border: 1px solid var(--line);
+          border-radius: 20px;
+          overflow: hidden;
+          background: var(--panel);
+          box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+        }
+        iframe {
+          display: block; width: 100%;
+          height: min(88vh, 1080px); min-height: 760px;
+          border: 0; background: #07080a;
+        }
+        .below { padding: 8px 0 20px; }
+        .related {
+          display: flex; flex-wrap: wrap; gap: 10px 18px;
+          margin: 0 0 22px; padding: 0; list-style: none;
+        }
+        .related a {
+          color: #e4e4e7; font-size: 14px; font-weight: 600;
+          text-decoration: none; border-bottom: 1px solid rgba(103,232,249,0.35);
+        }
+        .related a:hover { color: var(--cyan); }
+        .related-label {
+          width: 100%; margin: 0 0 2px;
+          color: var(--muted); font-size: 11px; font-weight: 700;
+          letter-spacing: 0.06em; text-transform: uppercase;
+        }
+        .notes {
+          border-top: 1px solid var(--line);
+          padding-top: 8px;
+        }
+        .notes > details {
+          border-bottom: 1px solid var(--line);
+          padding: 12px 0;
+        }
+        .notes > details > summary {
+          cursor: pointer; list-style: none;
+          font-size: 14px; font-weight: 700; color: #e4e4e7;
+        }
+        .notes > details > summary::-webkit-details-marker { display: none; }
+        .notes-body { padding: 12px 0 4px; max-width: 68ch; }
+        .notes-body h2 {
+          margin: 18px 0 6px; font-size: 15px; color: #fff;
+        }
+        .notes-body h2:first-child { margin-top: 0; }
+        .notes-body p {
+          margin: 0 0 10px; color: #d4d4d8;
+          font-size: 14px; line-height: 1.55;
+        }
+        .faq-item {
+          margin: 0 0 8px; padding: 10px 12px;
+          border: 1px solid var(--line); border-radius: 12px;
+          background: rgba(19, 18, 23, 0.65);
+        }
+        .faq-item summary { cursor: pointer; font-weight: 700; color: #fff; font-size: 13px; }
+        .faq-item p { margin: 8px 0 0; color: #d4d4d8; font-size: 13px; line-height: 1.5; }
+        .keywords { margin: 14px 0 0; color: var(--muted); font-size: 12px; }
+        @media (max-width: 720px) {
+          .hero { padding-top: 18px; }
+          .hero-bg { height: 180px; }
+          iframe { min-height: 680px; height: 80vh; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-bg img { transform: none; }
+        }
     </style>
 </head>
 <body>
+    <header class="noir-header">
+        <nav class="noir-pill" aria-label="Primary">
+            <a class="noir-brand" href="/">
+                <span class="brand-mark" aria-hidden="true">A</span>
+                <span>aFinanceCalculator</span>
+            </a>
+            <div class="noir-links">
+                <a href="/#calculators">Calculators</a>
+                <a href="/#calculators">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Support</a>
+            </div>
+            <a class="noir-cta" href="#calculator">Use calculator</a>
+        </nav>
+    </header>
+
     <div class="wrap">
-      <header class="top">
-          <a class="brand" href="/">aFinanceCalculator</a>
-          <a class="brand" href="/#calculators">All calculators</a>
-      </header>
-      <article>
-        <p class="meta">United States · Free browser calculator · Numbers stay on this device</p>
-        <h1>Mortgage calculator</h1>
-        <p class="lede">Free US mortgage payment calculator for principal and interest. Also used as a loan calculator and amortization schedule helper. Compounded monthly. Taxes, insurance, and mortgage insurance are not included.</p>
-        <div class="callout">
-        <p class="label">Worked example</p>
-        <p>A $450,000 home with $90,000 down leaves a $360,000 loan. At 6.2% for 30 years the payment is $2,204.89 a month. Interest over the full 360 payments is $433,759.79. The same loan at 15 years is $3,076.92 a month.</p>
-      </div>
-        <h2>How this figure is calculated</h2>
-      <p>The monthly principal and interest payment is M = P × [i(1+i)^n] / [(1+i)^n − 1]. P is the price minus the down payment. For a United States fixed mortgage, i is the annual rate divided by 12, and n is the number of months. A 30-year loan uses 360 months. The payment stays the same each month. Early payments are mostly interest. Later payments retire more principal.</p>
-      <h2>What this page leaves out</h2>
-      <p>Property tax, homeowners insurance, mortgage insurance, and HOA dues are not in the payment. The rate is compounded monthly, which is the US fixed-rate convention. This is not a lender approval and it does not apply Canadian semi-annual compounding. Use the Canada mortgage page for that schedule.</p>
-        <h2>Questions</h2>
-        <details>
+      <section class="hero" aria-label="Mortgage calculator">
+        <div class="hero-bg" aria-hidden="true">
+          <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=70" alt="" width="1600" height="500" loading="eager" decoding="async" fetchpriority="high">
+        </div>
+        <div class="hero-copy">
+          <p class="meta">United States · Free · Runs in your browser</p>
+          <h1>Mortgage calculator</h1>
+          <p class="lede">Free US mortgage payment calculator for principal and interest. Also used as a loan calculator and amortization schedule helper. Compounded monthly. Taxes, insurance, and mortgage insurance are not included.</p>
+          <p class="example-chip">A $450,000 home with $90,000 down leaves a $360,000 loan.</p>
+        </div>
+      </section>
+
+      <section class="tool" id="calculator">
+        <div class="tool-frame">
+          <iframe src="/index.html?engine=tab-mortgage&landing=1" title="Mortgage calculator" loading="eager"></iframe>
+        </div>
+      </section>
+
+      <section class="below">
+        <nav class="related" aria-label="Related calculators">
+          <span class="related-label">Related</span>
+          <a href="/biweekly-mortgage-calculator/">Biweekly mortgage calculator</a><a href="/refinance-calculator/">Refinance calculator</a><a href="/canada-mortgage-calculator/">Canada mortgage calculator</a><a href="/home-affordability-calculator/">How much house can I afford calculator</a>
+        </nav>
+
+        <div class="notes">
+          <details>
+            <summary>Notes, limits &amp; FAQ</summary>
+            <div class="notes-body">
+              <h2>How this figure is calculated</h2><p>The monthly principal and interest payment is M = P × [i(1+i)^n] / [(1+i)^n − 1]. P is the price minus the down payment. For a United States fixed mortgage, i is the annual rate divided by 12, and n is the number of months. A 30-year loan uses 360 months. The payment stays the same each month. Early payments are mostly interest. Later payments retire more principal.</p>
+              <h2>What this page leaves out</h2><p>Property tax, homeowners insurance, mortgage insurance, and HOA dues are not in the payment. The rate is compounded monthly, which is the US fixed-rate convention. This is not a lender approval and it does not apply Canadian semi-annual compounding. Use the Canada mortgage page for that schedule.</p>
+              <h2>Worked example</h2><p>A $450,000 home with $90,000 down leaves a $360,000 loan. At 6.2% for 30 years the payment is $2,204.89 a month. Interest over the full 360 payments is $433,759.79. The same loan at 15 years is $3,076.92 a month.</p>
+              <h2>Questions</h2>
+              <details class="faq-item">
         <summary>What is the monthly payment on a $360,000 mortgage at 6.2% for 30 years?</summary>
         <p>Principal and interest is $2,204.89 a month. Taxes and insurance are not included.</p>
       </details>
-      <details>
+      <details class="faq-item">
         <summary>Does this mortgage calculator include taxes and insurance?</summary>
         <p>No. It shows principal and interest only. Add tax, insurance, and mortgage insurance separately for a full housing payment.</p>
       </details>
-      <details>
+      <details class="faq-item">
         <summary>Is this free mortgage calculator also a loan calculator or amortization calculator?</summary>
         <p>Yes for principal and interest. The same amortizing formula powers a fixed loan payment. Use the personal loan or auto loan pages when the product is not a home mortgage.</p>
       </details>
-      <details>
+      <details class="faq-item">
         <summary>Is this for the United States or Canada?</summary>
         <p>This page uses US monthly compounding. For a Canadian quote compounded semi-annually, use the Canada mortgage calculator.</p>
       </details>
-        <h2>Related calculators</h2>
-        <ul class="related">
-            <li><a href="/biweekly-mortgage-calculator/">Biweekly mortgage calculator</a></li>
-            <li><a href="/refinance-calculator/">Refinance calculator</a></li>
-            <li><a href="/canada-mortgage-calculator/">Canada mortgage calculator</a></li>
-            <li><a href="/home-affordability-calculator/">How much house can I afford calculator</a></li>
-        </ul>
-        <h2>People also search for</h2>
-        <p class="meta">mortgage calculator · mortgage payment calculator · loan calculator · amortization calculator · home mortgage calculator · free mortgage calculator</p>
-      </article>
-      <section class="tool" id="calculator">
-        <h2>Use the calculator</h2>
-        <p class="meta">Adjust the inputs below. The result updates in this browser.</p>
-        <iframe src="/index.html?engine=tab-mortgage&landing=1" title="Mortgage calculator" loading="lazy"></iframe>
+              <p class="keywords">mortgage calculator · mortgage payment calculator · loan calculator · amortization calculator · home mortgage calculator · free mortgage calculator</p>
+            </div>
+          </details>
+        </div>
       </section>
-      <footer>
-        <p><a href="/">Home</a> · <a href="/about.html">About</a> · <a href="/privacy.html">Privacy</a> · <a href="/contact.html">Contact</a></p>
-        <p>Educational math only. Not a lender quote, tax filing, or financial advice.</p>
-      </footer>
     </div>
+
+    <footer class="site-footer">
+      <div class="site-footer-inner">
+        <div class="site-footer-grid">
+          <div>
+            <a class="site-footer-brand" href="/">
+              <span class="brand-mark" aria-hidden="true">A</span>
+              <span>a<span>Finance</span>Calculator</span>
+            </a>
+            <p>Free browser calculators for mortgages, paychecks, loans, and investing. Numbers stay on this device.</p>
+          </div>
+          <div>
+            <h3>Legal</h3>
+            <ul>
+              <li><a href="/privacy.html">Privacy Policy</a></li>
+              <li><a href="/terms.html">Terms of Service</a></li>
+              <li><a href="/privacy.html#cookies">Cookie Policy</a></li>
+              <li><a href="/terms.html#disclaimer">Financial Disclaimer</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3>Company</h3>
+            <ul>
+              <li><a href="/about.html">About</a></li>
+              <li><a href="/alternatives.html">vs Calculator.net &amp; Bankrate</a></li>
+              <li><a href="/contact.html">Contact Support</a></li>
+              <li><a href="/sitemap.xml">XML Sitemap</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3>Popular tools</h3>
+            <ul>
+              <li><a href="/mortgage-calculator/">Mortgage calculator</a></li>
+              <li><a href="/compound-interest-calculator/">Compound interest</a></li>
+              <li><a href="/paycheck-calculator/">Paycheck calculator</a></li>
+              <li><a href="/loan-calculator/">Loan calculator</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="site-footer-note">
+          <p>Educational math only. Not a lender quote, tax filing, or financial advice. &copy; 2026 aFinanceCalculator.</p>
+          <nav aria-label="Footer links">
+            <a href="/">Home</a>
+            <a href="/privacy.html">Privacy</a>
+            <a href="/terms.html">Terms</a>
+            <a href="/contact.html">Contact</a>
+            <a href="/about.html">About</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
 </body>
 </html>

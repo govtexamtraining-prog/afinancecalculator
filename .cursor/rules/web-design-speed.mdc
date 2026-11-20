@@ -1,0 +1,15 @@
+---
+description: Web design and speed rules for afinancecalculator (fast first paint, modern media, CPU-friendly motion)
+globs: index.html,css/**/*.css,js/cinematic.js,js/**/*.js
+alwaysApply: true
+---
+
+# Web Design & Speed Rules
+
+- Keep first paint fast: render text and a compressed hero image immediately without blocking loading screens.
+- Use modern image formats (WebP/AVIF) and avoid huge uncompressed videos or giant 3D files on initial load.
+- Use smooth CPU-friendly animations (`transform` and `opacity`) via Lenis and GSAP when richer motion is needed — load those libraries **deferred after first paint** (CDN or local), never in the critical path, and skip them when `prefers-reduced-motion: reduce`.
+- For this calculator-dense homepage: prefer CSS `transform`/`opacity` for the cinematic band on first paint; do **not** enable Lenis globally (it hijacks scroll and can fight sticky `.noir-header` / `.noir-tools`). Scope GSAP to `.noir-cinematic-*` only if used.
+- Keep layouts clean, spacious, and readable with high contrast.
+- Stack remains Vanilla HTML + CSS + JS (no React/Vue/Next, no Three.js). Do not block calculators, `#engine-*`, or `js/mechanics.js`.
+- When updating CSS/JS, bump `?v=` query strings and `CACHE_NAME` in `sw.js`.

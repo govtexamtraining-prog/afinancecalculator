@@ -1,4 +1,4 @@
-const CACHE_NAME = 'afinancecalc-v10-cache';
+const CACHE_NAME = 'afinancecalc-v20-cache';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -9,9 +9,15 @@ const ASSETS_TO_CACHE = [
   './css/styles.css',
   './css/terminal.css',
   './css/noir.css',
+  './css/cinematic.css',
+  './css/infographics.css',
+  './css/usage-illustrations.css',
   './css/tailwind.min.css',
   './js/banking_data.js',
   './js/mechanics.js',
+  './js/infographics.js',
+  './js/usage-illustrations.js',
+  './js/cinematic.js',
   './manifest.json',
   './favicon.svg',
   './favicon.ico',

@@ -1,0 +1,15 @@
+---
+description: Infographic-first architecture for afinancecalculator results
+globs: js/infographics.js,css/infographics.css,js/mechanics.js,index.html
+alwaysApply: true
+---
+
+# Infographic Architecture
+
+- Prefer **visual results** (SVG rings, gauges, bars) over long prose. Numbers stay as captions under the graphic.
+- Implement visuals in `js/infographics.js` + `css/infographics.css` only. Do **not** put chart SVG builders inside `mechanics.js`.
+- `mechanics.js` may call `InfoViz.<engine>(payload)` after math — never change formulas for styling.
+- Mount points: `#infographic-<engine>` + `#infographic-<engine>-legend` inside `.infographic-panel`.
+- Keep first paint fast: inline/SVG only, no Chart.js / D3 / Three.js / heavy image packs on load.
+- When adding a new engine visual: extend `InfoViz`, add a mount in that engine’s result card, and one hook after its `calc*` function.
+- Bump `?v=` on `infographics.css` / `infographics.js` and `CACHE_NAME` in `sw.js` when those files change.

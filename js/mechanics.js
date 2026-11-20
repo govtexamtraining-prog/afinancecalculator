@@ -407,6 +407,17 @@ function calcMortgage() {
 
   // Update SVG Donut / Bar Chart
   renderMortgageChart(principal, totalInterest);
+  if (window.InfoViz) {
+    InfoViz.mortgage({
+      principal: principal,
+      interest: totalInterest,
+      payment: monthlyPayment,
+      paymentLabel: formatCurrency(monthlyPayment),
+      principalLabel: formatCurrency(principal),
+      interestLabel: formatCurrency(totalInterest),
+      ltv: ltv
+    });
+  }
 
   // Calculate What-If Scenarios (30yr vs 15yr comparison & Extra payment)
   calcMortgageWhatIf(principal, rate, monthlyPayment, contractualInterest, extraPay);
@@ -639,6 +650,16 @@ function calcCompound() {
   }
 
   renderGrowthCurve('compound-growth-svg', principal, rate, years);
+  if (window.InfoViz) {
+    InfoViz.compound({
+      principal: principal,
+      growth: totalInterest,
+      multiplier: multiplier,
+      future: futureVal,
+      principalLabel: formatCurrency(principal),
+      growthLabel: formatCurrency(totalInterest)
+    });
+  }
   flashElement('compound-future-val');
 }
 
@@ -1192,6 +1213,16 @@ function calcAutoLoan() {
   const totEl = document.getElementById('autoloan-total-outflow');
   if (totEl) totEl.textContent = formatCurrency(totalPaid);
 
+  if (window.InfoViz) {
+    InfoViz.autoloan({
+      principal: val,
+      interest: totalInterest,
+      payment: monthly,
+      paymentLabel: formatCurrency(monthly),
+      principalLabel: formatCurrency(val),
+      interestLabel: formatCurrency(totalInterest)
+    });
+  }
   flashElement('autoloan-payment');
 }
 
@@ -1882,6 +1913,15 @@ function calcFire() {
   if (moEl) moEl.textContent = formatCurrency(safeMonthly);
 
   renderFireChart(expenses, savings, annualSave, target, years);
+  if (window.InfoViz) {
+    InfoViz.fire({
+      savings: savings,
+      target: target,
+      years: reached ? years : null,
+      savingsLabel: formatCurrency(savings),
+      targetLabel: formatCurrency(target)
+    });
+  }
   flashElement('fire-target-number');
 }
 
@@ -2077,6 +2117,14 @@ function calcPaycheck() {
   if (annEl) annEl.textContent = formatCurrency(annualNet);
   if (totEl) totEl.textContent = formatCurrency(totalDeductions);
 
+  if (window.InfoViz) {
+    InfoViz.paycheck({
+      net: netPay,
+      taxes: totalDeductions,
+      netLabel: formatCurrency(netPay),
+      taxesLabel: formatCurrency(totalDeductions)
+    });
+  }
   flashElement('paycheck-net-pay');
 }
 
@@ -2248,6 +2296,16 @@ function calcSnowball() {
   if (intEl) intEl.textContent = formatCurrency(avalanche.interest);
 
   renderSnowballChart(snowball.interest, avalanche.interest);
+  if (window.InfoViz) {
+    InfoViz.snowball({
+      snowballInterest: snowball.interest,
+      avalancheInterest: avalanche.interest,
+      savings: avalancheSavings,
+      snowballLabel: formatCurrency(snowball.interest),
+      avalancheLabel: formatCurrency(avalanche.interest),
+      savingsLabel: formatCurrency(avalancheSavings)
+    });
+  }
   flashElement('snowball-avalanche-savings');
 }
 

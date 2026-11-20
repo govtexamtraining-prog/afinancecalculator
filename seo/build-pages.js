@@ -6,6 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const pageCopy = require('./page-copy');
+const { siteHeaderHtml, siteFooterHtml, siteChromeLinks } = require('./site-chrome');
 
 const root = path.join(__dirname, '..');
 const origin = 'https://afinancecalculator.com';
@@ -94,6 +95,41 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;');
 }
 
+/** Unsplash photo id for hero atmosphere — not scraped Google Images. */
+function usagePhotoId(page) {
+  const map = {
+    mortgage: 'photo-1560518883-ce09059eeffa',
+    canada: 'photo-1560518883-ce09059eeffa',
+    biweekly: 'photo-1600596542815-ffad4c1539a9',
+    refinance: 'photo-1560518883-ce09059eeffa',
+    rent: 'photo-1560448204-e02f11c3d0e2',
+    affordability: 'photo-1600585154340-be6161a56a0c',
+    heloc: 'photo-1560518883-ce09059eeffa',
+    paycheck: 'photo-1554224155-6726b3ff858f',
+    compound: 'photo-1579621970563-ebec7560ff3e',
+    auto: 'photo-1492144534655-ae79c964c9d7',
+    car: 'photo-1503376780353-7e6692767b70',
+    fire: 'photo-1500530855697-b586d89ba3ee',
+    '401k': 'photo-1434626881859-194d67b2b86f',
+    debt: 'photo-1579621970795-87facc2f976d',
+    credit: 'photo-1556740758-90de374c12ad',
+    loan: 'photo-1556742049-0cfed4f6a45d',
+    student: 'photo-1523050854058-8df90110c9f1',
+    budget: 'photo-1554224154-26032ffc0d07',
+    airbnb: 'photo-1522708323590-d24dbb6b0267',
+    solar: 'photo-1509391366360-2e959784a276',
+    crypto: 'photo-1621761191319-c6fb62004040',
+    bank: 'photo-1556742049-0cfed4f6a45d'
+  };
+  const slug = page.slug || '';
+  const key = Object.keys(map).find((k) => slug.includes(k)) || 'compound';
+  return map[key];
+}
+
+function usageImageSrc(page, width) {
+  return `https://images.unsplash.com/${usagePhotoId(page)}?auto=format&fit=crop&w=${width || 1600}&q=70`;
+}
+
 function faqsFor(page) {
   const copy = pageCopy[page.slug] || {};
   const custom = copy.faq || [];
@@ -162,9 +198,6 @@ function pageHtml(page) {
   const relatedPages = (page.related || [])
     .map((slug) => bySlug[slug])
     .filter(Boolean);
-  const relatedList = relatedPages
-    .map((item) => `<li><a href="/${item.slug}/">${escapeHtml(item.h1)}</a></li>`)
-    .join('\n            ');
   const hreflang = page.slug === 'mortgage-calculator' || page.slug === 'canada-mortgage-calculator'
     ? `<link rel="alternate" hreflang="en-US" href="${origin}/mortgage-calculator/">
     <link rel="alternate" hreflang="en-CA" href="${origin}/canada-mortgage-calculator/">
@@ -178,28 +211,29 @@ function pageHtml(page) {
   const copy = pageCopy[page.slug];
   const faqs = faqsFor(page);
   const description = page.note;
-  const exampleBlock = copy
-    ? `<div class="callout">
-        <p class="label">Worked example</p>
-        <p>${escapeHtml(copy.example)}</p>
-      </div>`
-    : (page.example ? `<div class="callout"><p>${escapeHtml(page.example)}</p></div>` : '');
-  const howBlock = copy
-    ? `<h2>How this figure is calculated</h2>
-      <p>${escapeHtml(copy.how)}</p>
-      <h2>What this page leaves out</h2>
-      <p>${escapeHtml(copy.leaves)}</p>`
-    : `<p>${escapeHtml(page.note)}</p>`;
-  const faqHtml = faqs.map((item) => `<details>
+  const exampleText = (copy && copy.example) || page.example || '';
+  const exampleChip = exampleText
+    ? (exampleText.match(/^[^.]{12,110}\./) || [exampleText.slice(0, 110) + (exampleText.length > 110 ? '…' : '')])[0]
+    : '';
+  const howText = (copy && copy.how) || '';
+  const leavesText = (copy && copy.leaves) || '';
+  const faqHtml = faqs.map((item) => `<details class="faq-item">
         <summary>${escapeHtml(item.q)}</summary>
         <p>${escapeHtml(item.a)}</p>
       </details>`).join('\n      ');
   const moreLinks = pages
     .filter((item) => item.slug !== page.slug && item.region === page.region)
     .slice(0, 6)
-    .map((item) => `<li><a href="/${item.slug}/">${escapeHtml(item.h1)}</a></li>`)
-    .join('\n            ');
+    .map((item) => `<a href="/${item.slug}/">${escapeHtml(item.h1)}</a>`)
+    .join('');
+  const relatedLinks = relatedPages.length
+    ? relatedPages.map((item) => `<a href="/${item.slug}/">${escapeHtml(item.h1)}</a>`).join('')
+    : moreLinks;
   const iframeSrc = `/index.html?engine=${encodeURIComponent(page.engine)}&landing=1${page.market ? `&market=${encodeURIComponent(page.market)}` : ''}`;
+  const heroImg = usageImageSrc(page, 1600);
+  const keywordsLine = page.keywords
+    ? escapeHtml(page.keywords.split(',').map((k) => k.trim()).filter(Boolean).join(' · '))
+    : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -222,66 +256,195 @@ function pageHtml(page) {
     <meta name="twitter:title" content="${escapeHtml(page.title)} | aFinanceCalculator">
     <meta name="twitter:description" content="${escapeHtml(page.note)}">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    ${siteChromeLinks()}
     <script type="application/ld+json">${schemaJson(page, faqs)}</script>
     <style>
-        :root { color-scheme: dark; }
-        body { margin: 0; background: #07080a; color: #fff; font-family: "Plus Jakarta Sans", "Public Sans", system-ui, sans-serif; }
-        a { color: #67e8f9; }
-        .wrap { width: min(760px, calc(100% - 32px)); margin: 0 auto; }
-        .top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 16px 0 8px; }
-        .brand { color: #a1a1aa; font-size: 14px; text-decoration: none; }
-        h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; margin: 8px 0 12px; }
-        .lede { font-size: 18px; line-height: 1.55; color: #d4d4d8; margin: 0 0 16px; max-width: 62ch; }
-        .meta { color: #a1a1aa; font-size: 13px; margin: 0 0 16px; }
-        .callout { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 18px; margin: 0 0 24px; }
-        .callout .label { color: #67e8f9; font-size: 12px; font-weight: 700; margin: 0 0 6px; text-transform: none; letter-spacing: 0; }
-        .callout p { margin: 0; color: #fff; font-size: 16px; line-height: 1.5; font-variant-numeric: tabular-nums; }
-        article { padding: 8px 0 28px; }
-        article h2 { font-size: 22px; line-height: 1.2; margin: 28px 0 8px; }
-        article p { font-size: 16px; line-height: 1.55; color: #d4d4d8; max-width: 68ch; margin: 0 0 10px; }
-        .tool { margin: 8px 0 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; }
-        .tool h2 { font-size: 22px; margin: 0 0 10px; }
-        iframe { display: block; width: 100%; height: min(85vh, 900px); min-height: 720px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: #07080a; }
-        details { background: #131217; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 14px 16px; margin: 0 0 10px; }
-        summary { cursor: pointer; font-weight: 700; color: #fff; }
-        details p { margin: 10px 0 0; color: #d4d4d8; font-size: 15px; line-height: 1.55; }
-        .related { list-style: none; padding: 0; margin: 0 0 28px; }
-        .related li { margin: 0 0 8px; }
-        footer { padding: 24px 0 48px; color: #a1a1aa; font-size: 14px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 24px; }
-        footer a { color: #a1a1aa; }
+        :root {
+          color-scheme: dark;
+          --bg: #07080a;
+          --ink: #f4f4f5;
+          --muted: #a1a1aa;
+          --line: rgba(255,255,255,0.1);
+          --cyan: #67e8f9;
+          --panel: rgba(12, 14, 18, 0.92);
+        }
+        * { box-sizing: border-box; }
+        body {
+          margin: 0;
+          min-height: 100vh;
+          color: var(--ink);
+          background:
+            radial-gradient(ellipse 70% 45% at 10% -10%, rgba(34, 211, 238, 0.16), transparent 55%),
+            radial-gradient(ellipse 50% 40% at 100% 0%, rgba(30, 64, 175, 0.28), transparent 50%),
+            var(--bg);
+          font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+        }
+        .wrap a { color: var(--cyan); text-decoration: none; }
+        .wrap a:hover { text-decoration: underline; }
+        .wrap { width: min(1400px, calc(100% - 28px)); margin: 0 auto; }
+        .hero {
+          position: relative;
+          margin: 4px 0 14px;
+          padding: 18px 0 6px;
+          overflow: hidden;
+        }
+        .hero-bg {
+          position: absolute; inset: 0 -4% auto;
+          height: 170px; border-radius: 22px; overflow: hidden;
+          pointer-events: none; z-index: 0;
+        }
+        .hero-bg img {
+          width: 100%; height: 100%; object-fit: cover;
+          filter: saturate(0.85) brightness(0.45);
+          transform: scale(1.02);
+        }
+        .hero-bg::after {
+          content: ""; position: absolute; inset: 0;
+          background:
+            linear-gradient(180deg, rgba(7,8,10,0.2) 0%, rgba(7,8,10,0.92) 78%, var(--bg) 100%),
+            linear-gradient(90deg, rgba(7,8,10,0.75), transparent 55%);
+        }
+        .hero-copy { position: relative; z-index: 1; max-width: 46rem; }
+        .meta {
+          color: var(--muted); font-size: 12px; font-weight: 600;
+          letter-spacing: 0.02em; margin: 0 0 10px;
+        }
+        h1 {
+          margin: 0 0 10px;
+          font-size: clamp(2rem, 4.6vw, 3.35rem);
+          font-weight: 800; letter-spacing: -0.045em; line-height: 1.02;
+          color: #fff;
+        }
+        .lede {
+          margin: 0;
+          font-size: clamp(15px, 1.7vw, 17px);
+          line-height: 1.5; color: #d4d4d8; max-width: 48ch;
+        }
+        .example-chip {
+          display: inline-block; margin-top: 14px;
+          padding: 8px 12px; border-radius: 999px;
+          border: 1px solid rgba(103, 232, 249, 0.28);
+          background: rgba(8, 47, 58, 0.55);
+          color: #a5f3fc; font-size: 12px; font-weight: 600;
+          font-family: "JetBrains Mono", ui-monospace, monospace;
+          max-width: 100%;
+        }
+        .tool { position: relative; z-index: 1; margin: 0 0 28px; }
+        .tool-frame {
+          border: 1px solid var(--line);
+          border-radius: 20px;
+          overflow: hidden;
+          background: var(--panel);
+          box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+        }
+        iframe {
+          display: block; width: 100%;
+          height: min(88vh, 1080px); min-height: 760px;
+          border: 0; background: #07080a;
+        }
+        .below { padding: 8px 0 20px; }
+        .related {
+          display: flex; flex-wrap: wrap; gap: 10px 18px;
+          margin: 0 0 22px; padding: 0; list-style: none;
+        }
+        .related a {
+          color: #e4e4e7; font-size: 14px; font-weight: 600;
+          text-decoration: none; border-bottom: 1px solid rgba(103,232,249,0.35);
+        }
+        .related a:hover { color: var(--cyan); }
+        .related-label {
+          width: 100%; margin: 0 0 2px;
+          color: var(--muted); font-size: 11px; font-weight: 700;
+          letter-spacing: 0.06em; text-transform: uppercase;
+        }
+        .notes {
+          border-top: 1px solid var(--line);
+          padding-top: 8px;
+        }
+        .notes > details {
+          border-bottom: 1px solid var(--line);
+          padding: 12px 0;
+        }
+        .notes > details > summary {
+          cursor: pointer; list-style: none;
+          font-size: 14px; font-weight: 700; color: #e4e4e7;
+        }
+        .notes > details > summary::-webkit-details-marker { display: none; }
+        .notes-body { padding: 12px 0 4px; max-width: 68ch; }
+        .notes-body h2 {
+          margin: 18px 0 6px; font-size: 15px; color: #fff;
+        }
+        .notes-body h2:first-child { margin-top: 0; }
+        .notes-body p {
+          margin: 0 0 10px; color: #d4d4d8;
+          font-size: 14px; line-height: 1.55;
+        }
+        .faq-item {
+          margin: 0 0 8px; padding: 10px 12px;
+          border: 1px solid var(--line); border-radius: 12px;
+          background: rgba(19, 18, 23, 0.65);
+        }
+        .faq-item summary { cursor: pointer; font-weight: 700; color: #fff; font-size: 13px; }
+        .faq-item p { margin: 8px 0 0; color: #d4d4d8; font-size: 13px; line-height: 1.5; }
+        .keywords { margin: 14px 0 0; color: var(--muted); font-size: 12px; }
+        @media (max-width: 720px) {
+          .hero { padding-top: 18px; }
+          .hero-bg { height: 180px; }
+          iframe { min-height: 680px; height: 80vh; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-bg img { transform: none; }
+        }
     </style>
 </head>
 <body>
+    ${siteHeaderHtml({ ctaHref: '#calculator', ctaLabel: 'Use calculator' })}
+
     <div class="wrap">
-      <header class="top">
-          <a class="brand" href="/">aFinanceCalculator</a>
-          <a class="brand" href="/#calculators">All calculators</a>
-      </header>
-      <article>
-        <p class="meta">${escapeHtml(regionLine)} · Free browser calculator · Numbers stay on this device</p>
-        <h1>${escapeHtml(page.h1)}</h1>
-        <p class="lede">${escapeHtml(page.note)}</p>
-        ${exampleBlock}
-        ${howBlock}
-        <h2>Questions</h2>
-        ${faqHtml}
-        <h2>Related calculators</h2>
-        <ul class="related">
-            ${relatedList || moreLinks}
-        </ul>
-        ${page.keywords ? `<h2>People also search for</h2>
-        <p class="meta">${escapeHtml(page.keywords.split(',').map((k) => k.trim()).filter(Boolean).join(' · '))}</p>` : ''}
-      </article>
-      <section class="tool" id="calculator">
-        <h2>Use the calculator</h2>
-        <p class="meta">Adjust the inputs below. The result updates in this browser.</p>
-        <iframe src="${iframeSrc}" title="${escapeHtml(page.h1)}" loading="lazy"></iframe>
+      <section class="hero" aria-label="${escapeHtml(page.h1)}">
+        <div class="hero-bg" aria-hidden="true">
+          <img src="${heroImg}" alt="" width="1600" height="500" loading="eager" decoding="async" fetchpriority="high">
+        </div>
+        <div class="hero-copy">
+          <p class="meta">${escapeHtml(regionLine)} · Free · Runs in your browser</p>
+          <h1>${escapeHtml(page.h1)}</h1>
+          <p class="lede">${escapeHtml(page.note)}</p>
+          ${exampleChip ? `<p class="example-chip">${escapeHtml(exampleChip)}</p>` : ''}
+        </div>
       </section>
-      <footer>
-        <p><a href="/">Home</a> · <a href="/about.html">About</a> · <a href="/privacy.html">Privacy</a> · <a href="/contact.html">Contact</a></p>
-        <p>Educational math only. Not a lender quote, tax filing, or financial advice.</p>
-      </footer>
+
+      <section class="tool" id="calculator">
+        <div class="tool-frame">
+          <iframe src="${iframeSrc}" title="${escapeHtml(page.h1)}" loading="eager"></iframe>
+        </div>
+      </section>
+
+      <section class="below">
+        <nav class="related" aria-label="Related calculators">
+          <span class="related-label">Related</span>
+          ${relatedLinks}
+        </nav>
+
+        <div class="notes">
+          <details>
+            <summary>Notes, limits &amp; FAQ</summary>
+            <div class="notes-body">
+              ${howText ? `<h2>How this figure is calculated</h2><p>${escapeHtml(howText)}</p>` : ''}
+              ${leavesText ? `<h2>What this page leaves out</h2><p>${escapeHtml(leavesText)}</p>` : `<p>${escapeHtml(page.note)}</p>`}
+              ${exampleText ? `<h2>Worked example</h2><p>${escapeHtml(exampleText)}</p>` : ''}
+              <h2>Questions</h2>
+              ${faqHtml}
+              ${keywordsLine ? `<p class="keywords">${keywordsLine}</p>` : ''}
+            </div>
+          </details>
+        </div>
+      </section>
     </div>
+
+    ${siteFooterHtml()}
 </body>
 </html>
 `;
@@ -387,4 +550,5 @@ writePages();
 writeSitemap();
 writeBrowserMap();
 if (process.argv.includes('--home')) patchHome();
+require('./sync-static-chrome');
 console.log('pages', pages.length, 'us mortgage', usMortgage, 'ca mortgage', caMortgage);

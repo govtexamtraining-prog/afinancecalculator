@@ -1,0 +1,17 @@
+---
+description: Vanilla noir cinematic section rules for afinancecalculator (no React/heavy libs)
+globs: index.html,css/cinematic.css,css/noir.css,js/cinematic.js,sw.js
+alwaysApply: true
+---
+
+# afinancecalculator Cinematic Rules
+
+- Stack is Vanilla HTML + CSS + JS with no bundler. Do not introduce React, Vue, Next.js, or heavy 3D libraries like Three.js.
+- Only edit `index.html` (near `.noir-hero`) and a scoped stylesheet (`css/cinematic.css` loaded after `css/noir.css`, or scoped styles in `css/noir.css`).
+- Namespace all new classes with `.noir-cinematic-` and never alter global `body`, `form`, `#engine-*`, `.noir-tools`, or `js/mechanics.js`.
+- Keep first paint on CSS (`transform` / `opacity` / gradients). Optional GSAP may load deferred after idle for cinematic polish only; do not use Lenis globally on the calculator homepage.
+- Include `@media (prefers-reduced-motion: reduce)` fallbacks.
+- Any image should be WebP/AVIF when practical. Any video must use `preload="none"`, a compressed poster (WebP preferred), and lazy loading below or after initial paint — never a huge uncompressed clip on initial load.
+- Hide cinematic chrome when `html.in-frame` so `?landing=1` iframes stay untouched.
+- Do not edit generated `/{slug}/index.html` pages for visual work; those come from `node seo/build-pages.js`.
+- Remind me to bump the `?v=` query parameter on linked CSS/JS files when updated, and bump `CACHE_NAME` in `sw.js` when precached assets change.

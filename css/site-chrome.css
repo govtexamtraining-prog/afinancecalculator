@@ -1,0 +1,127 @@
+/* Shared header + footer chrome for home, landings, and legal pages.
+   Pair with css/noir.css for .noir-header / .noir-pill styles. */
+
+.noir-pill {
+  width: min(1400px, 100%);
+}
+
+.site-footer {
+  width: 100%;
+  margin-top: 2.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(2, 6, 23, 0.92);
+  color: #a1a1aa;
+  font-size: 12px;
+}
+
+.site-footer-inner {
+  width: min(1400px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 2.5rem 0 2rem;
+}
+
+.site-footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 2rem 2.5rem;
+}
+
+.site-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-size: 16px;
+}
+
+.site-footer-brand .brand-mark {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #22d3ee, #2563eb);
+  color: #041016;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.site-footer-brand span span {
+  color: #67e8f9;
+}
+
+.site-footer p {
+  margin: 0 0 10px;
+  line-height: 1.55;
+  max-width: 36ch;
+  color: #a1a1aa;
+}
+
+.site-footer h3 {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.site-footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.site-footer a {
+  color: #a1a1aa;
+  text-decoration: none;
+}
+
+.site-footer a:hover,
+.site-footer a:focus-visible {
+  color: #67e8f9;
+}
+
+.site-footer-note {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  font-size: 11px;
+  color: #71717a;
+}
+
+.site-footer-note nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+@media (max-width: 900px) {
+  .site-footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .site-footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .noir-links {
+    width: 100%;
+  }
+
+  .noir-cta {
+    margin-left: auto;
+  }
+}
