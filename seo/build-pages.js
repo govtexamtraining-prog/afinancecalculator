@@ -105,6 +105,23 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;');
 }
 
+/** First sentence for hero chips — do not split on decimals like 3.95% or $2,204.89. */
+function firstExampleChip(text, maxLen = 140) {
+  const raw = String(text || '').replace(/\s+/g, ' ').trim();
+  if (!raw) return '';
+  for (let i = 0; i < raw.length; i++) {
+    if (raw[i] !== '.') continue;
+    const prev = raw[i - 1] || '';
+    const next = raw[i + 1] || '';
+    if (/\d/.test(prev) && /\d/.test(next)) continue; // decimal
+    if (i + 1 >= 20) return raw.slice(0, i + 1).trim();
+  }
+  if (raw.length <= maxLen) return raw;
+  const slice = raw.slice(0, maxLen);
+  const sp = slice.lastIndexOf(' ');
+  return (sp > 40 ? slice.slice(0, sp) : slice).trim() + '…';
+}
+
 /** Unsplash photo id for hero atmosphere — not scraped Google Images. */
 function usagePhotoId(page) {
   const map = {
@@ -222,9 +239,7 @@ function pageHtml(page) {
   const faqs = faqsFor(page);
   const description = page.note;
   const exampleText = (copy && copy.example) || page.example || '';
-  const exampleChip = exampleText
-    ? (exampleText.match(/^[^.]{12,110}\./) || [exampleText.slice(0, 110) + (exampleText.length > 110 ? '…' : '')])[0]
-    : '';
+  const exampleChip = exampleText ? firstExampleChip(exampleText) : '';
   const howText = (copy && copy.how) || '';
   const leavesText = (copy && copy.leaves) || '';
   const faqHtml = faqs.map((item) => `<details class="faq-item">

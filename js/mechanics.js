@@ -6971,7 +6971,11 @@ function filterCategory(cat) {
   });
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    if (cat === 'all' || btn.dataset.cat === cat) {
+    const cats = String(btn.dataset.cat || '')
+      .split(/\s+/)
+      .map((c) => c.trim())
+      .filter(Boolean);
+    if (cat === 'all' || cats.includes(cat)) {
       btn.style.display = 'block';
     } else {
       btn.style.display = 'none';
