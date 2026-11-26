@@ -4,14 +4,97 @@
  */
 module.exports = {
   'mortgage-calculator': {
-    how: 'The monthly principal and interest payment is M = P × [i(1+i)^n] / [(1+i)^n − 1]. P is the price minus the down payment. For a United States fixed mortgage, i is the annual rate divided by 12, and n is the number of months. A 30-year loan uses 360 months. The payment stays the same each month. Early payments are mostly interest. Later payments retire more principal.',
-    example: 'A $450,000 home with $90,000 down leaves a $360,000 loan. At 6.2% for 30 years the payment is $2,204.89 a month. Interest over the full 360 payments is $433,759.79. The same loan at 15 years is $3,076.92 a month.',
-    leaves: 'Property tax, homeowners insurance, mortgage insurance, and HOA dues are not in the payment. The rate is compounded monthly, which is the US fixed-rate convention. This is not a lender approval and it does not apply Canadian semi-annual compounding. Use the Canada mortgage page for that schedule.',
+    how: 'The monthly principal and interest payment is M = P × [i(1+i)^n] / [(1+i)^n − 1]. P is the price minus the down payment. For a United States fixed mortgage, i is the annual rate divided by 12, and n is the number of months. A 30-year loan uses 360 months. Optional property tax, homeowners insurance, PMI, and HOA fields are added on top of P&I to estimate a full PITI housing payment.',
+    example: 'A $450,000 home with $90,000 down leaves a $360,000 loan. At 6.2% for 30 years principal and interest is $2,204.89 a month. Adding $375 tax, $140 insurance, and $0 PMI/HOA brings estimated PITI to $2,719.89.',
+    leaves: 'Escrow amounts are estimates you type — not county tax bills or carrier quotes. The rate is compounded monthly (US fixed-rate convention). This is not a lender approval. Use the Canada mortgage page for semi-annual compounding and CMHC premium math.',
     faq: [
-      { q: 'What is the monthly payment on a $360,000 mortgage at 6.2% for 30 years?', a: 'Principal and interest is $2,204.89 a month. Taxes and insurance are not included.' },
-      { q: 'Does this mortgage calculator include taxes and insurance?', a: 'No. It shows principal and interest only. Add tax, insurance, and mortgage insurance separately for a full housing payment.' },
-      { q: 'Is this free mortgage calculator also a loan calculator or amortization calculator?', a: 'Yes for principal and interest. The same amortizing formula powers a fixed loan payment. Use the personal loan or auto loan pages when the product is not a home mortgage.' },
+      { q: 'What is the monthly payment on a $360,000 mortgage at 6.2% for 30 years?', a: 'Principal and interest is $2,204.89 a month. Add your tax, insurance, PMI, and HOA fields for a PITI total.' },
+      { q: 'Does this mortgage calculator include taxes and insurance?', a: 'Yes as optional monthly fields. Enter property tax, homeowners insurance, PMI, and HOA to see estimated PITI on top of principal and interest.' },
+      { q: 'Is this free mortgage calculator also a loan calculator or amortization calculator?', a: 'Yes for principal and interest. Use the dedicated amortization calculator for a month-by-month schedule, or the personal/auto loan pages for non-mortgage products.' },
       { q: 'Is this for the United States or Canada?', a: 'This page uses US monthly compounding. For a Canadian quote compounded semi-annually, use the Canada mortgage calculator.' }
+    ]
+  },
+  'amortization-calculator': {
+    how: 'Each month, interest = remaining balance × (annual rate ÷ 12). The rest of the payment reduces principal. The schedule continues until the balance reaches zero. Extra principal shortens the term and cuts total interest.',
+    example: 'A $360,000 loan at 6.2% for 30 years has a $2,204.89 payment. Month 1 is mostly interest; later months retire more principal.',
+    leaves: 'Taxes, insurance, and lender fees are not in this schedule. It is not a Truth-in-Lending disclosure.',
+    faq: [
+      { q: 'What is an amortization schedule?', a: 'A month-by-month table of payment, interest, principal, and remaining balance until the loan is paid off.' },
+      { q: 'Does extra payment change the schedule?', a: 'Yes. Extra principal each month reduces the balance faster and usually cuts total interest.' }
+    ]
+  },
+  'balance-transfer-calculator': {
+    how: 'Interest on the current card is projected at the APR and payment you enter. The transfer path adds the fee to the balance, applies the intro APR for the intro months, then the go-to APR.',
+    example: 'Moving $8,000 from 22.9% APR to a 0% intro for 15 months with a 3% fee can cut interest if you keep paying $250/mo.',
+    leaves: 'Credit approval, issuer fees beyond the percent you enter, and rewards are not modeled.',
+    faq: [
+      { q: 'Is the transfer fee included?', a: 'Yes. The fee percent is added to the transferred balance before interest is estimated.' },
+      { q: 'What if I do not clear the balance before the intro ends?', a: 'Interest after the intro uses the go-to APR you enter for the remaining balance.' }
+    ]
+  },
+  'savings-calculator': {
+    how: 'Each month the balance grows by APY/12, then the monthly deposit is added. That approximates monthly compounding for planning.',
+    example: 'Starting at $5,000 with $300/mo at 4.2% APY for 5 years grows deposits plus interest into a larger ending balance.',
+    leaves: 'Taxes on interest, bank fees, and rate changes are not included.',
+    faq: [
+      { q: 'Is APY the same as APR?', a: 'APY already includes compounding. This tool compounds monthly for a planning estimate.' }
+    ]
+  },
+  'cd-calculator': {
+    how: 'Maturity ≈ principal × (1 + APY/n)^(n×years), where n is the compounding frequency you select.',
+    example: 'A $10,000 CD at 4.5% APY for 12 months with monthly compounding earns interest to maturity on that schedule.',
+    leaves: 'Early withdrawal penalties and promotional APYs are not priced unless you change the rate.',
+    faq: [
+      { q: 'Is this a live CD rate?', a: 'No. Enter the APY from the bank. Pair with the CD ladder tool for staggered maturities.' }
+    ]
+  },
+  'money-market-calculator': {
+    how: 'Each month the balance grows by APY/12, then the monthly deposit is added — the same monthly compounding model as the HYSA tool.',
+    example: 'Starting at $8,000 with $250/mo at 3.95% APY for 3 years grows deposits plus interest into a larger ending balance.',
+    leaves: 'Minimum balance rules, fees, and check-writing limits are not modeled. Not a live bank rate.',
+    faq: [
+      { q: 'Is a money market the same as a money-market fund?', a: 'No. This page models a bank or credit-union money market deposit account APY, not a mutual fund NAV.' },
+      { q: 'Where do the rate-row figures come from?', a: 'Editorial benchmarks in data/market-rates.json. Confirm the APY with your bank before depositing.' }
+    ]
+  },
+  'roth-ira-calculator': {
+    how: 'Each year the prior balance plus that year’s contribution grows by the return rate you enter.',
+    example: 'Starting at $15,000 with $7,000 annual contributions at 7% for 25 years compounds into a larger projected balance.',
+    leaves: 'Contribution limits, income phase-outs, and tax law changes are not enforced. Not tax advice.',
+    faq: [
+      { q: 'Is this the same as a 401(k) calculator?', a: 'No. Use the 401(k) page for workplace deferrals and employer match. This page models Roth IRA-style annual contributions.' }
+    ]
+  },
+  'down-payment-calculator': {
+    how: 'Down payment = price × percent. Closing buffer = price × closing percent. Months to goal = remaining cash ÷ monthly save rate.',
+    example: 'On a $450,000 home, 20% down is $90,000. A 3% closing buffer is $13,500.',
+    leaves: 'Earnest money timing and exact lender fees vary by market.',
+    faq: [
+      { q: 'Does a lower down payment always mean PMI?', a: 'Often on conventional US loans when LTV is above 80%. Confirm with the lender; this page does not underwrite PMI.' }
+    ]
+  },
+  'car-affordability-calculator': {
+    how: 'Max payment = income × payment percent − other auto debt. Max loan is the present value of that payment at the APR and term. Vehicle budget ≈ max loan + down payment.',
+    example: 'With $4,500 take-home, a 12% payment cap, 6.5% APR, 60 months, and $3,000 down, the tool estimates a vehicle budget.',
+    leaves: 'Tax, title, registration, and insurance are not in the price unless you fold them into down payment.',
+    faq: [
+      { q: 'Is this a loan approval?', a: 'No. It is a budget estimate from the payment rule you set.' }
+    ]
+  },
+  'rent-affordability-calculator': {
+    how: 'Suggested rent = income × rent percent. Housing with utilities adds the utility field. Leftover cash subtracts rent, utilities, and other debts from income.',
+    example: 'On $5,000 take-home with a 30% rule, suggested rent is $1,500 before utilities and other debts.',
+    leaves: 'Landlord income rules and local rent caps are not applied.',
+    faq: [
+      { q: 'Should I use gross or take-home income?', a: 'Many rules use gross; a conservative plan uses take-home. Pick the basis that matches how you budget.' }
+    ]
+  },
+  'apr-loan-comparison-calculator': {
+    how: 'Each loan’s payment uses the standard amortizing formula. Total cost = payments across the term + upfront fees. The lower total cost is highlighted.',
+    example: 'Comparing a 48-month 9.9% loan with a 60-month 7.5% loan plus fees shows which all-in cost is lower.',
+    leaves: 'Credit scores, prepayment penalties, and variable rates are not modeled.',
+    faq: [
+      { q: 'Why can a lower APR lose?', a: 'A longer term or higher fees can raise total interest and all-in cost even when the APR looks better.' }
     ]
   },
   'canada-mortgage-calculator': {

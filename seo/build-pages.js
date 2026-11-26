@@ -27,7 +27,17 @@ const caMortgage = money(monthlyPayment(480000, 4.5, 25), 'C$');
 
 /** @type {{slug:string, engine:string, title:string, h1:string, region:'us'|'ca'|'shared', note:string, example?:string, related?:string[], keywords?:string, priority?:string}[]} */
 const pages = [
-  { slug: 'mortgage-calculator', engine: 'tab-mortgage', title: 'Mortgage Calculator — Free Payment & Amortization', h1: 'Mortgage calculator', region: 'us', note: 'Free US mortgage payment calculator for principal and interest. Also used as a loan calculator and amortization schedule helper. Compounded monthly. Taxes, insurance, and mortgage insurance are not included.', example: `A $450,000 home with $90,000 down at 6.2% for 30 years is ${usMortgage} a month.`, related: ['biweekly-mortgage-calculator', 'refinance-calculator', 'canada-mortgage-calculator', 'home-affordability-calculator'], keywords: 'mortgage calculator, mortgage payment calculator, loan calculator, amortization calculator, home mortgage calculator, free mortgage calculator', priority: '1.0' },
+  { slug: 'mortgage-calculator', engine: 'tab-mortgage', title: 'Mortgage Calculator — Free PITI Payment & Amortization', h1: 'Mortgage calculator', region: 'us', note: 'Free US mortgage payment calculator for principal and interest plus optional property tax, homeowners insurance, PMI, and HOA (PITI). Compounded monthly. Confirm escrow amounts with your lender.', example: `A $450,000 home with $90,000 down at 6.2% for 30 years is about ${usMortgage} a month in principal and interest before taxes and insurance.`, related: ['amortization-calculator', 'biweekly-mortgage-calculator', 'refinance-calculator', 'canada-mortgage-calculator', 'home-affordability-calculator', 'down-payment-calculator'], keywords: 'mortgage calculator, mortgage payment calculator, piti calculator, loan calculator, amortization calculator, home mortgage calculator, free mortgage calculator', priority: '1.0' },
+  { slug: 'amortization-calculator', engine: 'tab-amortization', title: 'Amortization Calculator — Free Loan Schedule', h1: 'Amortization calculator', region: 'shared', note: 'Free amortization schedule calculator showing monthly principal, interest, and remaining balance. Extra principal payments are optional. Not a lender disclosure.', related: ['mortgage-calculator', 'loan-calculator', 'auto-loan-calculator'], keywords: 'amortization calculator, loan amortization calculator, amortization schedule calculator, mortgage amortization calculator', priority: '1.0' },
+  { slug: 'balance-transfer-calculator', engine: 'tab-balancetransfer', title: 'Balance Transfer Calculator — Credit Card Interest Savings', h1: 'Balance transfer calculator', region: 'shared', note: 'Estimate interest saved by moving credit card debt to an intro APR after the transfer fee. Not a card offer or credit decision.', related: ['credit-card-payoff-calculator', 'debt-snowball-calculator'], keywords: 'balance transfer calculator, credit card balance transfer calculator, 0 apr calculator', priority: '0.95' },
+  { slug: 'savings-calculator', engine: 'tab-savings', title: 'Savings Calculator — HYSA Growth', h1: 'Savings calculator', region: 'shared', note: 'High-yield savings calculator with monthly deposits and APY compounded monthly for planning. Not a live bank rate.', related: ['compound-interest-calculator', 'cd-calculator', 'money-market-calculator', 'cd-ladder-calculator'], keywords: 'savings calculator, high yield savings calculator, hysa calculator, savings account calculator', priority: '0.95' },
+  { slug: 'cd-calculator', engine: 'tab-cd', title: 'CD Calculator — Certificate of Deposit APY', h1: 'CD calculator', region: 'us', note: 'Certificate of deposit calculator for maturity value at the APY and term you enter. Not a live bank quote or Canadian GIC quote.', related: ['cd-ladder-calculator', 'savings-calculator', 'money-market-calculator', 'compound-interest-calculator'], keywords: 'cd calculator, certificate of deposit calculator, cd interest calculator, cd rates calculator', priority: '0.95' },
+  { slug: 'money-market-calculator', engine: 'tab-moneymarket', title: 'Money Market Calculator — APY Growth', h1: 'Money market calculator', region: 'shared', note: 'Money market account growth calculator with monthly deposits and APY compounded monthly for planning. Not a live bank rate.', related: ['savings-calculator', 'cd-calculator', 'compound-interest-calculator'], keywords: 'money market calculator, money market account calculator, money market apy calculator', priority: '0.95' },
+  { slug: 'roth-ira-calculator', engine: 'tab-rothira', title: 'Roth IRA Calculator — Free Growth Estimate', h1: 'Roth IRA calculator', region: 'us', note: 'Roth IRA growth calculator using the balance, annual contribution, and return you enter. Confirm current contribution limits; not tax advice.', related: ['401k-calculator', 'fire-calculator', 'compound-interest-calculator'], keywords: 'roth ira calculator, roth calculator, ira calculator, retirement calculator', priority: '0.95' },
+  { slug: 'down-payment-calculator', engine: 'tab-downpayment', title: 'Down Payment Calculator — Cash to Close', h1: 'Down payment calculator', region: 'shared', note: 'Calculate down payment cash from price and percent, plus an optional closing-cost buffer and months to save.', related: ['mortgage-calculator', 'home-affordability-calculator', 'closing-costs-calculator'], keywords: 'down payment calculator, how much down payment, home down payment calculator', priority: '0.9' },
+  { slug: 'car-affordability-calculator', engine: 'tab-carafford', title: 'Car Affordability Calculator — How Much Car Can I Afford', h1: 'How much car can I afford calculator', region: 'shared', note: 'Estimate a vehicle budget from income, payment cap, APR, term, and down payment. Not a lender pre-approval.', related: ['auto-loan-calculator', 'car-lease-calculator', 'auto-refinance-calculator'], keywords: 'how much car can I afford, car affordability calculator, auto affordability calculator', priority: '0.9' },
+  { slug: 'rent-affordability-calculator', engine: 'tab-rentafford', title: 'Rent Affordability Calculator — How Much Rent Can I Afford', h1: 'How much rent can I afford calculator', region: 'shared', note: 'Suggests a rent ceiling from income and a rent-to-income percent, after other debts and utilities.', related: ['rent-vs-buy-calculator', 'budget-calculator', 'paycheck-calculator'], keywords: 'how much rent can I afford, rent affordability calculator, rent calculator', priority: '0.9' },
+  { slug: 'apr-loan-comparison-calculator', engine: 'tab-aprcompare', title: 'APR Loan Comparison Calculator — Compare Two Loans', h1: 'APR loan comparison calculator', region: 'shared', note: 'Compare two loans by monthly payment, total interest, fees, and all-in cost. Not a credit offer.', related: ['loan-calculator', 'personal-loan-calculator', 'auto-loan-calculator'], keywords: 'apr calculator, loan comparison calculator, compare loan rates, loan apr calculator', priority: '0.9' },
   { slug: 'canada-mortgage-calculator', engine: 'tab-mortgage', market: 'ca', title: 'Canada Mortgage Calculator — Semi-Annual Payment', h1: 'Canada mortgage calculator', region: 'ca', note: 'Canadian mortgage payment calculator with the quoted rate compounded semi-annually. CMHC premium uses the published homeowner schedule when the down payment is under 20%. Provincial sales tax and the federal stress test are not included.', example: 'A C$600,000 home with C$120,000 down at 4.5% for 25 years is C$2,656.67 a month. That down payment is 20%, so no CMHC premium is added.', related: ['mortgage-calculator', 'us-canada-banks'], keywords: 'canada mortgage calculator, canadian mortgage calculator, mortgage calculator canada, cmhc calculator', priority: '0.95' },
   { slug: 'biweekly-mortgage-calculator', engine: 'tab-biweekly', title: 'Biweekly Mortgage Calculator — Extra Payment Savings', h1: 'Biweekly mortgage calculator', region: 'shared', note: 'Biweekly mortgage payment calculator that compares a monthly payment with 26 half-payments a year. It does not include taxes, insurance, or a lender’s biweekly fee.', related: ['mortgage-calculator', 'refinance-calculator'], keywords: 'biweekly mortgage calculator, bi weekly mortgage calculator, mortgage payment calculator', priority: '0.9' },
   { slug: 'refinance-calculator', engine: 'tab-refinance', title: 'Refinance Calculator — Mortgage Break-Even', h1: 'Refinance calculator', region: 'shared', note: 'Mortgage refinance calculator comparing your current payment with a new rate and term. Closing costs are the amount you enter. It is not a lender quote.', related: ['mortgage-calculator', 'biweekly-mortgage-calculator'], keywords: 'refinance calculator, mortgage refinance calculator, refinance loan calculator', priority: '0.95' },
@@ -229,7 +239,7 @@ function pageHtml(page) {
   const relatedLinks = relatedPages.length
     ? relatedPages.map((item) => `<a href="/${item.slug}/">${escapeHtml(item.h1)}</a>`).join('')
     : moreLinks;
-  const iframeSrc = `/index.html?engine=${encodeURIComponent(page.engine)}&landing=1${page.market ? `&market=${encodeURIComponent(page.market)}` : ''}`;
+  const iframeSrc = `/index.html?landing=1${page.market ? `&market=${encodeURIComponent(page.market)}` : ''}#engine=${encodeURIComponent(page.engine)}`;
   const heroImg = usageImageSrc(page, 1600);
   const keywordsLine = page.keywords
     ? escapeHtml(page.keywords.split(',').map((k) => k.trim()).filter(Boolean).join(' · '))
@@ -252,9 +262,13 @@ function pageHtml(page) {
     <meta property="og:title" content="${escapeHtml(page.title)}">
     <meta property="og:description" content="${escapeHtml(page.note)}">
     <meta property="og:site_name" content="aFinanceCalculator">
+    <meta property="og:image" content="${origin}/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="${escapeHtml(page.title)} | aFinanceCalculator">
     <meta name="twitter:description" content="${escapeHtml(page.note)}">
+    <meta name="twitter:image" content="${origin}/og-image.png">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -360,6 +374,23 @@ function pageHtml(page) {
           color: var(--muted); font-size: 11px; font-weight: 700;
           letter-spacing: 0.06em; text-transform: uppercase;
         }
+        .share-bar {
+          display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
+          margin: 0 0 20px; padding: 12px 14px;
+          border: 1px solid var(--line); border-radius: 14px;
+          background: rgba(19, 18, 23, 0.65);
+        }
+        .share-bar p { margin: 0; color: #d4d4d8; font-size: 13px; flex: 1; min-width: 180px; }
+        .share-bar button, .share-bar a.share-cta {
+          display: inline-flex; align-items: center; justify-content: center;
+          padding: 8px 12px; border-radius: 999px; font-size: 12px; font-weight: 700;
+          border: 1px solid rgba(34,211,238,0.4); background: #22d3ee; color: #07080a;
+          text-decoration: none; cursor: pointer;
+        }
+        .share-bar a.share-ghost {
+          color: var(--cyan); font-size: 12px; font-weight: 700;
+          background: transparent; border: 0; padding: 0;
+        }
         .notes {
           border-top: 1px solid var(--line);
           padding-top: 8px;
@@ -423,6 +454,11 @@ function pageHtml(page) {
       </section>
 
       <section class="below">
+        <div class="share-bar">
+          <p>Useful? Send this ${escapeHtml(page.h1)} to someone deciding the same numbers.</p>
+          <button type="button" id="page-share-btn">Share link</button>
+          <a class="share-ghost" href="/">All 50 calculators</a>
+        </div>
         <nav class="related" aria-label="Related calculators">
           <span class="related-label">Related</span>
           ${relatedLinks}
@@ -445,6 +481,27 @@ function pageHtml(page) {
     </div>
 
     ${siteFooterHtml()}
+    <script>
+      (function () {
+        var btn = document.getElementById('page-share-btn');
+        if (!btn) return;
+        btn.addEventListener('click', function () {
+          var url = window.location.href;
+          var title = ${JSON.stringify(page.title + ' | aFinanceCalculator')};
+          var text = ${JSON.stringify(page.note)};
+          if (navigator.share) {
+            navigator.share({ title: title, text: text, url: url }).catch(function () {});
+            return;
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(function () {
+              btn.textContent = 'Link copied';
+              window.setTimeout(function () { btn.textContent = 'Share link'; }, 1800);
+            });
+          }
+        });
+      })();
+    </script>
 </body>
 </html>
 `;
@@ -459,10 +516,14 @@ function writePages() {
 }
 
 function writeSitemap() {
-  const today = '2026-11-20';
+  const today = '2026-11-26';
   const urls = [
     ['/', 'weekly', '1.0'],
     ...pages.map((page) => [`/${page.slug}/`, 'weekly', page.priority || '0.8']),
+    ['/mortgage-rates-today/', 'daily', '0.9'],
+    ['/banking-rates/', 'daily', '0.9'],
+    ['/compare-credit-cards/', 'weekly', '0.9'],
+    ['/news/', 'weekly', '0.7'],
     ['/about.html', 'monthly', '0.4'],
     ['/alternatives.html', 'weekly', '0.85'],
     ['/contact.html', 'yearly', '0.3'],
@@ -551,4 +612,7 @@ writeSitemap();
 writeBrowserMap();
 if (process.argv.includes('--home')) patchHome();
 require('./sync-static-chrome');
-console.log('pages', pages.length, 'us mortgage', usMortgage, 'ca mortgage', caMortgage);
+const lenderBuild = require('./build-lender-pages');
+const lenderPages = lenderBuild.writeLenderPages();
+lenderBuild.appendLenderSitemap(lenderPages);
+console.log('pages', pages.length, 'lender pages', lenderPages.length, 'us mortgage', usMortgage, 'ca mortgage', caMortgage);

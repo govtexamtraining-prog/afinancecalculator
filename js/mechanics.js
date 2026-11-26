@@ -354,7 +354,15 @@ function calcMortgage() {
   const down = parseFloat(document.getElementById('mortgage-down').value) || 0;
   const rate = parseFloat(document.getElementById('mortgage-rate').value) || 0;
   const extraPay = parseFloat(document.getElementById('mortgage-extra')?.value) || 0;
-  
+  let taxMo = parseFloat(document.getElementById('mortgage-tax')?.value);
+  let insMo = parseFloat(document.getElementById('mortgage-insurance')?.value);
+  let pmiMo = parseFloat(document.getElementById('mortgage-pmi')?.value);
+  let hoaMo = parseFloat(document.getElementById('mortgage-hoa')?.value);
+  if (!Number.isFinite(taxMo)) taxMo = 0;
+  if (!Number.isFinite(insMo)) insMo = 0;
+  if (!Number.isFinite(pmiMo)) pmiMo = 0;
+  if (!Number.isFinite(hoaMo)) hoaMo = 0;
+
   if (document.getElementById('mortgage-term')) {
     const manualYears = parseFloat(document.getElementById('mortgage-term').value);
     if (manualYears > 0) {
@@ -393,9 +401,28 @@ function calcMortgage() {
   }
   const ltv = asset > 0 ? (basePrincipal / asset) * 100 : 0;
 
+  // Soft PMI hint when down < 20% and user left PMI at 0 (US-style conventional)
+  const pmiInput = document.getElementById('mortgage-pmi');
+  if (pmiInput && mortgageMarket !== 'ca' && ltv > 80 && pmiMo === 0 && !pmiInput.dataset.userTouched) {
+    const hinted = Math.round((principal * 0.0055) / 12);
+    pmiInput.value = String(hinted);
+    pmiMo = hinted;
+  }
+  if (pmiInput && !pmiInput.dataset.boundPmi) {
+    pmiInput.dataset.boundPmi = '1';
+    pmiInput.addEventListener('input', () => { pmiInput.dataset.userTouched = '1'; });
+  }
+
+  const escrow = taxMo + insMo + pmiMo + hoaMo;
+  const piti = monthlyPayment + escrow;
+
   const targetEl = document.getElementById('mortgage-payment');
   if (targetEl) targetEl.textContent = formatCurrency(monthlyPayment);
-  
+  const pitiEl = document.getElementById('mortgage-payment-piti');
+  if (pitiEl) pitiEl.textContent = formatCurrency(piti);
+  const escrowEl = document.getElementById('mortgage-escrow');
+  if (escrowEl) escrowEl.textContent = formatCurrency(escrow);
+
   const interestEl = document.getElementById('mortgage-total-interest');
   if (interestEl) interestEl.textContent = formatCurrency(totalInterest);
 
@@ -411,8 +438,8 @@ function calcMortgage() {
     InfoViz.mortgage({
       principal: principal,
       interest: totalInterest,
-      payment: monthlyPayment,
-      paymentLabel: formatCurrency(monthlyPayment),
+      payment: piti,
+      paymentLabel: formatCurrency(piti),
       principalLabel: formatCurrency(principal),
       interestLabel: formatCurrency(totalInterest),
       ltv: ltv
@@ -446,13 +473,13 @@ function calcMortgage() {
   // Update Plain English Solution Card
   const solTextEl = document.getElementById('mortgage-solution-text');
   if (solTextEl) {
-    const insuranceLine = mortgageMarket === 'ca'
-      ? 'The rate is compounded semi-annually. Property tax and provincial sales tax on a CMHC premium are not included.'
-      : 'Taxes, insurance, and mortgage insurance are not included.';
-    solTextEl.innerHTML = `To buy a home priced at <strong>${formatCurrency(asset)}</strong> with <strong>${formatCurrency(down)}</strong> down, principal and interest is <strong class="text-emerald-400 font-bold">${formatCurrency(monthlyPayment)}/mo</strong>. Interest on this schedule is <strong class="text-rose-400 font-bold">${formatCurrency(totalInterest)}</strong>. ${insuranceLine}${payoffNote}`;
+    const compoundNote = mortgageMarket === 'ca'
+      ? 'The rate is compounded semi-annually.'
+      : 'Monthly compounding on principal and interest.';
+    solTextEl.innerHTML = `To buy a home priced at <strong>${formatCurrency(asset)}</strong> with <strong>${formatCurrency(down)}</strong> down, P&amp;I is <strong class="text-emerald-400 font-bold">${formatCurrency(monthlyPayment)}/mo</strong> and estimated PITI is <strong class="text-emerald-400 font-bold">${formatCurrency(piti)}/mo</strong> (tax ${formatCurrency(taxMo)}, insurance ${formatCurrency(insMo)}, PMI ${formatCurrency(pmiMo)}, HOA ${formatCurrency(hoaMo)}). Interest on the P&amp;I schedule is <strong class="text-rose-400 font-bold">${formatCurrency(totalInterest)}</strong>. ${compoundNote} Confirm escrow with your lender.${payoffNote}`;
   }
 
-  flashElement('mortgage-payment');
+  flashElement(pitiEl ? 'mortgage-payment-piti' : 'mortgage-payment');
 }
 
 function calcMortgageWhatIf(principal, rate, currentPayment, currentInterest, extraPay) {
@@ -5187,6 +5214,15 @@ function calculatorPathFor(tabOrEngineId) {
 
 /** Open the calculator's own address. The engine list used to stay on one URL. */
 function goToCalculatorPage(tabOrEngineId) {
+  // Embedded calculator landings (?landing=1) stay in-SPA so the iframe keeps working
+  try {
+    const landing = new URLSearchParams(window.location.search || window.__AFC_BOOT_SEARCH__ || '').get('landing');
+    if (landing === '1' || document.documentElement.classList.contains('calculator-landing') || document.documentElement.classList.contains('in-frame')) {
+      switchEngine(tabOrEngineId);
+      return;
+    }
+  } catch (e) { /* fall through */ }
+
   const path = calculatorPathFor(tabOrEngineId);
   if (!path) {
     switchEngine(tabOrEngineId);
@@ -6791,7 +6827,7 @@ function updateThemeIcon(theme) {
 }
 
 function initTheme() {
-  const saved = localStorage.getItem('afinancecalc_theme') || localStorage.getItem('capmetrix_theme') || 'dark';
+  const saved = localStorage.getItem('afinancecalc_theme') || localStorage.getItem('capmetrix_theme') || 'light';
   const html = document.documentElement;
   if (saved === 'light') {
     html.classList.remove('dark');
@@ -6941,6 +6977,12 @@ function filterCategory(cat) {
       btn.style.display = 'none';
     }
   });
+
+  // Banking hub is a featured link (not always a .tab-btn with data-cat)
+  const bankingHub = document.getElementById('tab-banking-hub');
+  if (bankingHub) {
+    bankingHub.style.display = (cat === 'all' || cat === 'banking') ? '' : 'none';
+  }
 }
 
 function showToast(message) {
@@ -7070,11 +7112,15 @@ function setupKeyboardShortcuts() {
         return;
       }
       if (e.key === '1') { filterCategory('all'); showToast('Showing All Engines'); }
-      else if (e.key === '2') { filterCategory('housing'); showToast('Filter: Housing & Real Estate'); }
-      else if (e.key === '3') { filterCategory('wealth'); showToast('Filter: Wealth & Retirement'); }
-      else if (e.key === '4') { filterCategory('debt'); showToast('Filter: Debt & Credit'); }
-      else if (e.key === '5') { filterCategory('tax'); showToast('Filter: Tax & Income'); }
-      else if (e.key === '6') { filterCategory('business'); showToast('Filter: Business & Valuation'); }
+      else if (e.key === '2') { filterCategory('home'); showToast('Filter: Home'); }
+      else if (e.key === '3') { filterCategory('investing'); showToast('Filter: Investing'); }
+      else if (e.key === '4') { filterCategory('credit-cards'); showToast('Filter: Credit cards'); }
+      else if (e.key === '5') { filterCategory('taxes'); showToast('Filter: Taxes'); }
+      else if (e.key === '6') { filterCategory('small-business'); showToast('Filter: Small business'); }
+      else if (e.key === '7') { filterCategory('loans'); showToast('Filter: Loans'); }
+      else if (e.key === '8') { filterCategory('banking'); showToast('Filter: Banking'); }
+      else if (e.key === '9') { filterCategory('insurance'); showToast('Filter: Insurance'); }
+      else if (e.key === '0') { filterCategory('personal-finance'); showToast('Filter: Personal finance'); }
     }
 
     // Ctrl + P to print focused engine only
@@ -7824,9 +7870,28 @@ function engineIdFromSearch(raw) {
   return 'tab-' + value;
 }
 
+// Capture boot query before any later history/URL cleanup
+try {
+  window.__AFC_BOOT_SEARCH__ = window.__AFC_BOOT_SEARCH__ || window.location.search || '';
+} catch (e) {
+  window.__AFC_BOOT_SEARCH__ = '';
+}
+
 function openEngineFromQuery() {
-  const params = new URLSearchParams(window.location.search);
-  const tabId = engineIdFromSearch(params.get('engine') || params.get('q') || params.get('calculator'));
+  const boot = (typeof window.__AFC_BOOT_SEARCH__ === 'string' && window.__AFC_BOOT_SEARCH__) || '';
+  const params = new URLSearchParams(window.location.search || boot);
+  let hashParams = null;
+  try {
+    if (window.location.hash && window.location.hash.length > 1) {
+      hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    }
+  } catch (e) { hashParams = null; }
+  const tabId = engineIdFromSearch(
+    params.get('engine') ||
+    (hashParams && hashParams.get('engine')) ||
+    params.get('q') ||
+    params.get('calculator')
+  );
   if (!tabId) return false;
   const panelId = tabId === 'tab-banking-hub' ? 'engine-banking' : tabId.replace('tab-', 'engine-');
   if (!document.getElementById(tabId) && !document.getElementById(panelId)) return false;
@@ -8137,6 +8202,8 @@ document.addEventListener('DOMContentLoaded', () => {
   loadAdvisorProfile();
   updateContextualLeadCard(activeEngineId);
   updateAuditTrailContent(activeEngineId);
+  // Prefer explicit export so late-injected engines (high-traffic pack) can re-call
+  window.openEngineFromQuery = openEngineFromQuery;
   openEngineFromQuery();
   if (window.top !== window.self) {
     document.querySelectorAll('a[href^="/"]').forEach((link) => {
@@ -8161,9 +8228,9 @@ const personaWorkspaces = {
     description: 'Model property acquisition leverage, evaluate net operating income (NOI), verify 43% DTI affordability, and simulate cash-on-cash equity yield.',
     primaryEngine: 'tab-mortgage',
     engines: [
-      'tab-mortgage', 'tab-affordability', 'tab-refinance', 'tab-biweekly',
-      'tab-rentbuy', 'tab-cashoncash', 'tab-caprate', 'tab-heloc',
-      'tab-closingcosts', 'tab-airbnb'
+      'tab-mortgage', 'tab-amortization', 'tab-downpayment', 'tab-affordability',
+      'tab-refinance', 'tab-biweekly', 'tab-rentbuy', 'tab-cashoncash',
+      'tab-caprate', 'tab-heloc', 'tab-closingcosts', 'tab-airbnb'
     ],
     workflow: [
       { label: '1. Max Affordability', engineId: 'tab-affordability' },
@@ -8179,9 +8246,9 @@ const personaWorkspaces = {
     description: 'Engineer financial independence (FIRE 4% rule), project tax-advantaged 401(k) / Roth accumulation, and model inflation-adjusted safe withdrawal rates.',
     primaryEngine: 'tab-compound',
     engines: [
-      'tab-compound', 'tab-fire', 'tab-four01k', 'tab-rmd',
-      'tab-socialsecurity', 'tab-cdladder', 'tab-hsa', 'tab-sip',
-      'tab-dividend', 'tab-cagr', 'tab-realreturns'
+      'tab-compound', 'tab-savings', 'tab-cd', 'tab-rothira', 'tab-fire',
+      'tab-four01k', 'tab-rmd', 'tab-socialsecurity', 'tab-cdladder',
+      'tab-hsa', 'tab-sip', 'tab-dividend', 'tab-cagr', 'tab-realreturns'
     ],
     workflow: [
       { label: '1. Compound Multiplier', engineId: 'tab-compound' },
@@ -8215,8 +8282,9 @@ const personaWorkspaces = {
     description: 'Eradicate high-APR revolving card debt via mathematical avalanche/snowball protocols, model personal consolidation, and optimize FICO credit utilization.',
     primaryEngine: 'tab-creditcard',
     engines: [
-      'tab-creditcard', 'tab-snowball', 'tab-personalloan', 'tab-autoloan',
-      'tab-autorefi', 'tab-student', 'tab-studentrefi', 'tab-budget',
+      'tab-creditcard', 'tab-balancetransfer', 'tab-snowball', 'tab-personalloan',
+      'tab-aprcompare', 'tab-autoloan', 'tab-carafford', 'tab-autorefi',
+      'tab-student', 'tab-studentrefi', 'tab-budget', 'tab-rentafford',
       'tab-creditscore', 'tab-carlease'
     ],
     workflow: [
@@ -8243,10 +8311,11 @@ const personaWorkspaces = {
   }
 };
 
-function setPersonaWorkspace(workspaceKey, autoSwitch = true) {
+function setPersonaWorkspace(workspaceKey, autoSwitch = true, options = {}) {
   if (!personaWorkspaces[workspaceKey]) workspaceKey = 'all';
   currentPersonaWorkspace = workspaceKey;
   const config = personaWorkspaces[workspaceKey];
+  const silent = !!(options && options.silent);
 
   // 1. Update chip buttons styling
   document.querySelectorAll('.ws-chip').forEach(btn => {
@@ -8302,7 +8371,7 @@ function setPersonaWorkspace(workspaceKey, autoSwitch = true) {
     localStorage.setItem('afc_persona_workspace', workspaceKey);
   } catch (e) {}
 
-  showToast(`Active Workspace: ${config.name}`);
+  if (!silent) showToast(`Active Workspace: ${config.name}`);
   updateSessionSheet(activeEngineId);
 }
 
@@ -8354,7 +8423,8 @@ function initPersonaWorkspace() {
   try {
     saved = localStorage.getItem('afc_persona_workspace') || 'all';
   } catch (e) {}
-  setPersonaWorkspace(saved, false);
+  // Silent on boot so the toast does not cover hero/calculator content
+  setPersonaWorkspace(saved, false, { silent: true });
 }
 
 // -------------------------------------------------------------

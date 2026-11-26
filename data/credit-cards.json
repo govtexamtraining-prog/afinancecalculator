@@ -1,0 +1,92 @@
+{
+  "asOf": "2026-11-26",
+  "title": "Compare credit cards",
+  "dek": "Original aFinanceCalculator desk notes — not issuer offers and not NerdWallet reviews. Confirm terms on the issuer site before you apply.",
+  "filters": ["all", "cash-back", "travel", "zero-apr", "balance-transfer"],
+  "cards": [
+    {
+      "id": "afc-flat-cash",
+      "name": "Flat Cash Everyday",
+      "issuer": "Generic issuer desk",
+      "categories": ["cash-back", "all"],
+      "apr": "18.99%–26.99% variable",
+      "introApr": "N/A",
+      "annualFee": "$0",
+      "rewards": "2% cash back on all purchases",
+      "highlight": "Simple flat earn — no rotating categories.",
+      "score": 4.6,
+      "ctaHref": "/credit-card-payoff-calculator/",
+      "ctaLabel": "Model payoff"
+    },
+    {
+      "id": "afc-grocery-boost",
+      "name": "Grocery & Gas Boost",
+      "issuer": "Generic issuer desk",
+      "categories": ["cash-back", "all"],
+      "apr": "19.24%–27.24% variable",
+      "introApr": "N/A",
+      "annualFee": "$0",
+      "rewards": "3% groceries & gas (caps apply), 1% else",
+      "highlight": "Category earners who hit the cap still get a solid flat fallback.",
+      "score": 4.4,
+      "ctaHref": "/budget-calculator/",
+      "ctaLabel": "Budget the spend"
+    },
+    {
+      "id": "afc-travel-miles",
+      "name": "Travel Miles Select",
+      "issuer": "Generic issuer desk",
+      "categories": ["travel", "all"],
+      "apr": "20.99%–28.99% variable",
+      "introApr": "N/A",
+      "annualFee": "$95 (waived year 1 on some offers)",
+      "rewards": "3x travel & dining, 2x transit, 1x else + lounge credit variants",
+      "highlight": "Worth it when annual travel credits clear the fee.",
+      "score": 4.5,
+      "ctaHref": "/credit-card-payoff-calculator/",
+      "ctaLabel": "Pay in full plan"
+    },
+    {
+      "id": "afc-zero-purchase",
+      "name": "0% Purchase Starter",
+      "issuer": "Generic issuer desk",
+      "categories": ["zero-apr", "all"],
+      "apr": "17.99%–25.99% variable after intro",
+      "introApr": "0% on purchases for 15 months",
+      "annualFee": "$0",
+      "rewards": "1% cash back after intro, or none during 0%",
+      "highlight": "Best for a planned big purchase you can clear before go-to APR.",
+      "score": 4.3,
+      "ctaHref": "/balance-transfer-calculator/",
+      "ctaLabel": "Compare transfer math"
+    },
+    {
+      "id": "afc-bt-save",
+      "name": "Balance Transfer Relief",
+      "issuer": "Generic issuer desk",
+      "categories": ["balance-transfer", "zero-apr", "all"],
+      "apr": "18.99%–26.99% variable after intro",
+      "introApr": "0% on transfers for 18 months (3% fee typical)",
+      "annualFee": "$0",
+      "rewards": "Usually none during transfer window",
+      "highlight": "Run the fee vs interest-saved math before you move a balance.",
+      "score": 4.7,
+      "ctaHref": "/balance-transfer-calculator/",
+      "ctaLabel": "Open BT calculator"
+    },
+    {
+      "id": "afc-premium-travel",
+      "name": "Premium Travel Bundle",
+      "issuer": "Generic issuer desk",
+      "categories": ["travel", "all"],
+      "apr": "21.49%–28.49% variable",
+      "introApr": "N/A",
+      "annualFee": "$550",
+      "rewards": "High earn on travel portals + credits that must be used",
+      "highlight": "Only pencil this if you will use the credits every year.",
+      "score": 4.1,
+      "ctaHref": "/budget-calculator/",
+      "ctaLabel": "Check annual fee fit"
+    }
+  ]
+}

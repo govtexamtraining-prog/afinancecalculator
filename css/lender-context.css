@@ -1,0 +1,439 @@
+/* =============================================================================
+   Bank / rate-desk calculator chrome (ORIGINAL)
+   Patterns inspired by retail-bank payment calculators and rate-comparison desks
+   (brand header rail, institution mark, APR chips, compare switcher) —
+   NOT a clone of Chase, Bankrate, NerdWallet, or any third-party CSS/HTML.
+   Scoped to #lender-context-bar + body.has-lender-context accents only.
+   ============================================================================= */
+
+:root {
+  --lender-primary: #117aca;
+  --lender-accent: #0b5cab;
+  --lender-soft: #0b1220;
+  --lender-ink: #e8f4fc;
+  --lender-surface: #0f1624;
+  --lender-line: rgba(255, 255, 255, 0.1);
+  --lender-muted: #9ca3af;
+}
+
+#lender-context-bar {
+  --lender-radius: 16px;
+  position: relative;
+  margin: 0 0 16px;
+  padding: 0 0 12px;
+  overflow: hidden;
+  border-radius: var(--lender-radius);
+  border: 1px solid color-mix(in srgb, var(--lender-primary) 38%, var(--lender-line));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--lender-primary) 16%, transparent) 0%, transparent 42%),
+    var(--lender-surface);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  color: #f4f4f5;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+}
+
+#lender-context-bar[hidden] {
+  display: none !important;
+}
+
+/* Top accent rail — bank product header cue */
+.lender-context-rail {
+  height: 5px;
+  background: linear-gradient(90deg, var(--lender-primary), var(--lender-accent) 55%, color-mix(in srgb, var(--lender-primary) 40%, #fff));
+}
+
+/* Brand row: mark + name (institution face) */
+.lender-context-brandrow {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px 14px;
+  align-items: center;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--lender-line);
+  background: color-mix(in srgb, var(--lender-soft) 70%, transparent);
+}
+
+.lender-context-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.05em;
+  color: #07080a;
+  background: var(--lender-primary);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--lender-primary) 50%, transparent),
+    0 8px 18px color-mix(in srgb, var(--lender-primary) 28%, transparent);
+}
+
+.lender-context-kicker {
+  margin: 0 0 2px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--lender-ink) 65%, var(--lender-muted));
+}
+
+.lender-context-title {
+  margin: 0;
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  color: #fff;
+}
+
+.lender-context-meta {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--lender-muted);
+}
+
+.lender-context-dot {
+  margin: 0 0.35em;
+  opacity: 0.6;
+}
+
+.lender-context-brand-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.lender-context-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--lender-primary) 35%, var(--lender-line));
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--lender-ink);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+#lender-context-copy {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--lender-primary) 45%, transparent);
+  background: var(--lender-primary);
+  color: #07080a;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+#lender-context-copy:hover,
+#lender-context-copy:focus-visible {
+  filter: brightness(1.08);
+  outline: none;
+}
+
+/* Rate board — comparison-site chip strip (original) */
+.lender-context-rateboard {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--lender-line);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.lender-rate-chip {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--lender-line);
+  background: rgba(7, 8, 10, 0.45);
+  min-width: 0;
+}
+
+.lender-rate-chip[hidden] {
+  display: none !important;
+}
+
+.lender-rate-chip__label {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--lender-muted);
+}
+
+.lender-rate-chip__value {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.lender-rate-chip__hint {
+  font-size: 11px;
+  color: #788193;
+}
+
+.lender-rate-chip--sample {
+  border-color: color-mix(in srgb, var(--lender-primary) 45%, var(--lender-line));
+  background: color-mix(in srgb, var(--lender-primary) 14%, rgba(7, 8, 10, 0.55));
+}
+
+.lender-rate-chip--sample .lender-rate-chip__value {
+  color: var(--lender-ink);
+}
+
+.lender-rate-chip--market .lender-rate-chip__value {
+  color: #d4d4d8;
+}
+
+.lender-rate-chip--rank .lender-rate-chip__value {
+  color: #f8fafc;
+}
+
+/* Compare switcher row */
+.lender-context-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 12px 16px 4px;
+}
+
+.lender-context-switcher-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--lender-muted);
+}
+
+#lender-context-select {
+  flex: 1 1 220px;
+  max-width: 420px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--lender-primary) 35%, var(--lender-line));
+  background: rgba(7, 8, 10, 0.72);
+  color: #f4f4f5;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#lender-context-select:focus {
+  outline: none;
+  border-color: var(--lender-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--lender-primary) 22%, transparent);
+}
+
+#lender-context-reset {
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--lender-line);
+  background: transparent;
+  color: #d4d4d8;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#lender-context-reset:hover,
+#lender-context-reset:focus-visible {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.28);
+  outline: none;
+}
+
+.lender-context-link {
+  flex: 1 1 180px;
+  min-width: 0;
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid var(--lender-line);
+  background: rgba(7, 8, 10, 0.55);
+  color: #8b93a7;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+}
+
+.lender-context-default {
+  margin: 8px 16px 0;
+  padding: 8px 11px;
+  border-radius: 10px;
+  border: 1px dashed color-mix(in srgb, var(--lender-primary) 35%, transparent);
+  background: rgba(0, 0, 0, 0.22);
+  color: #d4d4d8;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.lender-context-legal {
+  margin: 8px 16px 0;
+  font-size: 10px;
+  line-height: 1.45;
+  color: #6b7280;
+}
+
+.lender-context-legal code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 9px;
+  color: #9ca3af;
+}
+
+/* Active engine inherits desk accent — quiet, data-forward */
+body.has-lender-context .engine-panel:not(.hidden) {
+  position: relative;
+  border-color: color-mix(in srgb, var(--lender-primary) 32%, rgba(255, 255, 255, 0.08)) !important;
+  box-shadow:
+    inset 3px 0 0 0 var(--lender-primary),
+    0 20px 44px rgba(0, 0, 0, 0.26);
+}
+
+body.has-lender-context .engine-panel:not(.hidden) h2 {
+  letter-spacing: -0.03em;
+}
+
+body.has-lender-context .engine-panel:not(.hidden) .output-value {
+  color: color-mix(in srgb, var(--lender-primary) 48%, #34d399) !important;
+}
+
+body.has-lender-context .engine-panel:not(.hidden) input[type="number"]:focus,
+body.has-lender-context .engine-panel:not(.hidden) input[type="text"]:focus,
+body.has-lender-context .engine-panel:not(.hidden) select:focus {
+  border-color: color-mix(in srgb, var(--lender-primary) 70%, #34d399) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--lender-primary) 22%, transparent);
+}
+
+/* ----- Variant skins (original palettes; brand-inspired, not cloned) ----- */
+html[data-lender-variant="us-blue"] {
+  --lender-surface: #0c1524;
+  --lender-soft: #0a1422;
+}
+
+html[data-lender-variant="us-red"] {
+  --lender-surface: #161016;
+  --lender-soft: #140c10;
+}
+
+html[data-lender-variant="us-navy"] {
+  --lender-surface: #0a1220;
+  --lender-soft: #08101c;
+}
+
+html[data-lender-variant="us-digital"] {
+  --lender-surface: #10081c;
+  --lender-soft: #0e0718;
+}
+
+html[data-lender-variant="us-green"] {
+  --lender-surface: #0c1610;
+  --lender-soft: #0a140e;
+}
+
+html[data-lender-variant="us-orange"] {
+  --lender-surface: #17110a;
+  --lender-soft: #140e08;
+}
+
+html[data-lender-variant="ca-blue"],
+html[data-lender-variant="ca-green"],
+html[data-lender-variant="ca-red"],
+html[data-lender-variant="global"] {
+  --lender-surface: #0e141c;
+  --lender-soft: #0c1218;
+}
+
+/* Design-family desks */
+#lender-context-bar[data-design-family="mortgage-desk"] .lender-context-rail {
+  height: 6px;
+}
+
+#lender-context-bar[data-design-family="card-desk"] .lender-context-mark {
+  border-radius: 999px;
+}
+
+#lender-context-bar[data-design-family="deposit-desk"] .lender-context-rail {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--lender-primary) 0 14px,
+    var(--lender-accent) 14px 28px
+  );
+}
+
+#lender-context-bar[data-design-family="wealth-desk"] {
+  background:
+    radial-gradient(ellipse 55% 80% at 100% 0%, color-mix(in srgb, var(--lender-accent) 26%, transparent), transparent 55%),
+    var(--lender-surface);
+}
+
+#lender-context-bar[data-design-family="crypto-desk"] .lender-context-mark {
+  background: linear-gradient(135deg, var(--lender-primary), var(--lender-accent));
+  color: #fff;
+}
+
+#lender-context-bar[data-design-family="payroll-desk"] .lender-rate-chip--sample {
+  display: none;
+}
+
+html.in-frame #lender-context-bar .lender-context-legal,
+html.in-frame #lender-context-bar .lender-context-link {
+  display: none;
+}
+
+html.in-frame #lender-context-bar {
+  margin-bottom: 10px;
+  border-radius: 12px;
+}
+
+@media (max-width: 800px) {
+  .lender-context-brandrow {
+    grid-template-columns: auto 1fr;
+  }
+
+  .lender-context-brand-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+
+  .lender-context-rateboard {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #lender-context-copy,
+  body.has-lender-context .engine-panel:not(.hidden) {
+    transition: none;
+  }
+
+  #lender-context-copy:hover {
+    filter: none;
+  }
+}
+
+@media print {
+  #lender-context-bar {
+    break-inside: avoid;
+    box-shadow: none;
+  }
+
+  #lender-context-copy,
+  .lender-context-link,
+  #lender-context-reset {
+    display: none !important;
+  }
+}

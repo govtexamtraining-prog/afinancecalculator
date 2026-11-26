@@ -1,0 +1,451 @@
+/* Rates board + credit-card compare (loaded after afc-nerd.css) */
+
+.afc-rates-board {
+  width: 100%;
+  background: linear-gradient(180deg, #f7faf8 0%, var(--nw-canvas, #fff) 48%);
+  border-top: 1px solid var(--nw-line);
+  border-bottom: 1px solid var(--nw-line);
+  padding: 40px 20px 44px;
+}
+
+.afc-rates-inner {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.afc-rates-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-bottom: 22px;
+}
+
+.afc-rates-title {
+  margin: 0 0 6px !important;
+  font-family: var(--nw-font) !important;
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--nw-ink) !important;
+  background: none !important;
+  -webkit-background-clip: initial !important;
+}
+
+.afc-rates-dek,
+.afc-rates-asof,
+.afc-rates-disclaimer {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--nw-muted);
+  max-width: 52ch;
+}
+
+.afc-rates-asof {
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.afc-rates-disclaimer {
+  margin-top: 18px;
+  max-width: none;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.afc-rates-all {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nw-green) !important;
+  text-decoration: none !important;
+}
+
+.afc-rates-all:hover {
+  text-decoration: underline !important;
+}
+
+.afc-rates-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.afc-rates-card {
+  background: #fff;
+  border: 1px solid var(--nw-line);
+  border-radius: 14px;
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 100%;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.afc-rates-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(16, 185, 129, 0.45);
+}
+
+.afc-rates-card-label {
+  margin: 0 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--nw-ink) !important;
+  letter-spacing: 0.01em;
+}
+
+.afc-rates-card-best {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.afc-rates-card-best-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--nw-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.afc-rates-card-best strong {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--nw-green);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.afc-rates-card-avg {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nw-muted);
+  padding-top: 4px;
+  border-top: 1px solid var(--nw-line);
+}
+
+.afc-rates-card-cta {
+  margin-top: auto;
+  align-self: flex-start;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nw-ink) !important;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.afc-rates-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--nw-line);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.afc-rates-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.afc-rates-table th,
+.afc-rates-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--nw-line);
+  font-variant-numeric: tabular-nums;
+}
+
+.afc-rates-table thead th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--nw-muted);
+  background: var(--nw-soft, #f4f7f5);
+}
+
+.afc-rates-table tbody th {
+  font-weight: 700;
+  color: var(--nw-ink);
+}
+
+.afc-rates-page {
+  width: min(900px, 100%);
+  margin: 0 auto;
+  padding: 32px 20px 56px;
+}
+
+.afc-rates-page h1 {
+  margin: 0 0 8px;
+  font-family: var(--nw-font);
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--nw-ink);
+}
+
+.afc-rates-page .afc-rates-lede {
+  margin: 0 0 20px;
+  color: var(--nw-muted);
+  font-size: 15px;
+  line-height: 1.55;
+  max-width: 60ch;
+}
+
+.afc-rates-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin: 20px 0 8px;
+}
+
+.afc-rates-page-actions a {
+  font-weight: 700;
+  color: var(--nw-green) !important;
+}
+
+html.in-frame .afc-rates-board,
+html.in-frame .afc-card-compare {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .afc-rates-card {
+    transition: none;
+  }
+  .afc-rates-card:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 960px) {
+  .afc-rates-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .afc-rates-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.afc-card-compare {
+  width: 100%;
+  background: var(--nw-canvas, #fff);
+  border-bottom: 1px solid var(--nw-line);
+  padding: 40px 20px 48px;
+}
+
+.afc-card-inner {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.afc-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-bottom: 16px;
+}
+
+.afc-card-head h2 {
+  margin: 0 0 6px !important;
+  font-family: var(--nw-font) !important;
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--nw-ink) !important;
+  background: none !important;
+  -webkit-background-clip: initial !important;
+}
+
+.afc-card-head p,
+.afc-card-asof {
+  margin: 0;
+  font-size: 13px;
+  color: var(--nw-muted);
+  max-width: 54ch;
+}
+
+.afc-card-asof {
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.afc-card-all {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nw-green) !important;
+  text-decoration: none !important;
+}
+
+.afc-card-all:hover {
+  text-decoration: underline !important;
+}
+
+.afc-card-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.afc-card-filter {
+  appearance: none;
+  border: 1px solid var(--nw-line);
+  background: #fff;
+  color: var(--nw-ink);
+  font-family: var(--nw-font);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.afc-card-filter.is-active,
+.afc-card-filter:hover {
+  border-color: var(--nw-green);
+  color: var(--nw-green);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.afc-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.afc-card-tile {
+  border: 1px solid var(--nw-line);
+  border-radius: 14px;
+  background: #fff;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.afc-card-issuer {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--nw-muted);
+}
+
+.afc-card-tile h3 {
+  margin: 4px 0 0 !important;
+  font-size: 1.1rem !important;
+  font-weight: 800 !important;
+  color: var(--nw-ink) !important;
+  letter-spacing: -0.02em;
+}
+
+.afc-card-score {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--nw-muted);
+}
+
+.afc-card-score strong {
+  color: var(--nw-ink);
+}
+
+.afc-card-facts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.afc-card-facts li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--nw-line);
+  padding-bottom: 6px;
+}
+
+.afc-card-facts span {
+  color: var(--nw-muted);
+  font-weight: 600;
+}
+
+.afc-card-facts strong {
+  text-align: right;
+  color: var(--nw-ink);
+  font-weight: 700;
+}
+
+.afc-card-highlight {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--nw-muted);
+}
+
+.afc-card-cta {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--nw-ink);
+  color: #fff !important;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none !important;
+}
+
+.afc-card-cta:hover {
+  background: #111827;
+}
+
+.afc-mm-rate-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  align-items: center;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.08);
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.afc-mm-rate-row strong {
+  color: #34d399;
+  font-variant-numeric: tabular-nums;
+}
+
+html.light .afc-mm-rate-row,
+body.afc-rates-static .afc-mm-rate-row {
+  color: var(--nw-muted);
+}
+
+@media (max-width: 960px) {
+  .afc-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .afc-card-grid {
+    grid-template-columns: 1fr;
+  }
+}

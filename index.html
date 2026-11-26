@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="light">
 <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=GT-NNXWJQMK"></script>
@@ -31,19 +31,22 @@
     <meta property="og:site_name" content="aFinanceCalculator">
     <meta property="og:title" content="Free Mortgage, Paycheck &amp; Loan Calculators | aFinanceCalculator">
     <meta property="og:description" content="Free mortgage, paycheck, loan, compound interest, auto loan, refinance, 401k, and FIRE calculators for the US and Canada. Canada mortgage with semi-annual compounding and CMHC.">
-    <meta property="og:image" content="https://afinancecalculator.com/favicon.svg">
+    <meta property="og:image" content="https://afinancecalculator.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="aFinanceCalculator — free mortgage, paycheck and loan calculators for the US and Canada">
 
     <!-- Twitter / X Protocol -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://afinancecalculator.com/">
     <meta name="twitter:title" content="Free Mortgage, Paycheck &amp; Loan Calculators | aFinanceCalculator">
     <meta name="twitter:description" content="Mortgage calculator, paycheck calculator, loan calculator, compound interest, auto loan, refinance, 401k, and FIRE tools for the US and Canada.">
-    <meta name="twitter:image" content="https://afinancecalculator.com/favicon.svg">
+    <meta name="twitter:image" content="https://afinancecalculator.com/og-image.png">
 
     <!-- PWA & Mobile Optimization -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#07080a">
+    <meta name="theme-color" content="#008254">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="aFinance">
@@ -302,31 +305,179 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css?v=2.3.0">
     <link rel="stylesheet" href="css/terminal.css?v=2.3.4">
     <link rel="stylesheet" href="css/noir.css?v=1.0.9">
-    <link rel="stylesheet" href="css/site-chrome.css?v=1">
-    <link rel="stylesheet" href="css/cinematic.css?v=2">
+    <link rel="stylesheet" href="css/site-chrome.css?v=2">
+    <link rel="stylesheet" href="css/cinematic.css?v=3">
+    <link rel="stylesheet" href="css/lender-context.css?v=3">
     <link rel="stylesheet" href="css/infographics.css?v=4">
     <link rel="stylesheet" href="css/usage-illustrations.css?v=2">
+    <link rel="stylesheet" href="css/afc-nerd.css?v=6">
+    <link rel="stylesheet" href="css/afc-rates.css?v=1">
     <script>try{if(window.top!==window.self)document.documentElement.classList.add("in-frame")}catch(e){}</script>
+    <script>
+      try {
+        if (localStorage.getItem('afinancecalc_theme_skin') !== 'nerd-v1') {
+          localStorage.setItem('afinancecalc_theme', 'light');
+          localStorage.setItem('afinancecalc_theme_skin', 'nerd-v1');
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
+        }
+      } catch (e) {}
+    </script>
 </head>
-<body class="bg-[#07080a] text-white min-h-screen font-sans antialiased">
+<body class="bg-[#f7f7f7] text-[#3d4045] min-h-screen font-sans antialiased">
 
-    <header class="noir-header">
-        <nav class="noir-pill" aria-label="Primary">
+    <header class="noir-header afc-mega-header">
+        <nav class="noir-pill afc-mega-nav" aria-label="Primary">
             <a class="noir-brand" href="/">
                 <span class="brand-mark" aria-hidden="true">A</span>
                 <span>aFinanceCalculator</span>
             </a>
-            <div class="noir-links">
-                <a href="/#calculators">Calculators</a>
-                <a href="/#calculators">Tools</a>
-                <a href="/about.html">About</a>
-                <a href="/contact.html">Support</a>
-            </div>
-            <a class="noir-cta" href="/#calculators" onclick="switchEngine('tab-mortgage')">Calculate now</a>
+            <button type="button" class="afc-mega-mobile-toggle" aria-expanded="false" aria-controls="afc-mega-drawer" aria-label="Open money topics menu">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="afc-mega-links afc-mega-drawer" id="afc-mega-drawer">
+                <li class="afc-mega-item" data-vertical="credit-cards">
+                    <button type="button" class="afc-mega-trigger" data-vertical="credit-cards" aria-expanded="false">Credit cards</button>
+                    <div class="afc-mega-panel" hidden>
+                        <p class="afc-mega-blurb">Pay off balances, track utilization, and plan rewards-friendly debt moves.</p>
+                        <div class="afc-mega-grid">
+                            <a href="/compare-credit-cards/">Compare credit cards</a>
+                            <a href="/credit-card-payoff-calculator/" data-afc-vertical="credit-cards" data-afc-engine="tab-creditcard">Credit card payoff</a>
+                            <a href="/balance-transfer-calculator/" data-afc-vertical="credit-cards" data-afc-engine="tab-balancetransfer">Balance transfer</a>
+                            <a href="/credit-utilization-calculator/" data-afc-vertical="credit-cards" data-afc-engine="tab-creditscore">Credit utilization</a>
+                            <a href="/debt-snowball-calculator/" data-afc-vertical="credit-cards" data-afc-engine="tab-snowball">Debt snowball</a>
+                            <a href="/chase-credit-card-calculator/">Chase card desk</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="afc-mega-item" data-vertical="banking">
+                    <button type="button" class="afc-mega-trigger" data-vertical="banking" aria-expanded="false">Banking</button>
+                    <div class="afc-mega-panel" hidden>
+                        <p class="afc-mega-blurb">Compare HYSA / CD math and browse the U.S. &amp; Canada banking hub.</p>
+                        <div class="afc-mega-grid">
+                            <a href="/us-canada-banks/" data-afc-vertical="banking" data-afc-engine="tab-banking-hub">US &amp; Canada banking hub</a>
+                            <a href="/savings-calculator/" data-afc-vertical="banking" data-afc-engine="tab-savings">HYSA / savings</a>
+                            <a href="/cd-calculator/" data-afc-vertical="banking" data-afc-engine="tab-cd">CD calculator</a>
+                            <a href="/money-market-calculator/" data-afc-vertical="banking" data-afc-engine="tab-moneymarket">Money market</a>
+                            <a href="/banking-rates/">Banking rates today</a>
+                            <a href="/compound-interest-calculator/" data-afc-vertical="banking" data-afc-engine="tab-compound">Compound growth</a>
+                            <a href="/cd-ladder-calculator/" data-afc-vertical="banking" data-afc-engine="tab-cdladder">CD ladder</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="afc-mega-item" data-vertical="home">
+                    <button type="button" class="afc-mega-trigger" data-vertical="home" aria-expanded="false">Home</button>
+                    <div class="afc-mega-panel" hidden>
+                        <p class="afc-mega-blurb">Mortgage payment, affordability, refinance, and home-equity tools.</p>
+                        <div class="afc-mega-grid">
+                            <a href="/mortgage-rates-today/">Mortgage rates today</a>
+                            <a href="/mortgage-calculator/" data-afc-vertical="home" data-afc-engine="tab-mortgage">Mortgage PITI</a>
+                            <a href="/amortization-calculator/" data-afc-vertical="home" data-afc-engine="tab-amortization">Amortization</a>
+                            <a href="/down-payment-calculator/" data-afc-vertical="home" data-afc-engine="tab-downpayment">Down payment</a>
+                            <a href="/home-affordability-calculator/" data-afc-vertical="home" data-afc-engine="tab-affordability">Home affordability</a>
+                            <a href="/refinance-calculator/" data-afc-vertical="home" data-afc-engine="tab-refinance">Refinance</a>
+                            <a href="/rent-vs-buy-calculator/" data-afc-vertical="home" data-afc-engine="tab-rentbuy">Rent vs buy</a>
+                            <a href="/heloc-calculator/" data-afc-vertical="home" data-afc-engine="tab-heloc">HELOC</a>
+                            <a href="/closing-costs-calculator/" data-afc-vertical="home" data-afc-engine="tab-closingcosts">Closing costs</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="afc-mega-item" data-vertical="loans">
+                    <button type="button" class="afc-mega-trigger" data-vertical="loans" aria-expanded="false">Loans</button>
+                    <div class="afc-mega-panel" hidden>
+                        <p class="afc-mega-blurb">Personal, auto, and student loan payment and refinance math.</p>
+                        <div class="afc-mega-grid">
+                            <a href="/personal-loan-calculator/" data-afc-vertical="loans" data-afc-engine="tab-personalloan">Personal loan</a>
+                            <a href="/apr-loan-comparison-calculator/" data-afc-vertical="loans" data-afc-engine="tab-aprcompare">APR / loan compare</a>
+                            <a href="/auto-loan-calculator/" data-afc-vertical="loans" data-afc-engine="tab-autoloan">Auto loan</a>
+                            <a href="/car-affordability-calculator/" data-afc-vertical="loans" data-afc-engine="tab-carafford">Car affordability</a>
+                            <a href="/auto-refinance-calculator/" data-afc-vertical="loans" data-afc-engine="tab-autorefi">Auto refinance</a>
+                            <a href="/student-loan-calculator/" data-afc-vertical="loans" data-afc-engine="tab-student">Student loan</a>
+                            <a href="/car-lease-calculator/" data-afc-vertical="loans" data-afc-engine="tab-carlease">Lease vs buy</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="afc-mega-item" data-vertical="insurance">
+                    <button type="button" class="afc-mega-trigger" data-vertical="insurance" aria-expanded="false">Insurance</button>
+                    <div class="afc-mega-panel" hidden>
+                        <p class="afc-mega-blurb">Rough life / auto coverage planning and HSA tax-advantaged growth.</p>
+                        <div class="afc-mega-grid">
+                            <a href="/#engine-insurance" data-afc-vertical="insurance" data-afc-engine="tab-insurance">Insurance planning desk</a>
+                            <a href="/hsa-calculator/" data-afc-vertical="insurance" data-afc-engine="tab-hsa">HSA growth</a>
+                            <a href="/closing-costs-calculator/" data-afc-vertical="insurance" data-afc-engine="tab-closingcosts">Home closing costs</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="afc-mega-item" data-vertical="personal-finance">
+                    <button type="button" class="afc-mega-trigger" data-vertical="personal-finance" aria-expanded="false">Personal finance</button>
+                    <div class="afc-mega-panel" hidden>
+                        <p class="afc-mega-blurb">Budgets, pay conversion, inflation, and everyday money runway.</p>
+                        <div class="afc-mega-grid">
+                            <a href="/budget-calculator/" data-afc-vertical="personal-finance" data-afc-engine="tab-budget">50/30/20 budget</a>
+                            <a href="/rent-affordability-calculator/" data-afc-vertical="personal-finance" data-afc-engine="tab-rentafford">Rent affordability</a>
+                            <a href="/salary-calculator/" data-afc-vertical="personal-finance" data-afc-engine="tab-salary">Hourly to salary</a>
+                            <a href="/inflation-calculator/" data-afc-vertical="personal-finance" data-afc-engine="tab-inflation">Inflation</a>
+                            <a href="/severance-calculator/" data-afc-vertical="personal-finance" data-afc-engine="tab-severance">Severance runway</a>
+                            <a href="/ev-vs-gas-calculator/" data-afc-vertical="personal-finance" data-afc-engine="tab-evgas">EV vs gas</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="afc-mega-item" data-vertical="investing">
+                    <button type="button" class="afc-mega-trigger" data-vertical="investing" aria-expanded="false">Investing</button>
+                    <div class="afc-mega-panel" hidden>
+                        <p class="afc-mega-blurb">Compounding, retirement, dividends, and portfolio growth engines.</p>
+                        <div class="afc-mega-grid">
+                            <a href="/compound-interest-calculator/" data-afc-vertical="investing" data-afc-engine="tab-compound">Compound interest</a>
+                            <a href="/roth-ira-calculator/" data-afc-vertical="investing" data-afc-engine="tab-rothira">Roth IRA</a>
+                            <a href="/401k-calculator/" data-afc-vertical="investing" data-afc-engine="tab-four01k">401(k)</a>
+                            <a href="/fire-calculator/" data-afc-vertical="investing" data-afc-engine="tab-fire">FIRE</a>
+                            <a href="/dividend-calculator/" data-afc-vertical="investing" data-afc-engine="tab-dividend">Dividend yield</a>
+                            <a href="/monthly-investment-calculator/" data-afc-vertical="investing" data-afc-engine="tab-sip">SIP / monthly</a>
+                            <a href="/cagr-calculator/" data-afc-vertical="investing" data-afc-engine="tab-cagr">CAGR</a>
+                            <a href="/social-security-calculator/" data-afc-vertical="investing" data-afc-engine="tab-socialsecurity">Social Security</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="afc-mega-item" data-vertical="small-business">
+                    <button type="button" class="afc-mega-trigger" data-vertical="small-business" aria-expanded="false">Small business</button>
+                    <div class="afc-mega-panel" hidden>
+                        <p class="afc-mega-blurb">Margins, break-even, invoices, and ecommerce unit economics.</p>
+                        <div class="afc-mega-grid">
+                            <a href="/break-even-calculator/" data-afc-vertical="small-business" data-afc-engine="tab-breakeven">Break-even</a>
+                            <a href="/profit-margin-calculator/" data-afc-vertical="small-business" data-afc-engine="tab-margin">Profit margin</a>
+                            <a href="/invoice-calculator/" data-afc-vertical="small-business" data-afc-engine="tab-invoice">Invoice &amp; tax</a>
+                            <a href="/ecommerce-margin-calculator/" data-afc-vertical="small-business" data-afc-engine="tab-dropship">Ecommerce margin</a>
+                            <a href="/roi-calculator/" data-afc-vertical="small-business" data-afc-engine="tab-roi">ROI</a>
+                            <a href="/airbnb-calculator/" data-afc-vertical="small-business" data-afc-engine="tab-airbnb">Airbnb ROI</a>
+                            <a href="/solar-calculator/" data-afc-vertical="small-business" data-afc-engine="tab-solar">Solar ROI</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="afc-mega-item" data-vertical="taxes">
+                    <button type="button" class="afc-mega-trigger" data-vertical="taxes" aria-expanded="false">Taxes</button>
+                    <div class="afc-mega-panel" hidden>
+                        <p class="afc-mega-blurb">Paycheck withholding, capital gains, quarterly estimates, and bonuses.</p>
+                        <div class="afc-mega-grid">
+                            <a href="/paycheck-calculator/" data-afc-vertical="taxes" data-afc-engine="tab-paycheck">Paycheck</a>
+                            <a href="/capital-gains-calculator/" data-afc-vertical="taxes" data-afc-engine="tab-capitalgains">Capital gains</a>
+                            <a href="/quarterly-tax-calculator/" data-afc-vertical="taxes" data-afc-engine="tab-quarterlytax">Quarterly 1040-ES</a>
+                            <a href="/bonus-tax-calculator/" data-afc-vertical="taxes" data-afc-engine="tab-bonustax">Bonus tax</a>
+                            <a href="/overtime-calculator/" data-afc-vertical="taxes" data-afc-engine="tab-overtime">Overtime pay</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="afc-mega-item afc-mega-item--static">
+                    <a class="afc-mega-static" href="/news/">News</a>
+                </li>
+                <li class="afc-mega-item afc-mega-item--static">
+                    <a class="afc-mega-static" href="/about.html">About</a>
+                </li>
+            </ul>
+            <a class="noir-cta" href="/#calculators" onclick="typeof switchEngine==='function'&&switchEngine('tab-mortgage')">Calculate now</a>
         </nav>
     </header>
     <div class="noir-tools">
@@ -431,14 +582,106 @@
     </div>
 
     <section class="noir-hero">
-        <h1><span>See the payment</span> <span>before you sign.</span></h1>
-        <p>Free mortgage calculator, paycheck calculator, loan calculator, compound interest, auto loan, refinance, 401k, and FIRE tools for the United States and Canada. The Canada mortgage page uses semi-annual compounding and CMHC premium bands when the down payment is under 20%. Entries stay in this browser.</p>
+        <p class="noir-hero-brand">aFinanceCalculator</p>
+        <h1><span>Smart money decisions</span> <span>start here.</span></h1>
+        <p>Free mortgage, paycheck, loan, and retirement calculators for the US and Canada — guidance you can trust, numbers that stay in your browser.</p>
+        <ul class="noir-cinematic-trust" aria-label="Why people use this">
+            <li>60+ free calculators</li>
+            <li>Numbers stay on your device</li>
+            <li>US + Canada rules</li>
+            <li>Share a link to any scenario</li>
+        </ul>
+        <form id="noir-cinematic-find" class="noir-cinematic-find" role="search" aria-label="Find a calculator">
+            <input type="search" name="q" placeholder="Search: mortgage, paycheck, FIRE…" autocomplete="off" enterkeyhint="search">
+            <button type="submit">Find tool</button>
+        </form>
         <div class="noir-pills">
             <button type="button" onclick="location.href='/mortgage-calculator/'">Mortgage calculator</button>
             <button type="button" onclick="location.href='/paycheck-calculator/'">Paycheck calculator</button>
             <button type="button" onclick="location.href='/compound-interest-calculator/'">Compound interest</button>
             <button type="button" onclick="location.href='/auto-loan-calculator/'">Auto loan</button>
             <button type="button" onclick="location.href='/canada-mortgage-calculator/'">Canada mortgage</button>
+        </div>
+    </section>
+
+    <section class="noir-cinematic-intents" aria-label="Start with your goal">
+        <h2 class="noir-cinematic-intents-head">What do you need to figure out?</h2>
+        <div class="noir-cinematic-intent-grid">
+            <button type="button" class="noir-cinematic-intent" data-noir-intent="home" data-engine="tab-mortgage" data-workspace="real-estate">
+                <strong>Home payment</strong>
+                <span>Mortgage, affordability, refinance</span>
+            </button>
+            <button type="button" class="noir-cinematic-intent" data-noir-intent="pay" data-engine="tab-paycheck" data-workspace="business">
+                <strong>Take-home pay</strong>
+                <span>Paycheck, overtime, bonus tax</span>
+            </button>
+            <button type="button" class="noir-cinematic-intent" data-noir-intent="grow" data-engine="tab-compound" data-workspace="wealth">
+                <strong>Grow savings</strong>
+                <span>Compound, 401k, FIRE number</span>
+            </button>
+            <button type="button" class="noir-cinematic-intent" data-noir-intent="debt" data-engine="tab-snowball" data-workspace="debt">
+                <strong>Pay off debt</strong>
+                <span>Snowball, credit cards, loans</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Wallet news (original editorial — NW-inspired carousel UX, not NW articles) -->
+    <section id="afc-wallet-news" class="afc-wallet-news" aria-label="News that impacts your wallet">
+        <div class="afc-wallet-news-inner">
+            <div class="afc-wallet-news-head">
+                <div>
+                    <h2 class="afc-wallet-news-title">News that impacts your wallet</h2>
+                    <p class="afc-wallet-news-status" aria-live="polite">Loading articles…</p>
+                </div>
+                <a class="afc-wallet-news-all" href="/news/">View all news</a>
+            </div>
+            <div class="afc-wallet-news-stage">
+                <button type="button" class="afc-wallet-news-prev" aria-label="Previous article">‹</button>
+                <div class="afc-wallet-news-viewport">
+                    <div class="afc-wallet-news-track"></div>
+                </div>
+                <button type="button" class="afc-wallet-news-next" aria-label="Next article">›</button>
+            </div>
+            <div class="afc-wallet-news-dots" role="tablist" aria-label="Choose article"></div>
+        </div>
+    </section>
+
+    <!-- Editorial rate board (from data/market-rates.json) -->
+    <section id="afc-rates-board" class="afc-rates-board" aria-label="Find smarter rates today">
+        <div class="afc-rates-inner">
+            <div class="afc-rates-head">
+                <div>
+                    <h2 class="afc-rates-title">Find smarter rates today</h2>
+                    <p class="afc-rates-dek">Editorial planning benchmarks vs sample “best desk” figures. Not live lender quotes.</p>
+                    <p class="afc-rates-asof" data-afc-rates-asof></p>
+                </div>
+                <a class="afc-rates-all" href="/banking-rates/">View all rates</a>
+            </div>
+            <div class="afc-rates-grid" aria-live="polite"></div>
+            <p class="afc-rates-disclaimer" data-afc-rates-disclaimer></p>
+        </div>
+    </section>
+
+    <!-- Original credit-card compare desk -->
+    <section id="afc-card-compare" class="afc-card-compare" aria-label="Compare credit cards">
+        <div class="afc-card-inner">
+            <div class="afc-card-head">
+                <div>
+                    <h2 id="afc-card-compare-title">Compare credit cards</h2>
+                    <p id="afc-card-compare-dek">Original aFinanceCalculator desk notes — not issuer offers.</p>
+                    <p class="afc-card-asof" data-afc-cards-asof></p>
+                </div>
+                <a class="afc-card-all" href="/compare-credit-cards/">Full compare desk</a>
+            </div>
+            <div id="afc-card-filters" class="afc-card-filters" role="toolbar" aria-label="Filter cards">
+                <button type="button" class="afc-card-filter is-active" data-filter="all">All</button>
+                <button type="button" class="afc-card-filter" data-filter="cash-back">Cash back</button>
+                <button type="button" class="afc-card-filter" data-filter="travel">Travel</button>
+                <button type="button" class="afc-card-filter" data-filter="zero-apr">0% APR</button>
+                <button type="button" class="afc-card-filter" data-filter="balance-transfer">Balance transfer</button>
+            </div>
+            <div id="afc-card-grid" class="afc-card-grid" aria-live="polite"></div>
         </div>
     </section>
 
@@ -480,15 +723,29 @@
     </section>
 
     <section id="popular-searches" class="max-w-7xl mx-auto px-4 pt-4 pb-2" aria-label="Popular calculator searches">
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Popular searches</p>
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wide m-0">Popular searches</p>
+            <button type="button" data-noir-share class="text-xs font-bold text-cyan-300 hover:text-cyan-200 underline-offset-2 hover:underline bg-transparent border-0 cursor-pointer p-0">Share this site</button>
+        </div>
         <nav class="flex flex-wrap gap-2 text-sm">
             <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/mortgage-calculator/">Mortgage calculator</a>
+            <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/amortization-calculator/">Amortization calculator</a>
             <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/loan-calculator/">Loan calculator</a>
             <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/paycheck-calculator/">Paycheck calculator</a>
+            <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/savings-calculator/">Savings calculator</a>
+            <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/cd-calculator/">CD calculator</a>
+            <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/money-market-calculator/">Money market calculator</a>
+            <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/mortgage-rates-today/">Mortgage rates today</a>
+            <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/balance-transfer-calculator/">Balance transfer calculator</a>
+            <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/roth-ira-calculator/">Roth IRA calculator</a>
             <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/compound-interest-calculator/">Compound interest calculator</a>
             <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/auto-loan-calculator/">Auto loan calculator</a>
+            <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/car-affordability-calculator/">How much car can I afford</a>
+            <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/rent-affordability-calculator/">How much rent can I afford</a>
             <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/refinance-calculator/">Refinance calculator</a>
             <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/home-affordability-calculator/">How much house can I afford</a>
+            <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/down-payment-calculator/">Down payment calculator</a>
+            <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/apr-loan-comparison-calculator/">APR loan comparison</a>
             <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/canada-mortgage-calculator/">Canada mortgage calculator</a>
             <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/401k-calculator/">401k calculator</a>
             <a class="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-950 text-cyan-300 hover:border-cyan-500/40" href="/fire-calculator/">FIRE calculator</a>
@@ -590,14 +847,18 @@
                     <span class="absolute right-2.5 top-2 text-[10px] text-slate-600 font-mono">/</span>
                 </div>
 
-                <!-- Category Filters -->
-                <div class="flex flex-wrap gap-1 mb-3 text-[10px] font-semibold">
+                <!-- Category Filters (NerdWallet-style money verticals) -->
+                <div class="flex flex-wrap gap-1 mb-3 text-[10px] font-semibold afc-cat-chips">
                     <button onclick="filterCategory('all')" data-cat="all" class="category-chip active px-2 py-0.5 rounded-md">All</button>
-                    <button onclick="filterCategory('debt')" data-cat="debt" class="category-chip px-2 py-0.5 rounded-md bg-slate-950 text-slate-400 border border-slate-800 hover:text-white">Debt</button>
-                    <button onclick="filterCategory('wealth')" data-cat="wealth" class="category-chip px-2 py-0.5 rounded-md bg-slate-950 text-slate-400 border border-slate-800 hover:text-white">Wealth</button>
-                    <button onclick="filterCategory('housing')" data-cat="housing" class="category-chip px-2 py-0.5 rounded-md bg-slate-950 text-slate-400 border border-slate-800 hover:text-white">Housing</button>
-                    <button onclick="filterCategory('tax')" data-cat="tax" class="category-chip px-2 py-0.5 rounded-md bg-slate-950 text-slate-400 border border-slate-800 hover:text-white">Tax & Pay</button>
-                    <button onclick="filterCategory('business')" data-cat="business" class="category-chip px-2 py-0.5 rounded-md bg-slate-950 text-slate-400 border border-slate-800 hover:text-white">Business</button>
+                    <button onclick="filterCategory('credit-cards')" data-cat="credit-cards" class="category-chip px-2 py-0.5 rounded-md">Credit cards</button>
+                    <button onclick="filterCategory('banking')" data-cat="banking" class="category-chip px-2 py-0.5 rounded-md">Banking</button>
+                    <button onclick="filterCategory('home')" data-cat="home" class="category-chip px-2 py-0.5 rounded-md">Home</button>
+                    <button onclick="filterCategory('loans')" data-cat="loans" class="category-chip px-2 py-0.5 rounded-md">Loans</button>
+                    <button onclick="filterCategory('insurance')" data-cat="insurance" class="category-chip px-2 py-0.5 rounded-md">Insurance</button>
+                    <button onclick="filterCategory('personal-finance')" data-cat="personal-finance" class="category-chip px-2 py-0.5 rounded-md">Personal finance</button>
+                    <button onclick="filterCategory('investing')" data-cat="investing" class="category-chip px-2 py-0.5 rounded-md">Investing</button>
+                    <button onclick="filterCategory('small-business')" data-cat="small-business" class="category-chip px-2 py-0.5 rounded-md">Small business</button>
+                    <button onclick="filterCategory('taxes')" data-cat="taxes" class="category-chip px-2 py-0.5 rounded-md">Taxes</button>
                 </div>
 
                 <nav class="flex flex-col gap-1 max-h-[580px] overflow-y-auto pr-1 custom-scrollbar">
@@ -609,56 +870,57 @@
                         </span>
                         <span class="text-[9px] bg-blue-500/20 text-blue-300 border border-blue-500/30 px-1.5 py-0.2 rounded font-mono font-bold">90+ Banks</span>
                     </a>
-                    <a id="tab-mortgage" data-cat="debt" class="tab-btn active w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/mortgage-calculator/">Home Loan EMI &amp; Mortgage</a>
-                    <a id="tab-invoice" data-cat="business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/invoice-calculator/">Simple Invoice & Tax</a>
-                    <a id="tab-roi" data-cat="business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/roi-calculator/">Investment Return & ROI</a>
-                    <a id="tab-crypto" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/crypto-leverage-calculator/">Crypto Leverage Calculator</a>
-                    <a id="tab-compound" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/compound-interest-calculator/">Savings & Compound Growth</a>
-                    <a id="tab-caprate" data-cat="business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/cap-rate-calculator/">Rental Property Cap Rate</a>
-                    <a id="tab-salary" data-cat="business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/salary-calculator/"> Hourly Pay to Yearly Salary</a>
-                    <a id="tab-breakeven" data-cat="business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/break-even-calculator/">Business Break-Even Point</a>
-                    <a id="tab-creditcard" data-cat="debt" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/credit-card-payoff-calculator/">Credit Card Debt Freedom</a>
-                    <a id="tab-stockavg" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/stock-average-calculator/">Stock Cost Averaging</a>
-                    <a id="tab-rentbuy" data-cat="debt" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/rent-vs-buy-calculator/">Rent vs Buy Comparison</a>
-                    <a id="tab-margin" data-cat="business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/profit-margin-calculator/">Retail Profit Margin</a>
-                    <a id="tab-autoloan" data-cat="debt" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/auto-loan-calculator/">Auto Finance Estimator</a>
-                    <a id="tab-student" data-cat="debt" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/student-loan-calculator/">Student Loan Payoff</a>
-                    <a id="tab-budget" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/budget-calculator/">50/30/20 Budget Setup</a>
-                    <a id="tab-interest" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/simple-interest-calculator/">Simple Interest Engine</a>
-                    <a id="tab-dividend" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl text-teal-400 border border-teal-900/30 bg-teal-950/20 transition-all cursor-pointer" href="/dividend-calculator/">Stock Dividend Yield</a>
-                    <a id="tab-inflation" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl text-teal-400 border border-teal-900/30 bg-teal-950/20 transition-all cursor-pointer" href="/inflation-calculator/">Cash Inflation Eroder</a>
-                    <a id="tab-sip" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl text-teal-400 border border-teal-900/30 bg-teal-950/20 transition-all cursor-pointer" href="/monthly-investment-calculator/">Systematic SIP Planner</a>
-                    <a id="tab-cagr" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl text-teal-400 border border-teal-900/30 bg-teal-950/20 transition-all cursor-pointer" href="/cagr-calculator/">CAGR Growth Rate</a>
-                    <a id="tab-affordability" data-cat="housing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/home-affordability-calculator/">Home Affordability Max</a>
-                    <a id="tab-refinance" data-cat="housing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/refinance-calculator/">Mortgage Refi Savings</a>
-                    <a id="tab-biweekly" data-cat="housing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/biweekly-mortgage-calculator/">Bi-Weekly Acceleration</a>
-                    <a id="tab-cashoncash" data-cat="housing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/cash-on-cash-calculator/">Rental Cash-on-Cash NOI</a>
-                    <a id="tab-heloc" data-cat="housing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/heloc-calculator/">HELOC Payment & Payoff</a>
-                    <a id="tab-closingcosts" data-cat="housing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/closing-costs-calculator/">Title & Closing Costs</a>
-                    <a id="tab-fire" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/fire-calculator/">FIRE Early Retirement</a>
-                    <a id="tab-four01k" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/401k-calculator/">401(k) & Roth Growth</a>
-                    <a id="tab-rmd" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/rmd-calculator/">Required Min Distribution</a>
-                    <a id="tab-socialsecurity" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/social-security-calculator/">Social Security Maximizer</a>
-                    <a id="tab-cdladder" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/cd-ladder-calculator/">CD Ladder APY Engine</a>
-                    <a id="tab-hsa" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/hsa-calculator/">HSA Triple-Tax Growth</a>
-                    <a id="tab-paycheck" data-cat="tax" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/paycheck-calculator/">Paycheck Gross to Net</a>
-                    <a id="tab-capitalgains" data-cat="tax" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/capital-gains-calculator/">Capital Gains Stock Profit</a>
-                    <a id="tab-quarterlytax" data-cat="tax" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/quarterly-tax-calculator/">Self-Employed 1040-ES Tax</a>
-                    <a id="tab-overtime" data-cat="tax" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/overtime-calculator/"> Overtime 1.5x & Double Pay</a>
-                    <a id="tab-bonustax" data-cat="tax" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/bonus-tax-calculator/">Bonus Withholding & Net</a>
-                    <a id="tab-severance" data-cat="tax" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/severance-calculator/">Severance & Runway Buffer</a>
-                    <a id="tab-snowball" data-cat="debt" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/debt-snowball-calculator/">Debt Snowball vs Avalanche</a>
-                    <a id="tab-carlease" data-cat="debt" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/car-lease-calculator/">Car Lease vs Buy Matrix</a>
-                    <a id="tab-personalloan" data-cat="debt" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/personal-loan-calculator/">Personal Loan Consolidate</a>
-                    <a id="tab-autorefi" data-cat="debt" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/auto-refinance-calculator/">Auto Refinance Savings</a>
-                    <a id="tab-studentrefi" data-cat="debt" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/student-loan-refinance-calculator/">Student Loan Refi vs PSLF</a>
-                    <a id="tab-creditscore" data-cat="debt" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/credit-utilization-calculator/">Credit Score Utilization</a>
-                    <a id="tab-solar" data-cat="business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/solar-calculator/">Solar Panel ROI Payback</a>
-                    <a id="tab-evgas" data-cat="business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/ev-vs-gas-calculator/">Electric Vehicle vs Gas</a>
-                    <a id="tab-staking" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/staking-calculator/">Crypto Staking & IL Yield</a>
-                    <a id="tab-dropship" data-cat="business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/ecommerce-margin-calculator/">E-Commerce / FBA Margin</a>
-                    <a id="tab-realreturns" data-cat="wealth" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/real-return-calculator/">Real Return Fisher Growth</a>
-                    <a id="tab-airbnb" data-cat="business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/airbnb-calculator/">Airbnb Vacation Rental ROI</a>
+                    <a id="tab-insurance" data-cat="insurance" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/#engine-insurance">Insurance Planning Desk</a>
+                    <a id="tab-mortgage" data-cat="home" class="tab-btn active w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/mortgage-calculator/">Home Loan EMI &amp; Mortgage</a>
+                    <a id="tab-invoice" data-cat="small-business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/invoice-calculator/">Simple Invoice & Tax</a>
+                    <a id="tab-roi" data-cat="investing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/roi-calculator/">Investment Return & ROI</a>
+                    <a id="tab-crypto" data-cat="investing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/crypto-leverage-calculator/">Crypto Leverage Calculator</a>
+                    <a id="tab-compound" data-cat="banking" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/compound-interest-calculator/">Savings & Compound Growth</a>
+                    <a id="tab-caprate" data-cat="home" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/cap-rate-calculator/">Rental Property Cap Rate</a>
+                    <a id="tab-salary" data-cat="personal-finance" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/salary-calculator/"> Hourly Pay to Yearly Salary</a>
+                    <a id="tab-breakeven" data-cat="small-business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/break-even-calculator/">Business Break-Even Point</a>
+                    <a id="tab-creditcard" data-cat="credit-cards" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/credit-card-payoff-calculator/">Credit Card Debt Freedom</a>
+                    <a id="tab-stockavg" data-cat="investing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/stock-average-calculator/">Stock Cost Averaging</a>
+                    <a id="tab-rentbuy" data-cat="home" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/rent-vs-buy-calculator/">Rent vs Buy Comparison</a>
+                    <a id="tab-margin" data-cat="small-business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/profit-margin-calculator/">Retail Profit Margin</a>
+                    <a id="tab-autoloan" data-cat="loans" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/auto-loan-calculator/">Auto Finance Estimator</a>
+                    <a id="tab-student" data-cat="loans" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/student-loan-calculator/">Student Loan Payoff</a>
+                    <a id="tab-budget" data-cat="personal-finance" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/budget-calculator/">50/30/20 Budget Setup</a>
+                    <a id="tab-interest" data-cat="banking" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/simple-interest-calculator/">Simple Interest Engine</a>
+                    <a id="tab-dividend" data-cat="investing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl text-teal-400 border border-teal-900/30 bg-teal-950/20 transition-all cursor-pointer" href="/dividend-calculator/">Stock Dividend Yield</a>
+                    <a id="tab-inflation" data-cat="personal-finance" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl text-teal-400 border border-teal-900/30 bg-teal-950/20 transition-all cursor-pointer" href="/inflation-calculator/">Cash Inflation Eroder</a>
+                    <a id="tab-sip" data-cat="investing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl text-teal-400 border border-teal-900/30 bg-teal-950/20 transition-all cursor-pointer" href="/monthly-investment-calculator/">Systematic SIP Planner</a>
+                    <a id="tab-cagr" data-cat="investing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl text-teal-400 border border-teal-900/30 bg-teal-950/20 transition-all cursor-pointer" href="/cagr-calculator/">CAGR Growth Rate</a>
+                    <a id="tab-affordability" data-cat="home" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/home-affordability-calculator/">Home Affordability Max</a>
+                    <a id="tab-refinance" data-cat="home" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/refinance-calculator/">Mortgage Refi Savings</a>
+                    <a id="tab-biweekly" data-cat="home" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/biweekly-mortgage-calculator/">Bi-Weekly Acceleration</a>
+                    <a id="tab-cashoncash" data-cat="home" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/cash-on-cash-calculator/">Rental Cash-on-Cash NOI</a>
+                    <a id="tab-heloc" data-cat="home" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/heloc-calculator/">HELOC Payment & Payoff</a>
+                    <a id="tab-closingcosts" data-cat="home" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/closing-costs-calculator/">Title & Closing Costs</a>
+                    <a id="tab-fire" data-cat="investing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/fire-calculator/">FIRE Early Retirement</a>
+                    <a id="tab-four01k" data-cat="investing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/401k-calculator/">401(k) & Roth Growth</a>
+                    <a id="tab-rmd" data-cat="investing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/rmd-calculator/">Required Min Distribution</a>
+                    <a id="tab-socialsecurity" data-cat="investing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/social-security-calculator/">Social Security Maximizer</a>
+                    <a id="tab-cdladder" data-cat="banking" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/cd-ladder-calculator/">CD Ladder APY Engine</a>
+                    <a id="tab-hsa" data-cat="insurance" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/hsa-calculator/">HSA Triple-Tax Growth</a>
+                    <a id="tab-paycheck" data-cat="taxes" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/paycheck-calculator/">Paycheck Gross to Net</a>
+                    <a id="tab-capitalgains" data-cat="taxes" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/capital-gains-calculator/">Capital Gains Stock Profit</a>
+                    <a id="tab-quarterlytax" data-cat="taxes" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/quarterly-tax-calculator/">Self-Employed 1040-ES Tax</a>
+                    <a id="tab-overtime" data-cat="taxes" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/overtime-calculator/"> Overtime 1.5x & Double Pay</a>
+                    <a id="tab-bonustax" data-cat="taxes" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/bonus-tax-calculator/">Bonus Withholding & Net</a>
+                    <a id="tab-severance" data-cat="personal-finance" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/severance-calculator/">Severance & Runway Buffer</a>
+                    <a id="tab-snowball" data-cat="loans" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/debt-snowball-calculator/">Debt Snowball vs Avalanche</a>
+                    <a id="tab-carlease" data-cat="loans" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/car-lease-calculator/">Car Lease vs Buy Matrix</a>
+                    <a id="tab-personalloan" data-cat="loans" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/personal-loan-calculator/">Personal Loan Consolidate</a>
+                    <a id="tab-autorefi" data-cat="loans" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/auto-refinance-calculator/">Auto Refinance Savings</a>
+                    <a id="tab-studentrefi" data-cat="loans" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/student-loan-refinance-calculator/">Student Loan Refi vs PSLF</a>
+                    <a id="tab-creditscore" data-cat="credit-cards" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/credit-utilization-calculator/">Credit Score Utilization</a>
+                    <a id="tab-solar" data-cat="small-business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/solar-calculator/">Solar Panel ROI Payback</a>
+                    <a id="tab-evgas" data-cat="personal-finance" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/ev-vs-gas-calculator/">Electric Vehicle vs Gas</a>
+                    <a id="tab-staking" data-cat="investing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/staking-calculator/">Crypto Staking & IL Yield</a>
+                    <a id="tab-dropship" data-cat="small-business" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/ecommerce-margin-calculator/">E-Commerce / FBA Margin</a>
+                    <a id="tab-realreturns" data-cat="investing" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/real-return-calculator/">Real Return Fisher Growth</a>
+                    <a id="tab-airbnb" data-cat="home" class="tab-btn w-full text-left px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer" href="/airbnb-calculator/">Airbnb Vacation Rental ROI</a>
                 </nav>
             </div>
 
@@ -707,65 +969,74 @@
                     <span class="text-[10px] text-slate-400 font-mono bg-slate-950 px-2 py-0.5 rounded border border-slate-800">50 Available</span>
                 </div>
                 <select id="mobile-engine-select" onchange="goToCalculatorPage(this.value)" class="w-full bg-slate-950 border border-slate-700 text-emerald-400 font-bold rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-emerald-400 cursor-pointer">
-                    <optgroup label="Debt &amp; Loans">
-                        <option value="tab-mortgage" selected>Mortgage Liability Core</option>
-                        <option value="tab-creditcard">Credit Card Payoff Plan</option>
-                        <option value="tab-autoloan">Auto Finance Estimator</option>
-                        <option value="tab-student">Student Loan Payoff</option>
-                        <option value="tab-rentbuy">Rent vs Buy Comparison</option>
-                        <option value="tab-snowball">Debt Snowball vs Avalanche</option>
-                        <option value="tab-carlease">Car Lease vs Buy Matrix</option>
-                        <option value="tab-personalloan">Personal Loan Consolidate</option>
-                        <option value="tab-autorefi">Auto Refinance Savings</option>
-                        <option value="tab-studentrefi">Student Loan Refi vs PSLF</option>
-                        <option value="tab-creditscore">Credit Score Utilization</option>
+                    <optgroup label="Credit cards">
+                        <option value="tab-creditcard">Credit card payoff</option>
+                        <option value="tab-creditscore">Credit utilization</option>
                     </optgroup>
-                    <optgroup label="Wealth &amp; Investing">
-                        <option value="tab-crypto">Crypto Futures Leverage</option>
-                        <option value="tab-compound">Compound Asset Wealth</option>
-                        <option value="tab-stockavg">Stock Cost Averaging</option>
-                        <option value="tab-budget">50/30/20 Budget Setup</option>
-                        <option value="tab-interest">Simple Interest Engine</option>
-                        <option value="tab-dividend">Stock Dividend Yield</option>
-                        <option value="tab-inflation">Cash Inflation Eroder</option>
-                        <option value="tab-sip">Systematic SIP Planner</option>
-                        <option value="tab-cagr">CAGR Growth Rate</option>
-                        <option value="tab-fire">FIRE Early Retirement</option>
-                        <option value="tab-four01k">401(k) &amp; Roth Growth</option>
-                        <option value="tab-rmd">Required Min Distribution</option>
-                        <option value="tab-socialsecurity">Social Security Maximizer</option>
-                        <option value="tab-cdladder">CD Ladder APY Engine</option>
-                        <option value="tab-hsa">HSA Triple-Tax Growth</option>
-                        <option value="tab-staking">Crypto Staking &amp; IL Yield</option>
-                        <option value="tab-realreturns">Real Return Fisher Growth</option>
+                    <optgroup label="Banking">
+                        <option value="tab-compound">Compound / savings</option>
+                        <option value="tab-interest">Simple interest</option>
+                        <option value="tab-cdladder">CD ladder</option>
                     </optgroup>
-                    <optgroup label="Housing &amp; Real Estate">
-                        <option value="tab-affordability">Home Affordability Max</option>
-                        <option value="tab-refinance">Mortgage Refi Savings</option>
-                        <option value="tab-biweekly">Bi-Weekly Acceleration</option>
-                        <option value="tab-cashoncash">Rental Cash-on-Cash NOI</option>
-                        <option value="tab-heloc">HELOC Payment &amp; Payoff</option>
-                        <option value="tab-closingcosts">Title &amp; Closing Costs</option>
+                    <optgroup label="Home">
+                        <option value="tab-mortgage" selected>Mortgage / EMI</option>
+                        <option value="tab-affordability">Home affordability</option>
+                        <option value="tab-refinance">Refinance</option>
+                        <option value="tab-rentbuy">Rent vs buy</option>
+                        <option value="tab-biweekly">Bi-weekly mortgage</option>
+                        <option value="tab-heloc">HELOC</option>
+                        <option value="tab-closingcosts">Closing costs</option>
+                        <option value="tab-cashoncash">Cash-on-cash</option>
+                        <option value="tab-caprate">Cap rate</option>
+                        <option value="tab-airbnb">Airbnb ROI</option>
                     </optgroup>
-                    <optgroup label="Tax &amp; Compensation">
-                        <option value="tab-salary"> Wage Hourly to Salary</option>
-                        <option value="tab-paycheck">Paycheck Gross to Net</option>
-                        <option value="tab-capitalgains">Capital Gains Stock Profit</option>
-                        <option value="tab-quarterlytax">Self-Employed 1040-ES Tax</option>
-                        <option value="tab-overtime"> Overtime 1.5x &amp; Double Pay</option>
-                        <option value="tab-bonustax">Bonus Withholding &amp; Net</option>
-                        <option value="tab-severance">Severance &amp; Runway Buffer</option>
+                    <optgroup label="Loans">
+                        <option value="tab-personalloan">Personal loan</option>
+                        <option value="tab-autoloan">Auto loan</option>
+                        <option value="tab-autorefi">Auto refinance</option>
+                        <option value="tab-student">Student loan</option>
+                        <option value="tab-studentrefi">Student refinance</option>
+                        <option value="tab-carlease">Lease vs buy</option>
+                        <option value="tab-snowball">Debt snowball</option>
                     </optgroup>
-                    <optgroup label="Business &amp; Commerce">
-                        <option value="tab-invoice">Invoicing &amp; Tax Matrix</option>
-                        <option value="tab-roi">Campaign Growth ROI</option>
-                        <option value="tab-caprate">Property Cap Rate Core</option>
-                        <option value="tab-breakeven">Venture Break-Even Level</option>
-                        <option value="tab-margin">Retail Profit Margin</option>
-                        <option value="tab-solar">Solar Panel ROI Payback</option>
-                        <option value="tab-evgas">Electric Vehicle vs Gas</option>
-                        <option value="tab-dropship">E-Commerce / FBA Margin</option>
-                        <option value="tab-airbnb">Airbnb Vacation Rental ROI</option>
+                    <optgroup label="Insurance">
+                        <option value="tab-insurance">Insurance planning desk</option>
+                        <option value="tab-hsa">HSA growth</option>
+                    </optgroup>
+                    <optgroup label="Personal finance">
+                        <option value="tab-budget">50/30/20 budget</option>
+                        <option value="tab-salary">Hourly to salary</option>
+                        <option value="tab-inflation">Inflation</option>
+                        <option value="tab-severance">Severance runway</option>
+                        <option value="tab-evgas">EV vs gas</option>
+                    </optgroup>
+                    <optgroup label="Investing">
+                        <option value="tab-crypto">Crypto leverage</option>
+                        <option value="tab-stockavg">Stock averaging</option>
+                        <option value="tab-dividend">Dividend yield</option>
+                        <option value="tab-sip">SIP / monthly</option>
+                        <option value="tab-cagr">CAGR</option>
+                        <option value="tab-fire">FIRE</option>
+                        <option value="tab-four01k">401(k) &amp; Roth</option>
+                        <option value="tab-rmd">RMD</option>
+                        <option value="tab-socialsecurity">Social Security</option>
+                        <option value="tab-staking">Crypto staking</option>
+                        <option value="tab-realreturns">Real return</option>
+                        <option value="tab-roi">ROI</option>
+                    </optgroup>
+                    <optgroup label="Small business">
+                        <option value="tab-invoice">Invoice &amp; tax</option>
+                        <option value="tab-breakeven">Break-even</option>
+                        <option value="tab-margin">Profit margin</option>
+                        <option value="tab-dropship">Ecommerce margin</option>
+                        <option value="tab-solar">Solar ROI</option>
+                    </optgroup>
+                    <optgroup label="Taxes">
+                        <option value="tab-paycheck">Paycheck</option>
+                        <option value="tab-capitalgains">Capital gains</option>
+                        <option value="tab-quarterlytax">Quarterly 1040-ES</option>
+                        <option value="tab-overtime">Overtime</option>
+                        <option value="tab-bonustax">Bonus tax</option>
                     </optgroup>
                 </select>
             </div>
@@ -821,6 +1092,126 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Bank desk chrome: original UX inspired by retail-bank / rate-comparison calculators (not a clone). -->
+            <aside id="lender-context-bar" class="lender-context-bar" aria-label="Bank or finance company for this calculator" hidden>
+                <div class="lender-context-rail" aria-hidden="true"></div>
+
+                <div class="lender-context-brandrow">
+                    <div id="lender-context-mark" class="lender-context-mark" aria-hidden="true">C</div>
+                    <div class="lender-context-copy">
+                        <p class="lender-context-kicker">Payment calculator desk</p>
+                        <p class="lender-context-title"><span id="lender-context-name">Chase</span></p>
+                        <p class="lender-context-meta">
+                            <span id="lender-context-product">Home lending</span>
+                            <span class="lender-context-dot" aria-hidden="true">·</span>
+                            <span id="lender-context-market">United States</span>
+                        </p>
+                    </div>
+                    <div class="lender-context-brand-actions">
+                        <span class="lender-context-badge">Unofficial</span>
+                        <button type="button" id="lender-context-copy" title="Copy deep link for this bank calculator">Share desk</button>
+                    </div>
+                </div>
+
+                <div class="lender-context-rateboard" aria-label="Sample and market rates">
+                    <div class="lender-rate-chip lender-rate-chip--sample" id="lender-context-rate-wrap" hidden>
+                        <span class="lender-rate-chip__label">Sample APR</span>
+                        <span class="lender-rate-chip__value" id="lender-context-rate">6.35%</span>
+                        <span class="lender-rate-chip__hint">Editable in the form</span>
+                    </div>
+                    <div class="lender-rate-chip lender-rate-chip--market" id="lender-context-benchmark-wrap" hidden>
+                        <span class="lender-rate-chip__label">Market avg</span>
+                        <span class="lender-rate-chip__value" id="lender-context-benchmark">6.28%</span>
+                        <span class="lender-rate-chip__hint">Editorial benchmark</span>
+                    </div>
+                    <div class="lender-rate-chip lender-rate-chip--rank">
+                        <span class="lender-rate-chip__label">Context rank</span>
+                        <span class="lender-rate-chip__value" id="lender-context-rank">#1</span>
+                        <span class="lender-rate-chip__hint">Default if none chosen</span>
+                    </div>
+                </div>
+
+                <div class="lender-context-switcher">
+                    <label class="lender-context-switcher-label" for="lender-context-select">Compare as</label>
+                    <select id="lender-context-select" title="Choose bank or finance company"></select>
+                    <button type="button" id="lender-context-reset" title="Use top-ranked lender for this market">Reset to #1</button>
+                    <input type="text" id="lender-context-link" readonly aria-label="Shareable bank calculator link" class="lender-context-link">
+                </div>
+
+                <p id="lender-context-default-note" class="lender-context-default">
+                    No bank selected — showing the <strong>top-ranked</strong> institution for this product in your market.
+                </p>
+                <p class="lender-context-legal">
+                    Planning desk only — not affiliated with the named institution. Rates from <code>/data/market-rates.json</code>, not live lender APIs. Deep link <code>?lender=</code> or pages like <code>/chase-mortgage-calculator/</code>.
+                </p>
+            </aside>
+
+            <!-- Insurance planning desk (educational estimates — not a quote marketplace) -->
+            <section id="engine-insurance" class="engine-panel hidden glass-panel rounded-2xl p-6 sm:p-8 border border-emerald-500/20 relative overflow-hidden transition-all">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-6 border-b border-slate-800/80 gap-4">
+                    <div>
+                        <div class="flex items-center gap-2.5 flex-wrap">
+                            <h2 class="text-xl sm:text-2xl font-black text-white">Insurance Planning Desk</h2>
+                            <span class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Educational</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-3xl leading-relaxed">
+                            Rough life-coverage and auto-premium budgeting math. Not a carrier quote, binder, or NerdWallet Insurance Experts marketplace — confirm numbers with a licensed agent.
+                        </p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                    <div class="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+                        <h3 class="text-sm font-black text-white mb-1">Life insurance needs (rule of thumb)</h3>
+                        <p class="text-[11px] text-slate-400 mb-4">Income × years of support, minus savings and existing coverage.</p>
+                        <div class="space-y-3">
+                            <label class="block text-xs font-bold text-slate-300">Annual income
+                                <input id="ins-life-income" type="number" value="75000" min="0" step="1000" class="mt-1 w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white" oninput="calcLifeInsurance()">
+                            </label>
+                            <label class="block text-xs font-bold text-slate-300">Years of income to replace
+                                <input id="ins-life-years" type="number" value="10" min="1" max="40" step="1" class="mt-1 w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white" oninput="calcLifeInsurance()">
+                            </label>
+                            <label class="block text-xs font-bold text-slate-300">Liquid savings / investments
+                                <input id="ins-life-savings" type="number" value="50000" min="0" step="1000" class="mt-1 w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white" oninput="calcLifeInsurance()">
+                            </label>
+                            <label class="block text-xs font-bold text-slate-300">Existing life coverage
+                                <input id="ins-life-existing" type="number" value="100000" min="0" step="1000" class="mt-1 w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white" oninput="calcLifeInsurance()">
+                            </label>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-800 flex items-end justify-between gap-3">
+                            <span class="text-[11px] text-slate-400 font-semibold">Suggested additional coverage</span>
+                            <span id="ins-life-need" class="text-xl font-black text-emerald-400">$600,000</span>
+                        </div>
+                    </div>
+                    <div class="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+                        <h3 class="text-sm font-black text-white mb-1">Auto insurance budget check</h3>
+                        <p class="text-[11px] text-slate-400 mb-4">Annualize your premium and see it as a share of household income.</p>
+                        <div class="space-y-3">
+                            <label class="block text-xs font-bold text-slate-300">Monthly premium
+                                <input id="ins-auto-premium" type="number" value="145" min="0" step="5" class="mt-1 w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white" oninput="calcAutoInsurance()">
+                            </label>
+                            <label class="block text-xs font-bold text-slate-300">Household annual income
+                                <input id="ins-auto-income" type="number" value="75000" min="0" step="1000" class="mt-1 w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white" oninput="calcAutoInsurance()">
+                            </label>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-800 space-y-2">
+                            <div class="flex items-end justify-between gap-3">
+                                <span class="text-[11px] text-slate-400 font-semibold">Annual premium</span>
+                                <span id="ins-auto-annual" class="text-xl font-black text-emerald-400">$1,740</span>
+                            </div>
+                            <div class="flex items-end justify-between gap-3">
+                                <span class="text-[11px] text-slate-400 font-semibold">Share of income</span>
+                                <span id="ins-auto-pct" class="text-sm font-bold text-slate-200">2.3% of income</span>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-4 leading-relaxed">Many households aim to keep auto insurance under ~2–3% of income; local rates vary widely. Shop multiple carriers before renewing.</p>
+                    </div>
+                </div>
+                <div class="mt-6 flex flex-wrap gap-2">
+                    <button type="button" onclick="switchEngine('tab-hsa')" class="px-3 py-2 rounded-xl text-xs font-bold border border-emerald-500/40 text-emerald-300 hover:text-white cursor-pointer">Open HSA calculator</button>
+                    <button type="button" onclick="switchEngine('tab-closingcosts')" class="px-3 py-2 rounded-xl text-xs font-bold border border-slate-700 text-slate-300 hover:text-white cursor-pointer">Home closing costs (incl. insurance lines)</button>
+                </div>
+            </section>
 
             <!-- 0. U.S. & CANADA BANKING INTELLIGENCE & CROSS-BORDER YIELD ENGINE -->
             <section id="engine-banking" class="engine-panel glass-panel rounded-2xl p-6 sm:p-8 border border-blue-500/30 relative overflow-hidden transition-all">
@@ -1350,8 +1741,8 @@
                             <span class="text-2xl"></span>
                             <h2 class="text-xl sm:text-2xl font-black text-white">Home Loan EMI &amp; Mortgage Calculator: What Will My Monthly Payment Be?</h2>
                         </div>
-                        <p class="text-sm text-slate-400 mt-1">Principal and interest only. Taxes, insurance, and mortgage insurance are not included.</p>
-                        <p id="mortgage-market-note" class="text-sm text-slate-400 mt-1 hidden">Canada: the quoted rate compounds semi-annually. A CMHC premium is added only when the down payment is under 20% and the price is inside the published limit.</p>
+                        <p class="text-sm text-slate-400 mt-1">Principal &amp; interest plus optional taxes, homeowners insurance, PMI, and HOA for a full PITI estimate.</p>
+                        <p id="mortgage-market-note" class="text-sm text-slate-400 mt-1 hidden">Canada: the quoted rate compounds semi-annually. A CMHC premium is added only when the down payment is under 20% and the price is inside the published limit. Property tax and insurance fields still apply as monthly add-ons.</p>
                     </div>
                     <div class="engine-actions flex items-center gap-2 no-print">
                         <button onclick="openAmortizationModal('mortgage')" class="px-3 py-1.5 text-xs font-semibold text-teal-400 bg-teal-950/40 border border-teal-800/60 rounded-lg hover:bg-teal-900/60 transition-colors">Schedule & CSV</button>
@@ -1429,6 +1820,41 @@
                                 <button type="button" id="mortgage-term-custom-btn" onclick="focusCustomTerm('mortgage-term')" class="mortgage-term-btn py-1.5 px-2 rounded-lg text-xs font-bold border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 hover:text-white transition-all cursor-pointer">Custom</button>
                             </div>
                         </div>
+
+                        <div class="pt-2 border-t border-slate-800/80">
+                            <p class="text-[10px] font-black uppercase tracking-wide text-emerald-400 mb-3">PITI add-ons (monthly)</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label for="mortgage-tax" class="block text-xs font-bold text-slate-300 mb-1">Property tax / mo</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-500 font-mono currency-symbol-tag">$</span>
+                                        <input type="number" id="mortgage-tax" value="375" min="0" max="20000" step="25" oninput="calcMortgage()" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="mortgage-insurance" class="block text-xs font-bold text-slate-300 mb-1">Homeowners insurance / mo</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-500 font-mono currency-symbol-tag">$</span>
+                                        <input type="number" id="mortgage-insurance" value="140" min="0" max="5000" step="10" oninput="calcMortgage()" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="mortgage-pmi" class="block text-xs font-bold text-slate-300 mb-1">PMI / mortgage insurance / mo</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-500 font-mono currency-symbol-tag">$</span>
+                                        <input type="number" id="mortgage-pmi" value="0" min="0" max="2000" step="5" oninput="calcMortgage()" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                    </div>
+                                    <span class="text-[10px] text-slate-500 mt-1 block">Often required when LTV &gt; 80%. Auto-hint when down &lt; 20%.</span>
+                                </div>
+                                <div>
+                                    <label for="mortgage-hoa" class="block text-xs font-bold text-slate-300 mb-1">HOA / condo fees / mo</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-500 font-mono currency-symbol-tag">$</span>
+                                        <input type="number" id="mortgage-hoa" value="0" min="0" max="5000" step="10" oninput="calcMortgage()" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Target Outputs & Micro-Chart (full width for readable visuals) -->
@@ -1439,7 +1865,9 @@
                                 <div class="infographic-legend" id="infographic-mortgage-legend"></div>
                             </div>
                             <span class="output-label text-xs font-bold text-slate-400">Principal &amp; Interest</span>
-                            <div id="mortgage-payment" class="output-value text-3xl sm:text-4xl font-black text-emerald-400 font-mono-num mt-1">$ 0.00</div>
+                            <span class="output-label text-[10px] font-bold text-slate-400 uppercase tracking-wide">Estimated total monthly (PITI)</span>
+                            <div id="mortgage-payment-piti" class="output-value text-3xl sm:text-4xl font-black text-emerald-400 font-mono-num mt-1">$ 0.00</div>
+                            <p class="text-[11px] text-slate-500 mt-1 font-medium">P&amp;I <span id="mortgage-payment" class="font-mono text-slate-300">$ 0.00</span> · add-ons <span id="mortgage-escrow" class="font-mono text-slate-300">$ 0.00</span></p>
                             <p class="text-[11px] text-slate-500 mt-1 font-medium">Principal & Interest Amortization</p>
 
                             <!-- The Plain English Solution & Verdict Card -->
@@ -7147,10 +7575,24 @@
     <!-- Banking Intelligence Dataset & Mechanics -->
     <script src="js/banking_data.js"></script>
     <script src="js/calculator-pages.js"></script>
+    <script src="js/lender-catalog.js?v=1"></script>
+    <script src="js/lender-pages.js?v=1"></script>
+    <script src="js/market-rates.js?v=1"></script>
     <!-- Core Computation Mechanics -->
-    <script src="js/mechanics.js?v=2.4.4"></script>
+    <script src="js/mechanics.js?v=2.5.1"></script>
+    <script src="js/high-traffic-calcs.js?v=6"></script>
+    <script src="js/afc-verticals.js?v=4"></script>
+    <script src="js/wallet-news.js?v=2" defer></script>
+    <script src="js/afc-rates-board.js?v=1" defer></script>
+    <script src="js/afc-card-compare.js?v=1" defer></script>
+    <script src="js/lender-context.js?v=3"></script>
     <script src="js/infographics.js?v=2" defer></script>
     <script src="js/usage-illustrations.js?v=2" defer></script>
+    <div id="noir-cinematic-dock" class="noir-cinematic-dock" hidden>
+        <a href="#calculators">Open calculators</a>
+        <button type="button" data-noir-share>Share</button>
+    </div>
     <script src="js/cinematic.js?v=2" defer></script>
+    <script src="js/growth.js?v=1" defer></script>
 </body>
 </html>

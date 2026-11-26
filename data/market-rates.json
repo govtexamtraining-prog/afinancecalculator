@@ -1,0 +1,144 @@
+{
+  "asOf": "2026-11-26",
+  "source": "Editorial rate board for aFinanceCalculator. National figures are planning benchmarks styled after commonly cited public surveys (e.g. PMMS-style 30-year FRM). Bank rows are editable samples — not scraped live offers, not underwriting quotes, and not an affiliation with any institution.",
+  "disclaimer": "Confirm every rate with the lender. This file is safe to update without code changes. Not live NerdWallet or bank API data.",
+  "markets": {
+    "US": {
+      "mortgage30": { "value": 6.28, "label": "US 30-yr fixed national avg", "unit": "%" },
+      "mortgage15": { "value": 5.55, "label": "US 15-yr fixed national avg", "unit": "%" },
+      "refinance30": { "value": 6.40, "label": "US 30-yr refinance avg", "unit": "%" },
+      "autoNew": { "value": 5.75, "label": "US new-auto loan avg", "unit": "%" },
+      "personal": { "value": 11.45, "label": "US personal loan avg", "unit": "%" },
+      "cardApr": { "value": 21.50, "label": "US credit card avg APR", "unit": "%" },
+      "savingsApy": { "value": 4.20, "label": "US high-yield savings benchmark", "unit": "%" },
+      "cd1y": { "value": 4.10, "label": "US 1-year CD benchmark", "unit": "%" },
+      "moneyMarket": { "value": 3.95, "label": "US money market benchmark", "unit": "%" }
+    },
+    "CA": {
+      "mortgage5": { "value": 4.49, "label": "CA 5-yr fixed benchmark", "unit": "%" },
+      "autoNew": { "value": 6.10, "label": "CA auto loan benchmark", "unit": "%" },
+      "personal": { "value": 9.50, "label": "CA personal loan benchmark", "unit": "%" }
+    },
+    "GB": {
+      "mortgage": { "value": 4.80, "label": "UK residential mortgage benchmark", "unit": "%" }
+    },
+    "IN": {
+      "homeLoan": { "value": 8.50, "label": "India home loan benchmark", "unit": "%" }
+    }
+  },
+  "rateBoard": {
+    "title": "Find smarter rates today",
+    "dek": "Editorial planning benchmarks vs sample “best desk” figures. Not live lender quotes.",
+    "viewAllHref": "/banking-rates/",
+    "cards": [
+      {
+        "id": "savings",
+        "label": "Savings (HYSA)",
+        "best": 5.00,
+        "average": 0.39,
+        "bestLabel": "Best desk APY",
+        "avgLabel": "National avg savings",
+        "unit": "%",
+        "href": "/savings-calculator/",
+        "cta": "Model savings"
+      },
+      {
+        "id": "cd",
+        "label": "CD rates (1-year)",
+        "best": 5.00,
+        "average": 1.81,
+        "bestLabel": "Best desk APY",
+        "avgLabel": "Average 1-year CD",
+        "unit": "%",
+        "href": "/cd-calculator/",
+        "cta": "Open CD calculator"
+      },
+      {
+        "id": "money-market",
+        "label": "Money market",
+        "best": 4.05,
+        "average": 0.63,
+        "bestLabel": "Best desk APY",
+        "avgLabel": "Average money market",
+        "unit": "%",
+        "href": "/money-market-calculator/",
+        "cta": "Model money market"
+      },
+      {
+        "id": "refinance",
+        "label": "Refinance (30-yr)",
+        "best": 6.80,
+        "average": 7.36,
+        "bestLabel": "Best desk rate",
+        "avgLabel": "Average 30-yr refi",
+        "unit": "%",
+        "href": "/refinance-calculator/",
+        "cta": "Run refinance math"
+      },
+      {
+        "id": "mortgage30",
+        "label": "30-year fixed",
+        "best": 6.68,
+        "average": 7.05,
+        "bestLabel": "Best desk rate",
+        "avgLabel": "National average",
+        "unit": "%",
+        "href": "/mortgage-rates-today/",
+        "cta": "Mortgage rates today"
+      },
+      {
+        "id": "mortgage15",
+        "label": "15-year fixed",
+        "best": 5.75,
+        "average": 6.44,
+        "bestLabel": "Best desk rate",
+        "avgLabel": "National average",
+        "unit": "%",
+        "href": "/mortgage-calculator/",
+        "cta": "Estimate payment"
+      }
+    ]
+  },
+  "lenders": {
+    "us-chase-home": { "sampleRate": 6.35 },
+    "us-wells-home": { "sampleRate": 6.42 },
+    "us-bofa-home": { "sampleRate": 6.48 },
+    "us-usb-home": { "sampleRate": 6.40 },
+    "us-pnc-home": { "sampleRate": 6.45 },
+    "us-chase-auto": { "sampleRate": 5.79 },
+    "us-capitalone-auto": { "sampleRate": 5.99 },
+    "us-ally-auto": { "sampleRate": 5.69 },
+    "us-wells-auto": { "sampleRate": 5.89 },
+    "us-sofi-personal": { "sampleRate": 9.49 },
+    "us-lightstream": { "sampleRate": 9.29 },
+    "us-discover-pl": { "sampleRate": 10.99 },
+    "us-chase-sl": { "sampleRate": 10.49 },
+    "us-chase-card": { "sampleRate": 21.49 },
+    "us-citi-card": { "sampleRate": 21.99 },
+    "us-amex-card": { "sampleRate": 20.99 },
+    "us-capitalone-card": { "sampleRate": 22.49 },
+    "us-sofi-student": { "sampleRate": 5.74 },
+    "us-credible": { "sampleRate": 5.99 },
+    "us-discover-student": { "sampleRate": 6.49 },
+    "us-marcus": { "sampleRate": 4.40 },
+    "us-ally-deposit": { "sampleRate": 4.20 },
+    "us-capitalone-360": { "sampleRate": 4.00 },
+    "us-fidelity": { "sampleRate": 8.00 },
+    "us-vanguard": { "sampleRate": 7.50 },
+    "us-schwab": { "sampleRate": 7.80 },
+    "ca-rbc-mortgage": { "sampleRate": 4.49 },
+    "ca-td-mortgage": { "sampleRate": 4.54 },
+    "ca-scotiabank-mortgage": { "sampleRate": 4.59 },
+    "ca-bmo-mortgage": { "sampleRate": 4.64 },
+    "gb-hsbc": { "sampleRate": 4.80 },
+    "in-sbi": { "sampleRate": 8.50 },
+    "in-hdfc": { "sampleRate": 8.70 }
+  },
+  "verticalBenchmark": {
+    "mortgage": { "US": "mortgage30", "CA": "mortgage5", "GB": "mortgage", "IN": "homeLoan" },
+    "auto": { "US": "autoNew", "CA": "autoNew" },
+    "personal": { "US": "personal", "CA": "personal" },
+    "cards": { "US": "cardApr" },
+    "deposits": { "US": "savingsApy" }
+  }
+}

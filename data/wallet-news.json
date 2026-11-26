@@ -1,0 +1,99 @@
+{
+  "asOf": "2026-11-26",
+  "sectionTitle": "News that impacts your wallet",
+  "sectionDek": "Short editorial briefs tied to our calculators. Not live wire copy and not affiliated with NerdWallet.",
+  "viewAllHref": "/news/",
+  "items": [
+    {
+      "id": "mortgage-board-2026-11-26",
+      "slug": "mortgage-rates-board-november-26-2026",
+      "title": "Mortgage rate board, Nov 26: planning averages ease a touch",
+      "dek": "Our editorial U.S. 30-year planning average sits near 6.28%. Run your payment before you chase a quote.",
+      "category": "Home",
+      "date": "2026-11-26",
+      "author": "aFinanceCalculator Editorial",
+      "imageTone": "home",
+      "ctaHref": "/mortgage-calculator/",
+      "ctaEngine": "tab-mortgage",
+      "ctaLabel": "Open mortgage calculator",
+      "body": [
+        "aFinanceCalculator keeps an editable editorial rate board in /data/market-rates.json. As of Nov 26, 2026, the U.S. 30-year fixed planning average is 6.28% and the 15-year average is 5.55%. These are benchmarks for modeling — not a lender lock.",
+        "If rates feel a little lower than last month’s desk notes, re-run principal and interest with your down payment and term. Taxes, insurance, and mortgage insurance are still outside the payment unless you add them.",
+        "Canada readers can swap to the 5-year fixed benchmark (about 4.49% in the same file) and use the Canada mortgage engine for semi-annual compounding."
+      ]
+    },
+    {
+      "id": "holiday-spend-2026",
+      "slug": "holiday-spending-plan-before-black-friday-2026",
+      "title": "Holiday spending 2026: set the budget before Black Friday hits",
+      "dek": "Decide the number first. Then decide what is worth a swipe — and what can wait until January.",
+      "category": "Personal finance",
+      "date": "2026-11-25",
+      "author": "aFinanceCalculator Editorial",
+      "imageTone": "spend",
+      "ctaHref": "/budget-calculator/",
+      "ctaEngine": "tab-budget",
+      "ctaLabel": "Open 50/30/20 budget",
+      "body": [
+        "Big sale weekends reward people who already know their wants vs needs split. Use a simple 50/30/20 layout: needs, wants, and savings/debt — then park a holiday cap inside wants.",
+        "If you will carry a balance, model payoff months on the credit card engine before you stack 0% intro offers you cannot clear.",
+        "Skip list starter: gadgets you have not researched, extended warranties you do not understand, and ‘only today’ carts that blow next month’s rent buffer."
+      ]
+    },
+    {
+      "id": "outage-cash-buffer",
+      "slug": "prep-cash-buffer-before-tech-outages",
+      "title": "Four money moves before the next tech outage",
+      "dek": "When apps freeze, cash, paper backups, and a paid-ahead bill matter more than another fintech tip.",
+      "category": "Banking",
+      "date": "2026-11-25",
+      "author": "aFinanceCalculator Editorial",
+      "imageTone": "banking",
+      "ctaHref": "/compound-interest-calculator/",
+      "ctaEngine": "tab-compound",
+      "ctaLabel": "Model emergency savings",
+      "body": [
+        "Keep a small amount of physical cash for transit, food, and tips when tap-to-pay is down.",
+        "Screenshot or print the last statement for cards and loans you may need to reference offline.",
+        "Pay critical bills a day early when storms or known maintenance windows are announced.",
+        "Park the rest of your emergency fund in an FDIC/CDIC-aware HYSA and use the compound engine to see what a 3–6 month buffer earns at today’s editorial APY benchmarks."
+      ]
+    },
+    {
+      "id": "gas-vs-ev-travel",
+      "slug": "thanksgiving-travel-gas-vs-ev-costs",
+      "title": "Thanksgiving travel: gas prices vs the EV cost line",
+      "dek": "Road-trip math is fuel, time, and depreciation — not just the pump screenshot on social media.",
+      "category": "Personal finance",
+      "date": "2026-11-24",
+      "author": "aFinanceCalculator Editorial",
+      "imageTone": "travel",
+      "ctaHref": "/ev-vs-gas-calculator/",
+      "ctaEngine": "tab-evgas",
+      "ctaLabel": "Compare EV vs gas",
+      "body": [
+        "Holiday fuel headlines move week to week. Before you change plans, estimate trip gallons × local price, then compare that to home charging or public charging for an EV on the same miles.",
+        "Add parking, tolls, and the cost of an extra overnight if charging slows you down — time has a money cost too.",
+        "If you are financing a vehicle swap, pair this with the auto loan and auto refinance desks instead of judging on fuel alone."
+      ]
+    },
+    {
+      "id": "rewards-vs-payoff",
+      "slug": "rewards-points-vs-paying-card-debt",
+      "title": "Hotel points news is fun — payoff math still wins if you carry a balance",
+      "dek": "Issuer perk updates make great headlines. Revolving APR usually beats any bonus night.",
+      "category": "Credit cards",
+      "date": "2026-11-24",
+      "author": "aFinanceCalculator Editorial",
+      "imageTone": "cards",
+      "ctaHref": "/credit-card-payoff-calculator/",
+      "ctaEngine": "tab-creditcard",
+      "ctaLabel": "Open card payoff calculator",
+      "body": [
+        "Loyalty program refreshes (new partners, milestone bonuses, transfer sweet spots) matter most when you pay the statement in full every month.",
+        "If you are revolving a balance, run months-to-debt-free at your APR before optimizing points. Interest often erases the value of the perk.",
+        "After the balance is gone, use utilization and budget tools to keep the card as a cash-flow instrument — not a high-APR loan."
+      ]
+    }
+  ]
+}
