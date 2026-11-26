@@ -940,11 +940,16 @@ html {
 }
 
 /* ---------- Mega-nav: money verticals (original, NW-inspired IA) ---------- */
+.afc-mega-header {
+  overflow: visible !important;
+}
+
 .afc-mega-header .noir-pill.afc-mega-nav {
   position: relative !important;
   align-items: center !important;
   gap: 4px 12px !important;
   padding: 10px 16px !important;
+  overflow: visible !important;
 }
 
 .afc-mega-links {

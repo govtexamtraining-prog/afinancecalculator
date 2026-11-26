@@ -207,18 +207,31 @@
     }
   }
 
+  function isHomePath() {
+    var p = location.pathname || '/';
+    // Only the real site root — NOT every "/slug/" landing (those also end in "/").
+    return p === '/' || p === '/index.html' || /\/index\.html$/i.test(p);
+  }
+
   function onLinkClick(e) {
     var a = e.target.closest('a[data-afc-engine], a[data-afc-vertical]');
     if (!a) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     var engine = a.getAttribute('data-afc-engine');
     var vertical = a.getAttribute('data-afc-vertical');
     if (!engine && !vertical) return;
-    // Same-origin calculator desk: keep SPA switch when on homepage
-    var onHome = /\/(index\.html)?$/.test(location.pathname) || location.pathname === '/';
-    if (onHome && (engine || vertical)) {
+    // Homepage only: SPA switch. Landing pages must follow href normally.
+    if (!isHomePath()) return;
+    // Prefer dedicated calculator URLs when present (works even if SPA engine is late).
+    var href = a.getAttribute('href') || '';
+    if (href && href.charAt(0) === '/' && href.indexOf('/#') !== 0 && href !== '/') {
       e.preventDefault();
-      goVertical(vertical || '', engine || null);
+      closeAll();
+      location.assign(href);
+      return;
     }
+    e.preventDefault();
+    goVertical(vertical || '', engine || null);
   }
 
   function bind() {

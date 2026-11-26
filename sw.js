@@ -1,4 +1,4 @@
-const CACHE_NAME = 'afinancecalc-v35-cache';
+const CACHE_NAME = 'afinancecalc-v36-cache';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

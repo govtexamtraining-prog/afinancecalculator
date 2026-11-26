@@ -184,9 +184,9 @@ function siteChromeLinks() {
   return `<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/noir.css?v=1.0.9">
     <link rel="stylesheet" href="/css/site-chrome.css?v=2">
-    <link rel="stylesheet" href="/css/afc-nerd.css?v=6">
+    <link rel="stylesheet" href="/css/afc-nerd.css?v=7">
     <link rel="stylesheet" href="/css/afc-rates.css?v=1">
-    <script src="/js/afc-verticals.js?v=4" defer></script>
+    <script src="/js/afc-verticals.js?v=5" defer></script>
     <script src="/js/wallet-news.js?v=2" defer></script>`;
 }
 
